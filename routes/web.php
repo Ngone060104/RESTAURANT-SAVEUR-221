@@ -3,9 +3,11 @@
 use App\Core\Router;
 use App\Controllers\AuthController;
 use App\Controllers\ProduitController;
+use App\Controllers\PanierController;
 use App\Controllers\Gerant\CategorieController as GerantCategorieController;
 use App\Controllers\Gerant\ProduitController as GerantProduitController;
 use App\Middleware\AdminMiddleware;
+use App\Middleware\ClientMiddleware;
 use App\Middleware\GerantMiddleware;
 
 /**
@@ -54,5 +56,12 @@ return function (Router $router): void {
     $router->post('/gerant/produits/approvisionner', [GerantProduitController::class, 'approvisionner'], [
         GerantMiddleware::class,
     ]);
+
+    // Panier (feature/panier) - réservé aux clients connectés
+    $router->get('/panier', [PanierController::class, 'index'], [ClientMiddleware::class]);
+    $router->post('/panier/ajouter', [PanierController::class, 'ajouter'], [ClientMiddleware::class]);
+    $router->post('/panier/quantite', [PanierController::class, 'modifierQuantite'], [ClientMiddleware::class]);
+    $router->post('/panier/supprimer', [PanierController::class, 'supprimer'], [ClientMiddleware::class]);
+    $router->post('/panier/vider', [PanierController::class, 'vider'], [ClientMiddleware::class]);
 
 };
