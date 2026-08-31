@@ -12,6 +12,8 @@ use ReflectionNamedType;
 class Container
 {
     private array $bindings = [];
+    private array $factories = [];
+    private array $singletons = [];
 
     /**
      * Permet de forcer une implémentation précise pour une interface,
@@ -22,8 +24,29 @@ class Container
         $this->bindings[$abstract] = $concrete;
     }
 
+    /**
+     * Permet de dire au container COMMENT construire une dépendance
+     * qu'il ne peut pas deviner tout seul (ex: PDO, qui a besoin d'un
+     * DSN). $factory est appelée une seule fois, le résultat est
+     * ensuite mis en cache et réutilisé (comportement Singleton).
+     *
+     * ex: $container->singleton(PDO::class, fn () => Database::getInstance()->getConnection());
+     */
+    public function singleton(string $abstract, callable $factory): void
+    {
+        $this->factories[$abstract] = $factory;
+    }
+
     public function make(string $class): object
     {
+        if (isset($this->singletons[$class])) {
+            return $this->singletons[$class];
+        }
+
+        if (isset($this->factories[$class])) {
+            return $this->singletons[$class] = ($this->factories[$class])();
+        }
+
         $class = $this->bindings[$class] ?? $class;
 
         $reflection = new ReflectionClass($class);
