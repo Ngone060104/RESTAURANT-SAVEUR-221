@@ -6,37 +6,65 @@ use PDO;
 use PDOException;
 
 /**
- * Fournit une connexion PDO unique partagée dans toute l'application.
- * Encapsulation : la config de connexion reste privée à la classe.
+ * Connexion PDO à PostgreSQL, sous forme de Singleton classique
+ * (constructeur privé + instance unique via getInstance()) : toute
+ * l'application partage la même connexion, jamais deux.
  */
 class Database
 {
-    private static ?PDO $connection = null;
+    private static ?Database $instance = null;
 
-    public static function connect(): PDO
+    private PDO $connection;
+
+    /**
+     * Privé : personne d'autre que getInstance() ne peut créer
+     * une Database (c'est ça, le coeur du pattern Singleton).
+     */
+    private function __construct()
     {
-        if (self::$connection === null) {
-            $config = require __DIR__ . '/../../config/config.php';
-            $db = $config['db'];
+        $config = require __DIR__ . '/../../config/config.php';
+        $db = $config['db'];
 
-            $dsn = sprintf(
-                'pgsql:host=%s;port=%s;dbname=%s;charset=utf8mb4',
-                $db['host'],
-                $db['port'],
-                $db['name']
-            );
+        $dsn = sprintf(
+            'pgsql:host=%s;port=%s;dbname=%s',
+            $db['host'],
+            $db['port'],
+            $db['name']
+        );
 
-            try {
-                self::$connection = new PDO($dsn, $db['user'], $db['pass'], [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-                    PDO::ATTR_EMULATE_PREPARES => false,
-                ]);
-            } catch (PDOException $e) {
-                throw new PDOException('Connexion à la base de données impossible : ' . $e->getMessage());
-            }
+        try {
+            $this->connection = new PDO($dsn, $db['user'], $db['pass'], [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ]);
+        } catch (PDOException $e) {
+            throw new PDOException('Connexion à la base de données impossible : ' . $e->getMessage());
+        }
+    }
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
         }
 
-        return self::$connection;
+        return self::$instance;
+    }
+
+    public function getConnection(): PDO
+    {
+        return $this->connection;
+    }
+
+    // Empêche aussi le clonage et la désérialisation de l'instance
+    // (sinon on pourrait contourner le Singleton par ces deux biais).
+    private function __clone()
+    {
+    }
+
+    public function __wakeup()
+    {
+        throw new \Exception('Impossible de désérialiser un Singleton.');
     }
 }

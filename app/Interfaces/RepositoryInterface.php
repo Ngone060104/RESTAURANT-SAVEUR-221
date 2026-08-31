@@ -11,7 +11,7 @@ interface RepositoryInterface
 {
     public function findAll(): array;
 
-    public function findById(int $id): ?array;
+    public function findById(int $id): ?object;
 
     public function create(array $data): int;
 
