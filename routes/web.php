@@ -2,6 +2,7 @@
 
 use App\Core\Router;
 use App\Controllers\AuthController;
+use App\Controllers\ProduitController;
 use App\Middleware\AdminMiddleware;
 use App\Middleware\GerantMiddleware;
 
@@ -14,4 +15,8 @@ return function (Router $router): void {
     $router->post('/register', [AuthController::class, 'register']);
     $router->post('/login', [AuthController::class, 'login']);
     $router->post('/logout', [AuthController::class, 'logout']);
+
+     // Catalogue public (feature/produits)
+    $router->get('/produits', [ProduitController::class, 'index']);
+    $router->get('/produit', [ProduitController::class, 'show']); // ?id=...
 };
