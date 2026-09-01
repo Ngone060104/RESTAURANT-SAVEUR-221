@@ -2,6 +2,7 @@
 
 namespace App\Middleware;
 
+use App\Core\View;
 use App\Interfaces\MiddlewareInterface;
 use App\Services\AuthService;
 
@@ -22,7 +23,7 @@ class AdminMiddleware implements MiddlewareInterface
 
         if ($user['role'] !== 'ADMIN') {
             http_response_code(403);
-            echo 'Accès réservé à l\'administrateur.';
+            View::render('errors/403', ["message" => "Cette page est réservée à l'administrateur."]);
 
             return false;
         }

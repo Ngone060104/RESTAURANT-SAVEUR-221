@@ -2,7 +2,7 @@
 
 namespace App\Core;
 
-use App\Exceptions\AppException;
+use App\Exceptions\NotFoundException;
 use Throwable;
 
 /**
@@ -27,12 +27,15 @@ class App
     {
         try {
             $this->router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI'] ?? '/');
-        } catch (AppException $e) {
+        } catch (NotFoundException $e) {
             http_response_code(404);
-            echo "Erreur : " . htmlspecialchars($e->getMessage());
+            View::render('errors/404');
         } catch (Throwable $e) {
+            // On n'affiche JAMAIS $e->getMessage() ici : une erreur PDO
+            // pourrait révéler des détails sensibles (requête SQL,
+            // structure de la base...) à un visiteur.
             http_response_code(500);
-            echo "Erreur serveur : " . htmlspecialchars($e->getMessage());
+            View::render('errors/500');
         }
     }
 }

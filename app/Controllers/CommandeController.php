@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\View;
 use App\Exceptions\AuthException;
 use App\Exceptions\ValidationException;
 use App\Services\AuthService;
@@ -42,10 +43,10 @@ class CommandeController extends Controller
             $this->view('commandes/show', $detail);
         } catch (AuthException $e) {
             http_response_code(403);
-            echo $e->getMessage();
+            View::render('errors/403', ['message' => $e->getMessage()]);
         } catch (ValidationException $e) {
             http_response_code(404);
-            echo $e->getMessage();
+            View::render('errors/404');
         }
     }
 

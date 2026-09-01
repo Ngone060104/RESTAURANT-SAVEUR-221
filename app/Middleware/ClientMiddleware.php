@@ -2,6 +2,7 @@
 
 namespace App\Middleware;
 
+use App\Core\View;
 use App\Interfaces\MiddlewareInterface;
 use App\Services\AuthService;
 
@@ -22,7 +23,7 @@ class ClientMiddleware implements MiddlewareInterface
 
         if ($user['role'] !== 'CLIENT') {
             http_response_code(403);
-            echo 'Accès réservé aux clients.';
+            View::render('errors/403', ['message' => 'Cette page est réservée aux clients.']);
 
             return false;
         }
