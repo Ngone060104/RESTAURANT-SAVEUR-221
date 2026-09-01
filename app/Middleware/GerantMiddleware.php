@@ -2,6 +2,7 @@
 
 namespace App\Middleware;
 
+use App\Core\View;
 use App\Interfaces\MiddlewareInterface;
 use App\Services\AuthService;
 
@@ -25,7 +26,9 @@ class GerantMiddleware implements MiddlewareInterface
 
         if (!in_array($user['role'], self::ROLES_AUTORISES, true)) {
             http_response_code(403);
-            echo 'Accès réservé au gérant et à l\'administrateur.';
+            View::render('errors/403', [
+                'message' => "Cette page est réservée au gérant et à l'administrateur.",
+            ]);
 
             return false;
         }
