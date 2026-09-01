@@ -6,8 +6,10 @@ use App\Controllers\CommandeController;
 use App\Controllers\PanierController;
 use App\Controllers\ProduitController;
 use App\Controllers\Gerant\CategorieController as GerantCategorieController;
-use App\Controllers\Gerant\CommandeController as GerantCommandeController;
 use App\Controllers\Gerant\ProduitController as GerantProduitController;
+use App\Controllers\Gerant\CommandeController as GerantCommandeController;
+use App\Controllers\Gerant\PaiementController as GerantPaiementController;
+
 use App\Middleware\AdminMiddleware;
 use App\Middleware\ClientMiddleware;
 use App\Middleware\GerantMiddleware;
@@ -80,6 +82,22 @@ return function (Router $router): void {
     $router->post('/gerant/commandes/annuler', [GerantCommandeController::class, 'annuler'], [
         GerantMiddleware::class,
     ]);
+
+    
+    // Paiements (feature/paiements) - gérant
+    $router->get('/gerant/paiements', [GerantPaiementController::class, 'index'], [GerantMiddleware::class]);
+    $router->get('/gerant/paiements/impayees', [GerantPaiementController::class, 'impayees'], [
+        GerantMiddleware::class,
+    ]);
+    $router->get('/gerant/paiements/partielles', [GerantPaiementController::class, 'partielles'], [
+        GerantMiddleware::class,
+    ]);
+    $router->post('/gerant/paiements', [GerantPaiementController::class, 'enregistrer'], [
+        GerantMiddleware::class,
+    ]);
+
+
+
 
 
 };
