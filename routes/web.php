@@ -2,9 +2,11 @@
 
 use App\Core\Router;
 use App\Controllers\AuthController;
-use App\Controllers\ProduitController;
+use App\Controllers\CommandeController;
 use App\Controllers\PanierController;
+use App\Controllers\ProduitController;
 use App\Controllers\Gerant\CategorieController as GerantCategorieController;
+use App\Controllers\Gerant\CommandeController as GerantCommandeController;
 use App\Controllers\Gerant\ProduitController as GerantProduitController;
 use App\Middleware\AdminMiddleware;
 use App\Middleware\ClientMiddleware;
@@ -63,5 +65,21 @@ return function (Router $router): void {
     $router->post('/panier/quantite', [PanierController::class, 'modifierQuantite'], [ClientMiddleware::class]);
     $router->post('/panier/supprimer', [PanierController::class, 'supprimer'], [ClientMiddleware::class]);
     $router->post('/panier/vider', [PanierController::class, 'vider'], [ClientMiddleware::class]);
+
+     // Commandes (feature/commandes) - client
+    $router->post('/commandes/valider', [CommandeController::class, 'valider'], [ClientMiddleware::class]);
+    $router->get('/commande', [CommandeController::class, 'show'], [ClientMiddleware::class]); // ?id=...
+    $router->get('/mes-commandes', [CommandeController::class, 'historique'], [ClientMiddleware::class]);
+
+    // Commandes - gérant
+    $router->get('/gerant/commandes', [GerantCommandeController::class, 'index'], [GerantMiddleware::class]);
+    $router->get('/gerant/commande', [GerantCommandeController::class, 'show'], [GerantMiddleware::class]); // ?id=...
+    $router->post('/gerant/commandes/statut', [GerantCommandeController::class, 'changerStatut'], [
+        GerantMiddleware::class,
+    ]);
+    $router->post('/gerant/commandes/annuler', [GerantCommandeController::class, 'annuler'], [
+        GerantMiddleware::class,
+    ]);
+
 
 };
