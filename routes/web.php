@@ -2,9 +2,11 @@
 
 use App\Core\Router;
 use App\Controllers\AuthController;
+use App\Controllers\AvisController;
 use App\Controllers\CommandeController;
 use App\Controllers\PanierController;
 use App\Controllers\ProduitController;
+use App\Controllers\Admin\AvisController as AdminAvisController;
 use App\Controllers\Gerant\CategorieController as GerantCategorieController;
 use App\Controllers\Gerant\ProduitController as GerantProduitController;
 use App\Controllers\Gerant\CommandeController as GerantCommandeController;
@@ -95,6 +97,13 @@ return function (Router $router): void {
     $router->post('/gerant/paiements', [GerantPaiementController::class, 'enregistrer'], [
         GerantMiddleware::class,
     ]);
+
+    // Avis (feature/avis) - client
+    $router->post('/avis', [AvisController::class, 'store'], [ClientMiddleware::class]);
+
+    // Avis - admin (règle métier n°13 : réservé à ADMIN, pas au gérant)
+    $router->get('/admin/avis', [AdminAvisController::class, 'index'], [AdminMiddleware::class]);
+    $router->post('/admin/avis/delete', [AdminAvisController::class, 'destroy'], [AdminMiddleware::class]);
 
 
 
