@@ -78,6 +78,7 @@ class UtilisateurRepository implements RepositoryInterface
         return $id === false ? null : (int) $id;
     }
 
+    
     public function create(array $data): int
     {
         $stmt = $this->pdo->prepare("

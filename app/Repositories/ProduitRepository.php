@@ -11,6 +11,7 @@ class ProduitRepository implements RepositoryInterface
     public function __construct(private PDO $pdo)
     {
     }
+    
 
     public function findAll(): array
     {
