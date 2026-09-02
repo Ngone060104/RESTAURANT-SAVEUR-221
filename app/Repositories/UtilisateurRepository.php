@@ -115,6 +115,46 @@ class UtilisateurRepository implements RepositoryInterface
         ]);
     }
 
+
+    public function updateMotDePasse(int $id, string $mdpHache): bool
+    {
+        $stmt = $this->pdo->prepare('UPDATE utilisateurs SET mdp = :mdp WHERE id = :id');
+
+        return $stmt->execute(['id' => $id, 'mdp' => $mdpHache]);
+    }
+
+    /**
+     * Utilisateurs internes uniquement (ADMIN/GERANT), sans les clients -
+     * section "ESPACE ADMINISTRATEUR -> CRUD utilisateurs".
+     */
+    public function findInternes(): array
+    {
+        $stmt = $this->pdo->query("
+            SELECT u.*, r.libelle AS role
+            FROM utilisateurs u
+            JOIN roles r ON r.id = u.role_id
+            WHERE r.libelle IN ('ADMIN', 'GERANT')
+            ORDER BY u.id
+        ");
+
+        return array_map([$this, 'hydrate'], $stmt->fetchAll());
+    }
+
+    public function searchInternes(string $terme): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT u.*, r.libelle AS role
+            FROM utilisateurs u
+            JOIN roles r ON r.id = u.role_id
+            WHERE r.libelle IN ('ADMIN', 'GERANT')
+              AND (u.nom ILIKE :terme OR u.prenom ILIKE :terme OR u.email ILIKE :terme)
+            ORDER BY u.id
+        ");
+        $stmt->execute(['terme' => "%{$terme}%"]);
+
+        return array_map([$this, 'hydrate'], $stmt->fetchAll());
+    }
+
     public function delete(int $id): bool
     {
         $stmt = $this->pdo->prepare('DELETE FROM utilisateurs WHERE id = :id');
