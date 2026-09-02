@@ -16,6 +16,7 @@ class LigneCommandeRepository
     {
     }
 
+    
     public function findByCommande(int $commandeId): array
     {
         $stmt = $this->pdo->prepare('

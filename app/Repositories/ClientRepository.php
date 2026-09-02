@@ -20,6 +20,7 @@ class ClientRepository implements RepositoryInterface
         private UtilisateurRepository $utilisateurRepository,
     ) {
     }
+    
 
     public function findAll(): array
     {

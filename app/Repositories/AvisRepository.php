@@ -10,6 +10,7 @@ class AvisRepository
     public function __construct(private PDO $pdo)
     {
     }
+    
 
     public function findAll(): array
     {
