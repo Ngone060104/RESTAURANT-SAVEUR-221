@@ -6,6 +6,7 @@ use App\Controllers\AvisController;
 use App\Controllers\CommandeController;
 use App\Controllers\PanierController;
 use App\Controllers\ProduitController;
+use App\Controllers\ProfilController;
 use App\Controllers\Admin\AvisController as AdminAvisController;
 use App\Controllers\Gerant\CategorieController as GerantCategorieController;
 use App\Controllers\Gerant\ProduitController as GerantProduitController;
@@ -104,6 +105,14 @@ return function (Router $router): void {
     // Avis - admin (règle métier n°13 : réservé à ADMIN, pas au gérant)
     $router->get('/admin/avis', [AdminAvisController::class, 'index'], [AdminMiddleware::class]);
     $router->post('/admin/avis/delete', [AdminAvisController::class, 'destroy'], [AdminMiddleware::class]);
+
+    
+    // Profil (feature/profil) - client
+    $router->get('/profil', [ProfilController::class, 'show'], [ClientMiddleware::class]);
+    $router->post('/profil', [ProfilController::class, 'update'], [ClientMiddleware::class]);
+    $router->post('/profil/mot-de-passe', [ProfilController::class, 'changerMotDePasse'], [
+        ClientMiddleware::class,
+    ]);
 
 
 
