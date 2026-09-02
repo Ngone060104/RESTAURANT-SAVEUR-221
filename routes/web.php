@@ -7,11 +7,14 @@ use App\Controllers\CommandeController;
 use App\Controllers\PanierController;
 use App\Controllers\ProduitController;
 use App\Controllers\ProfilController;
+
 use App\Controllers\Admin\AvisController as AdminAvisController;
+use App\Controllers\Admin\ClientController as AdminClientController;
+use App\Controllers\Admin\UtilisateurController as AdminUtilisateurController;
 use App\Controllers\Gerant\CategorieController as GerantCategorieController;
-use App\Controllers\Gerant\ProduitController as GerantProduitController;
 use App\Controllers\Gerant\CommandeController as GerantCommandeController;
 use App\Controllers\Gerant\PaiementController as GerantPaiementController;
+use App\Controllers\Gerant\ProduitController as GerantProduitController;
 
 use App\Middleware\AdminMiddleware;
 use App\Middleware\ClientMiddleware;
@@ -113,6 +116,27 @@ return function (Router $router): void {
     $router->post('/profil/mot-de-passe', [ProfilController::class, 'changerMotDePasse'], [
         ClientMiddleware::class,
     ]);
+
+
+    // Utilisateurs internes (feature/admin) - réservé à ADMIN
+    $router->get('/admin/utilisateurs', [AdminUtilisateurController::class, 'index'], [AdminMiddleware::class]);
+    $router->post('/admin/utilisateurs', [AdminUtilisateurController::class, 'store'], [AdminMiddleware::class]);
+    $router->post('/admin/utilisateurs/update', [AdminUtilisateurController::class, 'update'], [
+        AdminMiddleware::class,
+    ]);
+    $router->post('/admin/utilisateurs/delete', [AdminUtilisateurController::class, 'destroy'], [
+        AdminMiddleware::class,
+    ]);
+    $router->post('/admin/utilisateurs/activer', [AdminUtilisateurController::class, 'activer'], [
+        AdminMiddleware::class,
+    ]);
+    $router->post('/admin/utilisateurs/desactiver', [AdminUtilisateurController::class, 'desactiver'], [
+        AdminMiddleware::class,
+    ]);
+
+    // Clients (lecture seule) - réservé à ADMIN
+    $router->get('/admin/clients', [AdminClientController::class, 'index'], [AdminMiddleware::class]);
+    $router->get('/admin/client', [AdminClientController::class, 'show'], [AdminMiddleware::class]); // ?id=...
 
 
 

@@ -46,6 +46,22 @@ class ClientRepository implements RepositoryInterface
         return $row ? $this->hydrate($row) : null;
     }
 
+
+    
+    /**
+     * Section "ESPACE ADMINISTRATEUR -> Gestion des clients -> rechercher".
+     */
+    public function search(string $terme): array
+    {
+        $stmt = $this->pdo->prepare($this->baseQuery() . '
+            AND (u.nom ILIKE :terme OR u.prenom ILIKE :terme OR u.email ILIKE :terme)
+        ');
+        $stmt->execute(['terme' => "%{$terme}%"]);
+
+        return array_map([$this, 'hydrate'], $stmt->fetchAll());
+    }
+
+
     /**
      * Inscription d'un client : insère la partie commune (utilisateurs)
      * puis la partie spécifique (clients), dans une transaction.
