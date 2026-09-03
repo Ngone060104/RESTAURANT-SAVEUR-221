@@ -43,7 +43,7 @@ class PanierService
 
         if ($quantiteTotale > $produit->getStock()) {
             throw new ValidationException(
-                "Stock insuffisant pour {$produit->getLibelle()} (disponible : {$produit->getStock()})."
+                "Stock insuffisant pour {$produit->getNom()} (disponible : {$produit->getStock()})."
             );
         }
 
@@ -68,7 +68,7 @@ class PanierService
 
         if ($quantite > $produit->getStock()) {
             throw new ValidationException(
-                "Stock insuffisant pour {$produit->getLibelle()} (disponible : {$produit->getStock()})."
+                "Stock insuffisant pour {$produit->getNom()} (disponible : {$produit->getStock()})."
             );
         }
 

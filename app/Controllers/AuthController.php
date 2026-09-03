@@ -89,6 +89,16 @@ class AuthController extends Controller
         try {
             $user = $this->authService->login($email, $mdp);
 
+            // Si le visiteur venait du panier, on le renvoie vers le panier
+            if (!empty($_SESSION['redirect_after_login'])) {
+                $destination = $_SESSION['redirect_after_login'];
+                unset($_SESSION['redirect_after_login']);
+
+                $this->redirect($destination);
+                return;
+            }
+
+            // Sinon, redirection normale selon le rôle
             $this->redirectAfterLogin($user['role']);
         } catch (AuthException $e) {
 

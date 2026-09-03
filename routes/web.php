@@ -37,17 +37,17 @@ return function (Router $router): void {
     $router->post('/login', [AuthController::class, 'login']);
     $router->post('/logout', [AuthController::class, 'logout']);
 
-// Catalogue public (feature/produits)
+    // Catalogue public (feature/produits)
 
-$router->get('/produits', [ProduitController::class, 'index']);
+    $router->get('/produits', [ProduitController::class, 'index']);
 
-$router->get('/produits/categorie/{id}', [ProduitController::class, 'byCategorie']);
+    $router->get('/produits/categorie/{id}', [ProduitController::class, 'byCategorie']);
 
-$router->get('/produits/recherche/{terme}', [ProduitController::class, 'search']);
+    $router->get('/produits/recherche/{terme}', [ProduitController::class, 'search']);
 
-$router->get('/produits/statut/{statut}', [ProduitController::class, 'byStatut']);
+    $router->get('/produits/statut/{statut}', [ProduitController::class, 'byStatut']);
 
-$router->get('/produit/{id}', [ProduitController::class, 'show']);
+    $router->get('/produit/{id}', [ProduitController::class, 'show']);
 
 
     // Espace gérant - catégories (GERANT + ADMIN, règle métier n°14)
@@ -83,11 +83,26 @@ $router->get('/produit/{id}', [ProduitController::class, 'show']);
     ]);
 
     // Panier (feature/panier) - réservé aux clients connectés
-    $router->get('/panier', [PanierController::class, 'index'], [ClientMiddleware::class]);
-    $router->post('/panier/ajouter', [PanierController::class, 'ajouter'], [ClientMiddleware::class]);
-    $router->post('/panier/quantite', [PanierController::class, 'modifierQuantite'], [ClientMiddleware::class]);
-    $router->post('/panier/supprimer', [PanierController::class, 'supprimer'], [ClientMiddleware::class]);
-    $router->post('/panier/vider', [PanierController::class, 'vider'], [ClientMiddleware::class]);
+
+    $router->get('/panier', [PanierController::class, 'index'], [
+        ClientMiddleware::class,
+    ]);
+
+    $router->post('/panier/ajouter', [PanierController::class, 'ajouter'], [
+        ClientMiddleware::class,
+    ]);
+
+    $router->post('/panier/quantite', [PanierController::class, 'modifierQuantite'], [
+        ClientMiddleware::class,
+    ]);
+
+    $router->post('/panier/supprimer', [PanierController::class, 'supprimer'], [
+        ClientMiddleware::class,
+    ]);
+
+    $router->post('/panier/vider', [PanierController::class, 'vider'], [
+        ClientMiddleware::class,
+    ]);
 
     // Commandes (feature/commandes) - client
     $router->post('/commandes/valider', [CommandeController::class, 'valider'], [ClientMiddleware::class]);

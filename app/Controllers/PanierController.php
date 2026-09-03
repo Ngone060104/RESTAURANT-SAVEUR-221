@@ -7,10 +7,14 @@ use App\Exceptions\ValidationException;
 use App\Services\PanierService;
 
 /**
- * Section "Client -> Panier" du cahier des charges : ajouter, modifier
- * la quantité, supprimer, vider, voir le total. Toutes les routes sont
- * protégées par ClientMiddleware (un visiteur non connecté n'a pas de
- * panier persistant).
+ * Gestion du panier.
+ *
+ * Le panier est accessible aux visiteurs et aux clients.
+ * Il est stocké en session et peut être consulté, modifié ou vidé
+ * sans authentification.
+ *
+ * L'authentification est demandée uniquement lors de la validation
+ * de la commande.
  */
 class PanierController extends Controller
 {
