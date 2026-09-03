@@ -51,7 +51,7 @@ class ProduitService
         }
 
         return $this->produitRepository->update($id, $this->withStatutDerive([
-            'nom' => $produit->getLibelle(),
+            'nom' => $produit->getNom(),
             'description' => $produit->getDescription(),
             'prix' => $produit->getPrix(),
             'stock' => $produit->getStock() + $quantite,
