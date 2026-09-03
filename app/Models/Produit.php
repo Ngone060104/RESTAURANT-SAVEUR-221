@@ -10,7 +10,7 @@ class Produit
 {
     public function __construct(
         private int $id,
-        private string $libelle,
+        private string $nom,
         private ?string $description,
         private float $prix,
         private int $stock,
@@ -26,9 +26,9 @@ class Produit
         return $this->id;
     }
 
-    public function getLibelle(): string
+    public function getNom(): string
     {
-        return $this->libelle;
+        return $this->nom;
     }
 
     public function getDescription(): ?string

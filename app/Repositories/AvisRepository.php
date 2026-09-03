@@ -25,6 +25,35 @@ class AvisRepository
         return array_map([$this, 'hydrate'], $stmt->fetchAll());
     }
 
+     /**
+     * Avis les plus récents, pour la section témoignages de la page
+     * d'accueil. Inclut le nom du premier produit de la commande
+     * associée (approximation raisonnable : un avis porte sur toute
+     * la commande, pas sur un produit précis, il n'y a pas de colonne
+     * dédiée dans le schéma).
+     */
+    public function findRecents(int $limite = 2): array
+    {
+        $stmt = $this->pdo->query('
+            SELECT a.*, u.nom AS client_nom, u.prenom AS client_prenom,
+                (
+                    SELECT p.nom
+                    FROM lignes_commande lc
+                    JOIN produits p ON p.id = lc.produit_id
+                    WHERE lc.commande_id = a.commande_id
+                    ORDER BY lc.id
+                    LIMIT 1
+                ) AS produit_nom
+            FROM avis a
+            JOIN clients c ON c.id = a.client_id
+            JOIN utilisateurs u ON u.id = c.id
+            ORDER BY a.date_avis DESC
+            LIMIT ' . (int) $limite
+        );
+
+        return array_map([$this, 'hydrate'], $stmt->fetchAll());
+    }
+
     public function findByCommande(int $commandeId): ?Avis
     {
         $stmt = $this->pdo->prepare('SELECT * FROM avis WHERE commande_id = :commande_id');

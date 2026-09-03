@@ -11,6 +11,9 @@ class Avis
         private string $dateAvis,
         private int $clientId,
         private int $commandeId,
+        private ?string $clientNom = null,
+        private ?string $clientPrenom = null,
+        private ?string $produitNom = null,
     ) {
     }
 
@@ -42,5 +45,19 @@ class Avis
     public function getCommandeId(): int
     {
         return $this->commandeId;
+    }
+
+     public function getClientNomComplet(): ?string
+    {
+        if ($this->clientPrenom === null || $this->clientNom === null) {
+            return null;
+        }
+
+        return "{$this->clientPrenom} {$this->clientNom}";
+    }
+
+    public function getProduitNom(): ?string
+    {
+        return $this->produitNom;
     }
 }

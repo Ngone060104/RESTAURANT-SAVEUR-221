@@ -45,6 +45,53 @@ class ProduitRepository implements RepositoryInterface
         return array_map([$this, 'hydrate'], $stmt->fetchAll());
     }
 
+  public function findCatalogue(
+    ?int $categorieId = null,
+    ?string $statut = null,
+    ?string $terme = null
+): array {
+    $sql = '
+        SELECT
+            p.*,
+            c.libelle AS categorie_libelle
+        FROM produits p
+        JOIN categories c ON c.id = p.categorie_id
+        WHERE 1 = 1
+    ';
+
+    $params = [];
+
+    // Filtre par catégorie
+    if ($categorieId !== null) {
+        $sql .= ' AND p.categorie_id = :categorie_id';
+        $params['categorie_id'] = $categorieId;
+    }
+
+    // Filtre par disponibilité
+    if ($statut !== null) {
+        $sql .= ' AND p.statut = :statut';
+        $params['statut'] = $statut;
+    }
+
+    // Recherche
+    if ($terme !== null && $terme !== '') {
+        $sql .= ' AND (
+            p.nom ILIKE :terme
+            OR p.description ILIKE :terme
+        )';
+
+        $params['terme'] = '%' . $terme . '%';
+    }
+
+    // Tri alphabétique
+    $sql .= ' ORDER BY p.nom ASC';
+
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute($params);
+
+    return array_map([$this, 'hydrate'], $stmt->fetchAll());
+}
+
     public function findByCategorie(int $categorieId): array
     {
         $stmt = $this->pdo->prepare(
@@ -111,6 +158,20 @@ class ProduitRepository implements RepositoryInterface
     {
         $stmt = $this->pdo->query(
             $this->baseQuery() . " WHERE p.statut = 'en_rupture' ORDER BY p.nom"
+        );
+
+        return array_map([$this, 'hydrate'], $stmt->fetchAll());
+    }
+
+     /**
+     * Produits mis en avant sur la page d'accueil ("Plats les plus
+     * plébiscités"). Pas de colonne "vedette" dans le schéma : on
+     * prend simplement les premiers produits disponibles.
+     */
+    public function findVedettes(int $limite = 3): array
+    {
+        $stmt = $this->pdo->query(
+            $this->baseQuery() . " WHERE p.statut = 'disponible' ORDER BY p.id LIMIT " . (int) $limite
         );
 
         return array_map([$this, 'hydrate'], $stmt->fetchAll());

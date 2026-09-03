@@ -43,10 +43,10 @@ class CommandeController extends Controller
             $this->view('commandes/show', $detail);
         } catch (AuthException $e) {
             http_response_code(403);
-            View::render('errors/403', ['message' => $e->getMessage()]);
+            View::render('errors/403', ['message' => $e->getMessage()], null);
         } catch (ValidationException $e) {
             http_response_code(404);
-            View::render('errors/404');
+            View::render('errors/404', [], null);
         }
     }
 

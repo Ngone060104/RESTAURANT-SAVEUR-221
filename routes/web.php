@@ -4,6 +4,7 @@ use App\Core\Router;
 use App\Controllers\AuthController;
 use App\Controllers\AvisController;
 use App\Controllers\CommandeController;
+use App\Controllers\HomeController;
 use App\Controllers\PanierController;
 use App\Controllers\ProduitController;
 use App\Controllers\ProfilController;
@@ -25,17 +26,31 @@ use App\Middleware\GerantMiddleware;
  * Ce fichier retourne une closure appelée avec le Router déjà prêt.
  */
 return function (Router $router): void {
+
+    // Accueil (feature/vues-accueil)
+    $router->get('/', [HomeController::class, 'index']);
+
     // Authentification (feature/auth)
+    $router->get('/login', [AuthController::class, 'showLogin']);
+    $router->get('/register', [AuthController::class, 'showRegister']);
     $router->post('/register', [AuthController::class, 'register']);
     $router->post('/login', [AuthController::class, 'login']);
     $router->post('/logout', [AuthController::class, 'logout']);
 
-     // Catalogue public (feature/produits)
-    $router->get('/produits', [ProduitController::class, 'index']);
-    $router->get('/produit', [ProduitController::class, 'show']); // ?id=...
+// Catalogue public (feature/produits)
+
+$router->get('/produits', [ProduitController::class, 'index']);
+
+$router->get('/produits/categorie/{id}', [ProduitController::class, 'byCategorie']);
+
+$router->get('/produits/recherche/{terme}', [ProduitController::class, 'search']);
+
+$router->get('/produits/statut/{statut}', [ProduitController::class, 'byStatut']);
+
+$router->get('/produit/{id}', [ProduitController::class, 'show']);
 
 
-     // Espace gérant - catégories (GERANT + ADMIN, règle métier n°14)
+    // Espace gérant - catégories (GERANT + ADMIN, règle métier n°14)
     $router->get('/gerant/categories', [GerantCategorieController::class, 'index'], [
         GerantMiddleware::class,
     ]);
@@ -50,7 +65,7 @@ return function (Router $router): void {
     ]);
 
 
-      // Espace gérant - produits
+    // Espace gérant - produits
     $router->get('/gerant/produits', [GerantProduitController::class, 'index'], [
         GerantMiddleware::class,
     ]);
@@ -74,7 +89,7 @@ return function (Router $router): void {
     $router->post('/panier/supprimer', [PanierController::class, 'supprimer'], [ClientMiddleware::class]);
     $router->post('/panier/vider', [PanierController::class, 'vider'], [ClientMiddleware::class]);
 
-     // Commandes (feature/commandes) - client
+    // Commandes (feature/commandes) - client
     $router->post('/commandes/valider', [CommandeController::class, 'valider'], [ClientMiddleware::class]);
     $router->get('/commande', [CommandeController::class, 'show'], [ClientMiddleware::class]); // ?id=...
     $router->get('/mes-commandes', [CommandeController::class, 'historique'], [ClientMiddleware::class]);
@@ -89,7 +104,7 @@ return function (Router $router): void {
         GerantMiddleware::class,
     ]);
 
-    
+
     // Paiements (feature/paiements) - gérant
     $router->get('/gerant/paiements', [GerantPaiementController::class, 'index'], [GerantMiddleware::class]);
     $router->get('/gerant/paiements/impayees', [GerantPaiementController::class, 'impayees'], [
@@ -109,7 +124,7 @@ return function (Router $router): void {
     $router->get('/admin/avis', [AdminAvisController::class, 'index'], [AdminMiddleware::class]);
     $router->post('/admin/avis/delete', [AdminAvisController::class, 'destroy'], [AdminMiddleware::class]);
 
-    
+
     // Profil (feature/profil) - client
     $router->get('/profil', [ProfilController::class, 'show'], [ClientMiddleware::class]);
     $router->post('/profil', [ProfilController::class, 'update'], [ClientMiddleware::class]);
