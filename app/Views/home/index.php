@@ -130,7 +130,7 @@ $prixFormate = static fn (float $prix) => number_format($prix, 0, ',', ' ') . ' 
                             <p class="font-extrabold text-stone-900"><?= $prixFormate($produit->getPrix()) ?></p>
                         </div>
                         <div class="flex items-center gap-3">
-                            <a href="/produit?id=<?= $produit->getId() ?>"
+                            <a href="/produit/<?= $produit->getId() ?>"
                                class="text-sm font-semibold text-stone-600 hover:text-orange-500">
                                 Détail
                             </a>
