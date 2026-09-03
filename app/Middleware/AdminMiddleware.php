@@ -23,7 +23,7 @@ class AdminMiddleware implements MiddlewareInterface
 
         if ($user['role'] !== 'ADMIN') {
             http_response_code(403);
-            View::render('errors/403', ["message" => "Cette page est réservée à l'administrateur."]);
+            View::render('errors/403', ["message" => "Cette page est réservée à l'administrateur."], null);
 
             return false;
         }

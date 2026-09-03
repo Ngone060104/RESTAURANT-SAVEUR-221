@@ -28,7 +28,7 @@ class GerantMiddleware implements MiddlewareInterface
             http_response_code(403);
             View::render('errors/403', [
                 'message' => "Cette page est réservée au gérant et à l'administrateur.",
-            ]);
+            ], null);
 
             return false;
         }

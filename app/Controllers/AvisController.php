@@ -31,7 +31,7 @@ class AvisController extends Controller
             $this->redirect("/commande?id={$commandeId}");
         } catch (AuthException $e) {
             http_response_code(403);
-            View::render('errors/403', ['message' => $e->getMessage()]);
+            View::render('errors/403', ['message' => $e->getMessage()], null);
         } catch (ValidationException $e) {
             http_response_code(422);
             echo $e->getMessage();
