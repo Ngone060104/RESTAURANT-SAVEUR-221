@@ -6,6 +6,7 @@ use App\Exceptions\AuthException;
 use App\Exceptions\ValidationException;
 use App\Repositories\CommandeRepository;
 use App\Repositories\LigneCommandeRepository;
+use App\Repositories\PaiementRepository;
 use PDO;
 use PDOException;
 use Throwable;
@@ -30,6 +31,7 @@ class CommandeService
         private CommandeRepository $commandeRepository,
         private LigneCommandeRepository $ligneCommandeRepository,
         private PanierService $panierService,
+         private PaiementRepository $paiementRepository,
     ) {
     }
 
@@ -84,23 +86,34 @@ class CommandeService
     /**
      * @return array{commande: \App\Models\Commande, lignes: \App\Models\LigneCommande[]}
      */
-    public function getDetail(int $commandeId, int $clientId): array
-    {
-        $commande = $this->commandeRepository->findCommandeById($commandeId);
+   public function getDetail(int $commandeId, int $clientId): array
+{
+    $commande = $this->commandeRepository->findCommandeById($commandeId);
 
-        if ($commande === null) {
-            throw new ValidationException('Commande introuvable.');
-        }
-
-        if (!$commande->appartientA($clientId)) {
-            throw new AuthException("Cette commande ne vous appartient pas.");
-        }
-
-        return [
-            'commande' => $commande,
-            'lignes' => $this->ligneCommandeRepository->findByCommande($commandeId),
-        ];
+    if ($commande === null) {
+        throw new ValidationException('Commande introuvable.');
     }
+
+    if (!$commande->appartientA($clientId)) {
+        throw new AuthException("Cette commande ne vous appartient pas.");
+    }
+
+    $paiements = $this->paiementRepository->findByCommande($commandeId);
+
+    $statutPaiement = $this->paiementRepository->getStatutCommande($commandeId);
+
+    return [
+        'commande' => $commande,
+
+        'lignes' => $this->ligneCommandeRepository->findByCommande(
+            $commandeId
+        ),
+
+        'paiements' => $paiements,
+
+        'statutPaiement' => $statutPaiement,
+    ];
+}
 
     public function getHistoriqueClient(int $clientId): array
     {

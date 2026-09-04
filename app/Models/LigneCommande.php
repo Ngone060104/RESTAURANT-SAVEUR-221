@@ -12,6 +12,7 @@ class LigneCommande
         private int $commandeId,
         private int $produitId,
         private ?string $produitLibelle = null,
+        private ?string $produitImage = null,
     ) {
     }
 
@@ -48,5 +49,10 @@ class LigneCommande
     public function getProduitLibelle(): ?string
     {
         return $this->produitLibelle;
+    }
+
+    public function getProduitImage(): ?string
+    {
+        return $this->produitImage;
     }
 }

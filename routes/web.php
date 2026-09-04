@@ -104,10 +104,52 @@ return function (Router $router): void {
         ClientMiddleware::class,
     ]);
 
-    // Commandes (feature/commandes) - client
-    $router->post('/commandes/valider', [CommandeController::class, 'valider'], [ClientMiddleware::class]);
-    $router->get('/commande', [CommandeController::class, 'show'], [ClientMiddleware::class]); // ?id=...
-    $router->get('/mes-commandes', [CommandeController::class, 'historique'], [ClientMiddleware::class]);
+    // =====================================================
+    // Commandes - client connecté
+    // =====================================================
+
+    // 1. Page Validation & Confirmation avant création
+    $router->get(
+        '/commande',
+        [CommandeController::class, 'confirmation'],
+        [ClientMiddleware::class]
+    );
+
+    // 2. Création réelle de la commande
+    $router->post(
+        '/commandes/valider',
+        [CommandeController::class, 'valider'],
+        [ClientMiddleware::class]
+    );
+
+    // 3. Page de succès après création
+   $router->get(
+    '/commande/show/{id}',
+    [CommandeController::class, 'show'],
+    [ClientMiddleware::class]
+);
+
+// 4. Suivi de l'avancement d'une commande
+$router->get(
+    '/commande/suivi/{id}',
+    [CommandeController::class, 'suivi'],
+    [ClientMiddleware::class]
+);
+
+    
+// 5. Détail complet d'une commande existante (liste des lignes, montant total, statut, date, etc.)
+    $router->get(
+        '/commande/detail/{id}',
+        [CommandeController::class, 'detail'],
+        [ClientMiddleware::class]
+    );
+
+    // 6. Historique
+    $router->get(
+        '/mes-commandes',
+        [CommandeController::class, 'historique'],
+        [ClientMiddleware::class]
+    );
 
     // Commandes - gérant
     $router->get('/gerant/commandes', [GerantCommandeController::class, 'index'], [GerantMiddleware::class]);

@@ -380,17 +380,12 @@ foreach ($lignes ?? [] as $ligne) {
                         method="post"
                         class="mt-7">
 
-                        <button
-                            type="submit"
+                        <a
+                            href="/commande"
                             class="w-full bg-orange-500 hover:bg-orange-600 text-stone-900 font-extrabold py-4 rounded-2xl transition flex items-center justify-center gap-3 shadow-sm">
-
-                            <span>
-                                Passer la commande
-                            </span>
-
+                            <span>Passer la commande</span>
                             <i class="fa-solid fa-arrow-right"></i>
-
-                        </button>
+                        </a>
 
                     </form>
 
