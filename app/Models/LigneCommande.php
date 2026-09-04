@@ -11,7 +11,8 @@ class LigneCommande
         private float $montantLigne,
         private int $commandeId,
         private int $produitId,
-        private ?string $produitNom = null,
+        private ?string $produitLibelle = null,
+        private ?string $produitImage = null,
     ) {
     }
 
@@ -45,8 +46,13 @@ class LigneCommande
         return $this->produitId;
     }
 
-    public function getProduitNom(): ?string
+    public function getProduitLibelle(): ?string
     {
-        return $this->produitNom;
+        return $this->produitLibelle;
+    }
+
+    public function getProduitImage(): ?string
+    {
+        return $this->produitImage;
     }
 }
