@@ -123,21 +123,27 @@ return function (Router $router): void {
     );
 
     // 3. Page de succès après création
-   $router->get(
-    '/commande/show/{id}',
-    [CommandeController::class, 'show'],
-    [ClientMiddleware::class]
-);
+    $router->get(
+        '/commande/show/{id}',
+        [CommandeController::class, 'show'],
+        [ClientMiddleware::class]
+    );
 
-// 4. Suivi de l'avancement d'une commande
-$router->get(
-    '/commande/suivi/{id}',
-    [CommandeController::class, 'suivi'],
-    [ClientMiddleware::class]
-);
+    // 4. Suivi de l'avancement d'une commande
+    $router->get(
+        '/commande/suivi/{id}',
+        [CommandeController::class, 'suivi'],
+        [ClientMiddleware::class]
+    );
 
-    
-// 5. Détail complet d'une commande existante (liste des lignes, montant total, statut, date, etc.)
+    $router->get(
+        '/commande/suivi/{id}/etat',
+        [CommandeController::class, 'etat'],
+        [ClientMiddleware::class]
+    );
+
+
+    // 5. Détail complet d'une commande existante (liste des lignes, montant total, statut, date, etc.)
     $router->get(
         '/commande/detail/{id}',
         [CommandeController::class, 'detail'],
@@ -148,6 +154,16 @@ $router->get(
     $router->get(
         '/mes-commandes',
         [CommandeController::class, 'historique'],
+        [ClientMiddleware::class]
+    );
+
+    // =====================================================
+    // Annulation d'une commande - client connecté
+    // =====================================================
+
+    $router->post(
+        '/commandes/{id}/annuler',
+        [CommandeController::class, 'annuler'],
         [ClientMiddleware::class]
     );
 

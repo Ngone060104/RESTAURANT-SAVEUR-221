@@ -105,17 +105,50 @@ class CommandeController extends Controller
      *
      * Cette page est différente du détail d'une commande.
      */
-   public function show(int $id): void
-{
-    try {
-        $user = AuthService::currentUser();
+    public function show(int $id): void
+    {
+        try {
+            $user = AuthService::currentUser();
 
-        if ($user === null) {
-            $this->redirect('/login');
-            return;
-        }
+            if ($user === null) {
+                $this->redirect('/login');
+                return;
+            }
 
-        if ($id <= 0) {
+            if ($id <= 0) {
+                http_response_code(404);
+
+                View::render(
+                    'errors/404',
+                    [],
+                    null
+                );
+
+                return;
+            }
+
+            $detail = $this->commandeService->getDetail(
+                $id,
+                (int) $user['id']
+            );
+
+            $this->view(
+                'commandes/show',
+                $detail
+            );
+        } catch (AuthException $e) {
+
+            http_response_code(403);
+
+            View::render(
+                'errors/403',
+                [
+                    'message' => $e->getMessage()
+                ],
+                null
+            );
+        } catch (ValidationException $e) {
+
             http_response_code(404);
 
             View::render(
@@ -123,43 +156,8 @@ class CommandeController extends Controller
                 [],
                 null
             );
-
-            return;
         }
-
-        $detail = $this->commandeService->getDetail(
-            $id,
-            (int) $user['id']
-        );
-
-        $this->view(
-            'commandes/show',
-            $detail
-        );
-
-    } catch (AuthException $e) {
-
-        http_response_code(403);
-
-        View::render(
-            'errors/403',
-            [
-                'message' => $e->getMessage()
-            ],
-            null
-        );
-
-    } catch (ValidationException $e) {
-
-        http_response_code(404);
-
-        View::render(
-            'errors/404',
-            [],
-            null
-        );
     }
-}
 
     /**
      * Détail d'une commande existante.
@@ -252,6 +250,74 @@ class CommandeController extends Controller
     }
 
     /**
+     * Annulation d'une commande par le client.
+     *
+     * La commande doit appartenir au client connecté.
+     * L'annulation est possible uniquement pour :
+     * - EN_ATTENTE
+     * - EN_PREPARATION
+     *
+     * Le service se charge de la vérification et du changement
+     * de statut. Le trigger PostgreSQL restitue le stock.
+     */
+    public function annuler(string $id): void
+    {
+        try {
+
+            $user = AuthService::currentUser();
+
+            if ($user === null) {
+                $this->redirect('/login');
+                return;
+            }
+
+            $commandeId = (int) $id;
+
+            if ($commandeId <= 0) {
+                http_response_code(404);
+
+                View::render(
+                    'errors/404',
+                    [],
+                    null
+                );
+
+                return;
+            }
+
+            // Récupérer la commande
+            $commande = $this->commandeService->getDetail(
+                $commandeId,
+                (int) $user['id']
+            );
+
+            // Annulation
+            $this->commandeService->annuler($commandeId);
+
+            // Retour au suivi de la commande
+            $this->redirect("/commande/suivi/{$commandeId}");
+        } catch (AuthException $e) {
+
+            http_response_code(403);
+
+            View::render(
+                'errors/403',
+                ['message' => $e->getMessage()],
+                null
+            );
+        } catch (ValidationException $e) {
+
+            http_response_code(422);
+
+            echo htmlspecialchars(
+                $e->getMessage(),
+                ENT_QUOTES,
+                'UTF-8'
+            );
+        }
+    }
+
+    /**
      * Historique des commandes du client connecté.
      */
     public function historique(): void
@@ -272,22 +338,59 @@ class CommandeController extends Controller
     }
 
     /**
- * Suivi de l'avancement d'une commande.
- *
- * Exemple :
- * /commande/suivi/9
- */
-public function suivi(int $id): void
-{
-    try {
-        $user = AuthService::currentUser();
+     * Suivi de l'avancement d'une commande.
+     *
+     * Exemple :
+     * /commande/suivi/9
+     */
+    public function suivi(int $id): void
+    {
+        try {
+            $user = AuthService::currentUser();
 
-        if ($user === null) {
-            $this->redirect('/login');
-            return;
-        }
+            if ($user === null) {
+                $this->redirect('/login');
+                return;
+            }
 
-        if ($id <= 0) {
+            if ($id <= 0) {
+                http_response_code(404);
+
+                View::render(
+                    'errors/404',
+                    [],
+                    null
+                );
+
+                return;
+            }
+
+            /*
+         * getDetail() vérifie également que la commande
+         * appartient bien au client connecté.
+         */
+            $detail = $this->commandeService->getDetail(
+                $id,
+                (int) $user['id']
+            );
+
+            $this->view(
+                'commandes/suivi',
+                $detail
+            );
+        } catch (AuthException $e) {
+
+            http_response_code(403);
+
+            View::render(
+                'errors/403',
+                [
+                    'message' => $e->getMessage()
+                ],
+                null
+            );
+        } catch (ValidationException $e) {
+
             http_response_code(404);
 
             View::render(
@@ -295,46 +398,83 @@ public function suivi(int $id): void
                 [],
                 null
             );
-
-            return;
         }
-
-        /*
-         * getDetail() vérifie également que la commande
-         * appartient bien au client connecté.
-         */
-        $detail = $this->commandeService->getDetail(
-            $id,
-            (int) $user['id']
-        );
-
-        $this->view(
-            'commandes/suivi',
-            $detail
-        );
-
-    } catch (AuthException $e) {
-
-        http_response_code(403);
-
-        View::render(
-            'errors/403',
-            [
-                'message' => $e->getMessage()
-            ],
-            null
-        );
-
-    } catch (ValidationException $e) {
-
-        http_response_code(404);
-
-        View::render(
-            'errors/404',
-            [],
-            null
-        );
     }
-}
+    /**
+     * Retourne l'état actuel d'une commande en JSON.
+     *
+     * Utilisé par JavaScript pour le suivi en temps réel.
+     */
+    public function etat(int $id): void
+    {
+        try {
 
+            $user = AuthService::currentUser();
+
+            if ($user === null) {
+                http_response_code(401);
+
+                header('Content-Type: application/json; charset=utf-8');
+
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Utilisateur non connecté.',
+                ]);
+
+                return;
+            }
+
+            if ($id <= 0) {
+                http_response_code(404);
+
+                header('Content-Type: application/json; charset=utf-8');
+
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Commande introuvable.',
+                ]);
+
+                return;
+            }
+
+            /*
+         * getDetail() vérifie que la commande appartient
+         * bien au client connecté.
+         */
+            $detail = $this->commandeService->getDetail(
+                $id,
+                (int) $user['id']
+            );
+
+            header('Content-Type: application/json; charset=utf-8');
+
+            echo json_encode([
+                'success' => true,
+                'commande' => [
+                    'id' => $detail['commande']->getId(),
+                    'statut' => $detail['commande']->getStatut(),
+                ],
+            ]);
+        } catch (AuthException $e) {
+
+            http_response_code(403);
+
+            header('Content-Type: application/json; charset=utf-8');
+
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        } catch (ValidationException $e) {
+
+            http_response_code(404);
+
+            header('Content-Type: application/json; charset=utf-8');
+
+            echo json_encode([
+                'success' => false,
+                'message' => 'Commande introuvable.',
+            ]);
+        }
+    }
 }
