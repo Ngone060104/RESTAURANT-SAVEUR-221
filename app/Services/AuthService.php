@@ -8,9 +8,12 @@ use App\Repositories\ClientRepository;
 use App\Repositories\UtilisateurRepository;
 
 /**
- * Centralise les règles métier d'authentification (règles 1, 2, 3 du
- * cahier des charges) : email unique, mot de passe >= 6 caractères,
- * compte désactivé refusé, session ouverte après connexion.
+ * Centralise les règles métier d'authentification :
+ * - email unique
+ * - téléphone unique
+ * - mot de passe >= 6 caractères
+ * - compte désactivé refusé
+ * - session ouverte après connexion
  */
 class AuthService
 {
@@ -25,8 +28,13 @@ class AuthService
      */
     public function register(array $data): int
     {
+        // Validation des champs du formulaire
         $this->validateRegistration($data);
-        if ($this->utilisateurRepository->emailExists($data['email'])) {
+
+        // Vérification de l'unicité de l'email
+        $email = trim($data['email']);
+
+        if ($this->utilisateurRepository->emailExists($email)) {
             throw new ValidationException(
                 'Cet email est déjà utilisé.',
                 [
@@ -34,36 +42,74 @@ class AuthService
                 ]
             );
         }
+
+        // Normalisation du numéro de téléphone
+        $telephone = preg_replace(
+            '/[\s.-]/',
+            '',
+            trim($data['telephone'] ?? '')
+        );
+
+        // Si le numéro est saisi avec +221,
+        // on conserve uniquement les 9 chiffres.
+        if (str_starts_with($telephone, '+221')) {
+            $telephone = substr($telephone, 4);
+        }
+
+        // Vérification de l'unicité du téléphone
+        if ($this->clientRepository->telephoneExists($telephone)) {
+            throw new ValidationException(
+                'Ce numéro de téléphone est déjà utilisé.',
+                [
+                    'telephone' => 'Ce numéro de téléphone est déjà utilisé.'
+                ]
+            );
+        }
+
+        // Création du client
         return $this->clientRepository->create([
-            'nom' => $data['nom'],
-            'prenom' => $data['prenom'],
-            'email' => $data['email'],
+            'nom' => trim($data['nom']),
+            'prenom' => trim($data['prenom']),
+            'email' => $email,
             'mdp' => $this->hasher->hash($data['mdp']),
-            'telephone' => $data['telephone'],
-            'adresse' => $data['adresse'],
+            'telephone' => $telephone,
+            'adresse' => trim($data['adresse']),
         ]);
     }
 
     /**
-     * Connexion : valide contre la table utilisateurs, tous rôles confondus
+     * Connexion :
+     * valide contre la table utilisateurs, tous rôles confondus
      * (client, gérant, admin), puis ouvre la session.
      *
-     * @return array{id:int, nom:string, prenom:string, email:string, role:string}
+     * @return array{
+     *     id:int,
+     *     nom:string,
+     *     prenom:string,
+     *     email:string,
+     *     role:string
+     * }
      */
     public function login(string $email, string $password): array
     {
         $user = $this->utilisateurRepository->findByEmailWithPassword($email);
 
         if ($user === null) {
-            throw new AuthException('Email ou mot de passe incorrect.');
+            throw new AuthException(
+                'Email ou mot de passe incorrect.'
+            );
         }
 
         if (!$this->hasher->verify($password, $user->mdp)) {
-            throw new AuthException('Email ou mot de passe incorrect.');
+            throw new AuthException(
+                'Email ou mot de passe incorrect.'
+            );
         }
 
         if (!$user->actif) {
-            throw new AuthException('Ce compte a été désactivé.');
+            throw new AuthException(
+                'Ce compte a été désactivé.'
+            );
         }
 
         $sessionUser = [
@@ -79,16 +125,25 @@ class AuthService
         return $sessionUser;
     }
 
+    /**
+     * Déconnexion.
+     */
     public function logout(): void
     {
         unset($_SESSION['user']);
     }
 
+    /**
+     * Récupère l'utilisateur actuellement connecté.
+     */
     public static function currentUser(): ?array
     {
         return $_SESSION['user'] ?? null;
     }
 
+    /**
+     * Validation des données d'inscription.
+     */
     private function validateRegistration(array $data): void
     {
         $errors = [];
@@ -117,31 +172,50 @@ class AuthService
 
         if ($telephone === '') {
             $errors['telephone'] = 'Le numéro de téléphone est obligatoire.';
-        } elseif (!preg_match('/^(?:\+221)?[0-9]{9}$/', preg_replace('/[\s.-]/', '', $telephone))) {
-            $errors['telephone'] = 'Veuillez saisir un numéro sénégalais valide.';
+        } else {
+            $telephoneNormalise = preg_replace(
+                '/[\s.-]/',
+                '',
+                $telephone
+            );
+
+            if (
+                !preg_match(
+                    '/^(?:\+221)?[0-9]{9}$/',
+                    $telephoneNormalise
+                )
+            ) {
+                $errors['telephone'] =
+                    'Veuillez saisir un numéro sénégalais valide.';
+            }
         }
 
         // Adresse
         if (empty(trim($data['adresse'] ?? ''))) {
-            $errors['adresse'] = 'L’adresse de livraison est obligatoire.';
+            $errors['adresse'] =
+                'L’adresse de livraison est obligatoire.';
         }
 
         // Mot de passe
         $mdp = $data['mdp'] ?? '';
 
         if ($mdp === '') {
-            $errors['mdp'] = 'Le mot de passe est obligatoire.';
+            $errors['mdp'] =
+                'Le mot de passe est obligatoire.';
         } elseif (strlen($mdp) < 6) {
-            $errors['mdp'] = 'Le mot de passe doit contenir au moins 6 caractères.';
+            $errors['mdp'] =
+                'Le mot de passe doit contenir au moins 6 caractères.';
         }
 
         // Confirmation du mot de passe
         $confirmation = $data['confirmation_mdp'] ?? '';
 
         if ($confirmation === '') {
-            $errors['confirmation_mdp'] = 'Veuillez confirmer votre mot de passe.';
+            $errors['confirmation_mdp'] =
+                'Veuillez confirmer votre mot de passe.';
         } elseif ($mdp !== $confirmation) {
-            $errors['confirmation_mdp'] = 'Les mots de passe ne correspondent pas.';
+            $errors['confirmation_mdp'] =
+                'Les mots de passe ne correspondent pas.';
         }
 
         // S'il y a des erreurs, on les retourne toutes

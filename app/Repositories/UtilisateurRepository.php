@@ -13,9 +13,7 @@ use PDO;
  */
 class UtilisateurRepository implements RepositoryInterface
 {
-    public function __construct(private PDO $pdo)
-    {
-    }
+    public function __construct(private PDO $pdo) {}
 
     public function findAll(): array
     {
@@ -61,10 +59,20 @@ class UtilisateurRepository implements RepositoryInterface
         return $row ?: null;
     }
 
-    public function emailExists(string $email): bool
+    public function emailExists(string $email, ?int $excludeId = null): bool
     {
-        $stmt = $this->pdo->prepare('SELECT 1 FROM utilisateurs WHERE email = :email');
-        $stmt->execute(['email' => $email]);
+        $stmt = $this->pdo->prepare('
+        SELECT 1
+        FROM utilisateurs
+        WHERE email = :email
+          AND (:exclude_id IS NULL OR id <> :exclude_id)
+        LIMIT 1
+    ');
+
+        $stmt->execute([
+            'email' => $email,
+            'exclude_id' => $excludeId,
+        ]);
 
         return (bool) $stmt->fetchColumn();
     }
@@ -78,7 +86,7 @@ class UtilisateurRepository implements RepositoryInterface
         return $id === false ? null : (int) $id;
     }
 
-    
+
     public function create(array $data): int
     {
         $stmt = $this->pdo->prepare("
