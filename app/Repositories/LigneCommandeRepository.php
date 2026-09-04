@@ -20,7 +20,7 @@ class LigneCommandeRepository
     public function findByCommande(int $commandeId): array
     {
         $stmt = $this->pdo->prepare('
-            SELECT lc.*, p.nom AS produit_libelle
+            SELECT lc.*, p.nom AS produit_nom
             FROM lignes_commande lc
             JOIN produits p ON p.id = lc.produit_id
             WHERE lc.commande_id = :commande_id
