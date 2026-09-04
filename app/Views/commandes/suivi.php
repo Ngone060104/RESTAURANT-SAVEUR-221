@@ -39,7 +39,9 @@ $numeroCommande = 'CMD-' . date('Y') . '-' . str_pad(
 );
 
 $statutActuel = $commande->getStatut();
+
 $total = (float) $commande->getMontantTotal();
+
 $dateCommande = $commande->getDateCommande();
 
 try {
@@ -47,6 +49,7 @@ try {
 
     $dateFormatee = $dateObjet->format('d/m/Y');
     $heureFormatee = $dateObjet->format('H:i');
+
 } catch (Throwable $e) {
 
     $dateFormatee = htmlspecialchars(
@@ -87,9 +90,12 @@ $etapes = [
         'description' => 'Commande remise au client. Bon appétit !',
         'icone' => 'fa-regular fa-circle-check',
     ],
+
 ];
 
-/* Ordre officiel des étapes */
+/* =========================================================
+   ORDRE OFFICIEL DES ÉTAPES
+========================================================= */
 
 $ordreEtapes = [
     'EN_ATTENTE',
@@ -115,37 +121,43 @@ if ($indexActuel === false) {
 $badgeClasses = match ($statutActuel) {
 
     'EN_ATTENTE' =>
-    'bg-orange-50 text-orange-600 border-orange-300',
+        'bg-orange-50 text-orange-600 border-orange-300',
 
     'EN_PREPARATION' =>
-    'bg-blue-50 text-blue-600 border-blue-300',
+        'bg-blue-50 text-blue-600 border-blue-300',
 
     'PRETE' =>
-    'bg-emerald-50 text-emerald-600 border-emerald-300',
+        'bg-emerald-50 text-emerald-600 border-emerald-300',
 
     'RETIREE' =>
-    'bg-green-50 text-green-600 border-green-300',
+        'bg-green-50 text-green-600 border-green-300',
 
     'ANNULEE' =>
-    'bg-red-50 text-red-600 border-red-300',
+        'bg-red-50 text-red-600 border-red-300',
 
     default =>
-    'bg-stone-50 text-stone-600 border-stone-300',
+        'bg-stone-50 text-stone-600 border-stone-300',
 };
 
 $statutLabel = match ($statutActuel) {
 
-    'EN_ATTENTE' => 'En attente',
+    'EN_ATTENTE' =>
+        'En attente',
 
-    'EN_PREPARATION' => 'En préparation',
+    'EN_PREPARATION' =>
+        'En préparation',
 
-    'PRETE' => 'Prête au comptoir',
+    'PRETE' =>
+        'Prête au comptoir',
 
-    'RETIREE' => 'Retirée',
+    'RETIREE' =>
+        'Retirée',
 
-    'ANNULEE' => 'Annulée',
+    'ANNULEE' =>
+        'Annulée',
 
-    default => $statutActuel,
+    default =>
+        $statutActuel,
 };
 
 ?>
@@ -160,9 +172,12 @@ $statutLabel = match ($statutActuel) {
 
         <div class="flex items-center justify-between gap-6">
 
+            <!-- RETOUR -->
+
             <a
                 href="/mes-commandes"
-                class="inline-flex items-center gap-3 font-['DM_Sans'] text-[14px] text-[#333333] transition hover:text-[#fe9a00]">
+                class="inline-flex items-center gap-3 font-['DM_Sans'] text-[14px] text-[#333333] transition hover:text-[#fe9a00]"
+            >
 
                 <span class="text-[23px] leading-none">
                     ←
@@ -174,18 +189,28 @@ $statutLabel = match ($statutActuel) {
 
             </a>
 
+
             <!-- STATUT -->
 
             <span
-                class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-semibold <?= $badgeClasses ?>">
+                id="statutBadge"
+                class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-semibold <?= $badgeClasses ?>"
+            >
 
-                <i class="fa-regular fa-clock"></i>
+                <i
+                    id="statutBadgeIcon"
+                    class="<?= $statutActuel === 'ANNULEE'
+                        ? 'fa-regular fa-circle-xmark'
+                        : 'fa-regular fa-clock' ?>"
+                ></i>
 
-                <?= htmlspecialchars(
-                    $statutLabel,
-                    ENT_QUOTES,
-                    'UTF-8'
-                ) ?>
+                <span id="statutBadgeLabel">
+                    <?= htmlspecialchars(
+                        $statutLabel,
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>
+                </span>
 
             </span>
 
@@ -201,7 +226,8 @@ $statutLabel = match ($statutActuel) {
     <section class="mx-auto max-w-[1150px] px-6 pb-10 pt-6">
 
         <div
-            class="overflow-hidden rounded-[16px] border border-[#dddddd] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+            class="overflow-hidden rounded-[16px] border border-[#dddddd] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
+        >
 
             <!-- =================================================
                  EN-TÊTE COMMANDE
@@ -210,27 +236,38 @@ $statutLabel = match ($statutActuel) {
             <div class="px-7 py-6 md:px-10 md:py-7">
 
                 <div
-                    class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+                    class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between"
+                >
+
+                    <!-- INFORMATIONS -->
 
                     <div>
 
                         <p
-                            class="mb-3 font-['DM_Sans'] text-[12px] font-bold uppercase text-[#fe7900]">
+                            class="mb-3 font-['DM_Sans'] text-[12px] font-bold uppercase text-[#fe7900]"
+                        >
                             SUIVI EN DIRECT
                         </p>
 
+
                         <h1
-                            class="font-['Inter'] text-[30px] font-black leading-tight text-[#252525] md:text-[38px]">
+                            class="font-['Inter'] text-[30px] font-black leading-tight text-[#252525] md:text-[38px]"
+                        >
+
                             Commande
+
                             <?= htmlspecialchars(
                                 $numeroCommande,
                                 ENT_QUOTES,
                                 'UTF-8'
                             ) ?>
+
                         </h1>
 
+
                         <p
-                            class="mt-3 font-['DM_Sans'] text-[12px] text-[#333333]">
+                            class="mt-3 font-['DM_Sans'] text-[12px] text-[#333333]"
+                        >
 
                             Passée le
 
@@ -264,12 +301,14 @@ $statutLabel = match ($statutActuel) {
                     <div class="text-left md:text-right">
 
                         <p
-                            class="font-['DM_Sans'] text-[12px] font-bold uppercase text-[#333333]">
+                            class="font-['DM_Sans'] text-[12px] font-bold uppercase text-[#333333]"
+                        >
                             MONTANT
                         </p>
 
                         <p
-                            class="mt-2 font-['Inter'] text-[28px] font-black text-[#c96500] md:text-[34px]">
+                            class="mt-2 font-['Inter'] text-[28px] font-black text-[#c96500] md:text-[34px]"
+                        >
                             <?= $formatPrix($total) ?>
                         </p>
 
@@ -288,93 +327,182 @@ $statutLabel = match ($statutActuel) {
 
 
             <!-- =================================================
-                 ÉTAPES
+                 AFFICHAGE COMMANDE ANNULÉE / ÉTAPES
             ================================================== -->
 
-            <div class="px-6 py-6 md:px-10 md:py-7">
+            <div id="suiviEtatContainer">
 
-                <div
-                    class="grid grid-cols-1 gap-7 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] md:items-start">
+                <?php if ($statutActuel === 'ANNULEE'): ?>
 
-                    <?php foreach ($ordreEtapes as $index => $code): ?>
+                    <!-- =================================================
+                         COMMANDE ANNULÉE
+                    ================================================== -->
 
-                        <?php
+                    <div
+                        id="commandeAnnulee"
+                        class="px-7 py-7 md:px-10 md:py-8"
+                    >
 
-                        $etape = $etapes[$code];
+                        <div
+                            class="flex items-center gap-5 rounded-[16px] border border-red-500 bg-red-100 px-5 py-5"
+                        >
 
-                        $estAtteinte =
-                            $indexActuel >= $index;
+                            <!-- ICÔNE -->
 
-                        $estActuelle =
-                            $indexActuel === $index;
+                            <div
+                                class="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full border-[3px] border-red-600"
+                            >
 
-                        ?>
-
-                        <!-- ÉTAPE -->
-
-                        <div class="text-center">
-
-                            <div class="flex justify-center">
-
-                                <div
-                                    class="
-                                        flex h-[64px] w-[64px] items-center justify-center rounded-[21px]
-                                        <?= $estAtteinte
-                                            ? 'bg-[#ff9800] text-black shadow-[0_0_0_4px_#e3e3e3]'
-                                            : 'bg-[#f5f5f5] text-[#bdbdbd]' ?>
-                                    ">
-
-                                    <i
-                                        class="<?= $etape['icone'] ?> text-[25px]"></i>
-
-                                </div>
+                                <i
+                                    class="fa-solid fa-xmark text-[21px] text-red-600"
+                                ></i>
 
                             </div>
 
 
-                            <h3
-                                class="
-                                    mt-3 font-['DM_Sans'] text-[13px] font-bold
-                                    <?= $estAtteinte
-                                        ? 'text-[#c96500]'
-                                        : 'text-[#333333]' ?>
-                                ">
+                            <!-- TEXTE -->
 
-                                <?= htmlspecialchars(
-                                    $etape['label'],
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>
+                            <div>
 
-                            </h3>
+                                <h2
+                                    class="font-['Inter'] text-[16px] font-bold text-red-700"
+                                >
+                                    Commande Annulée
+                                </h2>
 
+                                <p
+                                    class="mt-2 font-['DM_Sans'] text-[13px] leading-6 text-red-600"
+                                >
+                                    Cette commande a été annulée.
+                                    Conformément à la
+                                    <strong>Règle métier #8</strong>,
+                                    l'ensemble des articles commandés a été
+                                    réinjecté dans le stock disponible de la cuisine.
+                                </p>
 
-                            <p
-                                class="mx-auto mt-1 max-w-[160px] font-['DM_Sans'] text-[10px] leading-4 text-[#888888]">
-
-                                <?= htmlspecialchars(
-                                    $etape['description'],
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>
-
-                            </p>
+                            </div>
 
                         </div>
 
+                    </div>
 
-                        <!-- CONNECTEUR -->
+                <?php else: ?>
 
-                        <?php if ($index < count($ordreEtapes) - 1): ?>
+                    <!-- =================================================
+                         ÉTAPES DE LA COMMANDE
+                    ================================================== -->
 
-                            <div
-                                class="hidden h-[3px] w-[55px] self-center bg-[#dedede] md:block"></div>
+                    <div
+                        id="etapesCommande"
+                        class="px-6 py-6 md:px-10 md:py-7"
+                    >
 
-                        <?php endif; ?>
+                        <div
+                            class="grid grid-cols-1 gap-7 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] md:items-start"
+                        >
 
-                    <?php endforeach; ?>
+                            <?php foreach ($ordreEtapes as $index => $code): ?>
 
-                </div>
+                                <?php
+
+                                $etape = $etapes[$code];
+
+                                $estAtteinte =
+                                    $indexActuel >= $index;
+
+                                $estActuelle =
+                                    $indexActuel === $index;
+
+                                ?>
+
+                                <!-- ÉTAPE -->
+
+                                <div
+                                    class="text-center"
+                                    data-step="<?= $code ?>"
+                                >
+
+                                    <div class="flex justify-center">
+
+                                        <div
+                                            data-step-icon="<?= $code ?>"
+                                            class="
+                                                flex h-[64px] w-[64px]
+                                                items-center justify-center
+                                                rounded-[21px]
+                                                transition-all duration-300
+                                                <?= $estAtteinte
+                                                    ? 'bg-[#ff9800] text-black shadow-[0_0_0_4px_#e3e3e3]'
+                                                    : 'bg-[#f5f5f5] text-[#bdbdbd]' ?>
+                                            "
+                                        >
+
+                                            <i
+                                                data-step-icon-element="<?= $code ?>"
+                                                class="<?= $etape['icone'] ?> text-[25px]"
+                                            ></i>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <h3
+                                        data-step-label="<?= $code ?>"
+                                        class="
+                                            mt-3 font-['DM_Sans']
+                                            text-[13px] font-bold
+                                            transition-colors duration-300
+                                            <?= $estAtteinte
+                                                ? 'text-[#c96500]'
+                                                : 'text-[#333333]' ?>
+                                        "
+                                    >
+
+                                        <?= htmlspecialchars(
+                                            $etape['label'],
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>
+
+                                    </h3>
+
+
+                                    <p
+                                        class="mx-auto mt-1 max-w-[160px] font-['DM_Sans'] text-[10px] leading-4 text-[#888888]"
+                                    >
+
+                                        <?= htmlspecialchars(
+                                            $etape['description'],
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>
+
+                                    </p>
+
+                                </div>
+
+
+                                <!-- CONNECTEUR -->
+
+                                <?php if (
+                                    $index < count($ordreEtapes) - 1
+                                ): ?>
+
+                                    <div
+                                        data-connector="<?= $index ?>"
+                                        class="hidden h-[3px] w-[55px] self-center bg-[#dedede] transition-colors duration-300 md:block"
+                                    ></div>
+
+                                <?php endif; ?>
+
+                            <?php endforeach; ?>
+
+                        </div>
+
+                    </div>
+
+                <?php endif; ?>
 
             </div>
 
@@ -393,72 +521,185 @@ $statutLabel = match ($statutActuel) {
             <div class="px-7 py-6 md:px-10">
 
                 <h2
-                    class="font-['Inter'] text-[17px] font-medium uppercase text-[#222222]">
+                    class="font-['Inter'] text-[17px] font-medium uppercase text-[#222222]"
+                >
                     HISTORIQUE DES ÉTAPES DE LA COMMANDE
                 </h2>
 
 
                 <div
-                    class="mt-5 flex items-center justify-between gap-5 rounded-[14px] border border-[#eeeeee] bg-[#fafafa] px-5 py-4">
+                    id="historiqueCommande"
+                    class="mt-5 space-y-4"
+                >
 
-                    <!-- BADGE -->
+                    <!-- =================================================
+                         COMMANDE EN ATTENTE
+                    ================================================== -->
 
-                    <span
-                        class="inline-flex shrink-0 items-center gap-2 rounded-full border border-orange-300 bg-orange-50 px-3 py-1 text-[10px] font-semibold text-orange-600">
+                    <div
+                        class="flex items-center justify-between gap-5 rounded-[14px] border border-[#eeeeee] bg-[#fafafa] px-5 py-4"
+                    >
 
-                        <i class="fa-regular fa-clock"></i>
+                        <!-- BADGE -->
 
-                        <?= htmlspecialchars(
-                            $statutLabel,
-                            ENT_QUOTES,
-                            'UTF-8'
-                        ) ?>
+                        <span
+                            class="inline-flex shrink-0 items-center gap-2 rounded-full border border-orange-300 bg-orange-50 px-3 py-1 text-[10px] font-semibold text-orange-600"
+                        >
 
-                    </span>
+                            <i class="fa-regular fa-clock"></i>
+
+                            En attente
+
+                        </span>
 
 
-                    <!-- TEXTE -->
+                        <!-- TEXTE -->
 
-                    <p
-                        class="flex-1 text-center font-['DM_Sans'] text-[14px] text-[#333333]">
-
-                        <?php if ($statutActuel === 'EN_ATTENTE'): ?>
-
+                        <p
+                            class="flex-1 text-center font-['DM_Sans'] text-[14px] text-[#333333]"
+                        >
                             Commande enregistrée avec succès via le site web Saveur 221
+                        </p>
 
-                        <?php elseif ($statutActuel === 'EN_PREPARATION'): ?>
 
-                            Votre commande est actuellement en préparation dans notre cuisine
+                        <!-- HEURE -->
 
-                        <?php elseif ($statutActuel === 'PRETE'): ?>
+                        <span
+                            class="shrink-0 font-['DM_Sans'] text-[14px] font-medium text-[#333333]"
+                        >
+                            <?= htmlspecialchars(
+                                $heureFormatee,
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+                        </span>
 
-                            Votre commande est prête au comptoir et attend votre retrait
+                    </div>
 
-                        <?php elseif ($statutActuel === 'RETIREE'): ?>
 
-                            Commande remise au client. Bon appétit !
+                    <?php if ($statutActuel === 'ANNULEE'): ?>
 
-                        <?php elseif ($statutActuel === 'ANNULEE'): ?>
+                        <!-- =================================================
+                             COMMANDE ANNULÉE
+                        ================================================== -->
 
-                            Cette commande a été annulée.
+                        <div
+                            id="historiqueAnnulation"
+                            class="flex items-center justify-between gap-5 rounded-[14px] border border-[#eeeeee] bg-[#fafafa] px-5 py-4"
+                        >
+
+                            <!-- BADGE -->
+
+                            <span
+                                class="inline-flex shrink-0 items-center gap-2 rounded-full border border-red-400 bg-red-50 px-3 py-1 text-[10px] font-semibold text-red-600"
+                            >
+
+                                <i class="fa-regular fa-circle-xmark"></i>
+
+                                Annulée
+
+                            </span>
+
+
+                            <!-- TEXTE -->
+
+                            <p
+                                class="flex-1 text-center font-['DM_Sans'] text-[14px] text-[#333333]"
+                            >
+                                Annulée par le client - Stock restitué
+                            </p>
+
+
+                            <!-- HEURE -->
+
+                            <span
+                                class="shrink-0 font-['DM_Sans'] text-[14px] font-medium text-[#333333]"
+                            >
+                                <?= date('H:i') ?>
+                            </span>
+
+                        </div>
+
+                    <?php else: ?>
+
+                        <!-- =================================================
+                             HISTORIQUE DU STATUT ACTUEL
+                        ================================================== -->
+
+                        <?php if ($statutActuel !== 'EN_ATTENTE'): ?>
+
+                            <div
+                                id="historiqueStatutActuel"
+                                class="flex items-center justify-between gap-5 rounded-[14px] border border-[#eeeeee] bg-[#fafafa] px-5 py-4"
+                            >
+
+                                <!-- BADGE -->
+
+                                <span
+                                    id="historiqueBadge"
+                                    class="inline-flex shrink-0 items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-semibold <?= $badgeClasses ?>"
+                                >
+
+                                    <i
+                                        id="historiqueBadgeIcon"
+                                        class="<?= $etapes[$statutActuel]['icone'] ?? 'fa-regular fa-clock' ?>"
+                                    ></i>
+
+                                    <span id="historiqueBadgeLabel">
+                                        <?= htmlspecialchars(
+                                            $statutLabel,
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>
+                                    </span>
+
+                                </span>
+
+
+                                <!-- TEXTE -->
+
+                                <p
+                                    id="historiqueMessage"
+                                    class="flex-1 text-center font-['DM_Sans'] text-[14px] text-[#333333]"
+                                >
+
+                                    <?php if ($statutActuel === 'EN_PREPARATION'): ?>
+
+                                        Votre commande est actuellement en préparation dans notre cuisine
+
+                                    <?php elseif ($statutActuel === 'PRETE'): ?>
+
+                                        Votre commande est prête au comptoir et attend votre retrait
+
+                                    <?php elseif ($statutActuel === 'RETIREE'): ?>
+
+                                        Commande remise au client. Bon appétit !
+
+                                    <?php endif; ?>
+
+                                </p>
+
+
+                                <!-- HEURE -->
+
+                                <span
+                                    id="historiqueHeure"
+                                    class="shrink-0 font-['DM_Sans'] text-[14px] font-medium text-[#333333]"
+                                >
+
+                                    <?= htmlspecialchars(
+                                        $heureFormatee,
+                                        ENT_QUOTES,
+                                        'UTF-8'
+                                    ) ?>
+
+                                </span>
+
+                            </div>
 
                         <?php endif; ?>
 
-                    </p>
-
-
-                    <!-- HEURE -->
-
-                    <span
-                        class="shrink-0 font-['DM_Sans'] text-[14px] font-medium text-[#333333]">
-
-                        <?= htmlspecialchars(
-                            $heureFormatee,
-                            ENT_QUOTES,
-                            'UTF-8'
-                        ) ?>
-
-                    </span>
+                    <?php endif; ?>
 
                 </div>
 
@@ -470,41 +711,51 @@ $statutLabel = match ($statutActuel) {
             ================================================== -->
 
             <div
-                class="border-t border-[#dedede] px-7 py-5 md:px-10">
+                class="border-t border-[#dedede] px-7 py-5 md:px-10"
+            >
 
                 <div
-                    class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    class="flex items-center justify-end gap-4"
+                >
 
                     <!-- ANNULER -->
 
-                    <?php if (
-                        in_array(
-                            $statutActuel,
-                            ['EN_ATTENTE', 'EN_PREPARATION'],
-                            true
-                        )
-                    ): ?>
+                    <div id="annulationContainer">
 
-                        <button
-                            type="button"
-                            id="openCancelModal"
-                            class="inline-flex items-center justify-center gap-3 rounded-[9px] border border-red-500 px-5 py-2.5 font-['DM_Sans'] text-[13px] font-medium text-red-500 transition hover:bg-red-50">
-                            <i class="fa-regular fa-circle-xmark"></i>
-                            Annuler cette commande
-                        </button>
+                        <?php if (
+                            in_array(
+                                $statutActuel,
+                                [
+                                    'EN_ATTENTE',
+                                    'EN_PREPARATION'
+                                ],
+                                true
+                            )
+                        ): ?>
 
-                    <?php else: ?>
+                            <button
+                                type="button"
+                                id="openCancelModal"
+                                class="inline-flex items-center justify-center gap-3 rounded-[9px] border border-red-500 px-5 py-2.5 font-['DM_Sans'] text-[13px] font-medium text-red-500 transition hover:bg-red-50"
+                            >
 
-                        <div></div>
+                                <i class="fa-regular fa-circle-xmark"></i>
 
-                    <?php endif; ?>
+                                Annuler cette commande
+
+                            </button>
+
+                        <?php endif; ?>
+
+                    </div>
 
 
                     <!-- DÉTAIL COMPLET -->
 
                     <a
                         href="/commande/detail/<?= $idCommande ?>"
-                        class="inline-flex items-center justify-center gap-3 rounded-[9px] border border-[#dddddd] px-5 py-2.5 font-['DM_Sans'] text-[12px] font-bold text-[#333333] transition hover:bg-[#f8f8f8]">
+                        class="inline-flex items-center justify-center gap-3 rounded-[9px] border border-[#dddddd] px-5 py-2.5 font-['DM_Sans'] text-[12px] font-bold text-[#333333] transition hover:bg-[#f8f8f8]"
+                    >
 
                         <i class="fa-regular fa-file-lines"></i>
 
@@ -520,162 +771,1114 @@ $statutLabel = match ($statutActuel) {
 
     </section>
 
+
     <!-- =========================================================
-     MODAL ANNULATION COMMANDE
-========================================================= -->
-<div
-    id="cancelModal"
-    class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/50 px-4"
-    aria-hidden="true"
->
+         MODAL ANNULATION COMMANDE
+    ========================================================== -->
+
     <div
-        id="cancelModalContent"
-        class="relative w-full max-w-[560px] overflow-hidden rounded-[24px] bg-white shadow-2xl"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="cancelModalTitle"
+        id="cancelModal"
+        class="fixed inset-0 z-[9999] hidden items-start justify-center bg-black/50 px-4 pt-[10vh]"
+        aria-hidden="true"
     >
 
-        <!-- HEADER -->
         <div
-            class="flex items-center justify-between border-b border-[#eeeeee] px-6 py-5 md:px-7"
+            id="cancelModalContent"
+            class="relative w-full max-w-[460px] overflow-hidden rounded-[18px] bg-white shadow-2xl"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cancelModalTitle"
         >
-            <h2
-                id="cancelModalTitle"
-                class="font-['Inter'] text-[23px] font-bold text-[#111111]"
-            >
-                Annuler la commande ?
-            </h2>
 
-            <button
-                type="button"
-                id="closeCancelModal"
-                class="flex h-9 w-9 items-center justify-center text-[34px] leading-none text-[#111111] transition hover:text-[#fe7900]"
-                aria-label="Fermer"
-            >
-                ×
-            </button>
-        </div>
+            <!-- HEADER -->
 
-        <!-- CONTENU -->
-        <div class="px-6 py-6 text-center md:px-8 md:py-7">
-
-            <!-- ICÔNE AVERTISSEMENT -->
-            <div class="flex justify-center">
-                <div
-                    class="flex h-[68px] w-[68px] items-center justify-center rounded-[20px] bg-red-100"
-                >
-                    <i
-                        class="fa-solid fa-triangle-exclamation text-[38px] text-red-600"
-                    ></i>
-                </div>
-            </div>
-
-            <!-- MESSAGE -->
-            <p
-                class="mx-auto mt-6 max-w-[470px] font-['DM_Sans'] text-[16px] leading-6 text-[#777777]"
-            >
-                Êtes-vous sûr de vouloir annuler cette commande ?
-                Les articles seront automatiquement restitués au stock
-                du restaurant (Règle métier #8).
-            </p>
-
-            <!-- BOUTONS -->
             <div
-                class="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2"
+                class="flex items-center justify-between border-b border-[#eeeeee] px-5 py-4"
             >
 
-                <!-- ANNULER -->
+                <h2
+                    id="cancelModalTitle"
+                    class="font-['Inter'] text-[19px] font-bold text-[#111111]"
+                >
+                    Annuler la commande ?
+                </h2>
+
+
                 <button
                     type="button"
-                    id="cancelModalButton"
-                    class="inline-flex h-[48px] items-center justify-center rounded-[11px] border border-[#dddddd] bg-white px-5 font-['DM_Sans'] text-[15px] font-bold text-[#333333] transition hover:bg-[#f7f7f7]"
+                    id="closeCancelModal"
+                    class="flex h-8 w-8 items-center justify-center text-[28px] leading-none text-[#111111] transition hover:text-[#fe7900]"
+                    aria-label="Fermer"
                 >
-                    Annuler
+                    ×
                 </button>
 
-                <!-- CONFIRMER -->
-                <form
-                    method="POST"
-                    action="/commandes/<?= $idCommande ?>/annuler"
-                    class="w-full"
-                >
-                    <button
-                        type="submit"
-                        class="inline-flex h-[48px] w-full items-center justify-center rounded-[11px] bg-[#ff4545] px-5 font-['DM_Sans'] text-[15px] font-bold text-white transition hover:bg-[#e93636]"
+            </div>
+
+
+            <!-- CONTENU -->
+
+            <div class="px-5 py-5 text-center">
+
+                <!-- ICÔNE AVERTISSEMENT -->
+
+                <div class="flex justify-center">
+
+                    <div
+                        class="flex h-[54px] w-[54px] items-center justify-center rounded-[16px] bg-red-100"
                     >
-                        Oui, annuler
+
+                        <i
+                            class="fa-solid fa-triangle-exclamation text-[28px] text-red-600"
+                        ></i>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MESSAGE -->
+
+                <p
+                    class="mx-auto mt-4 max-w-[390px] font-['DM_Sans'] text-[13px] leading-5 text-[#777777]"
+                >
+                    Êtes-vous sûr de vouloir annuler cette commande ?
+
+                    Les articles seront automatiquement restitués au stock
+                    du restaurant (Règle métier #8).
+                </p>
+
+
+                <!-- BOUTONS -->
+
+                <div
+                    class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2"
+                >
+
+                    <!-- ANNULER -->
+
+                    <button
+                        type="button"
+                        id="cancelModalButton"
+                        class="inline-flex h-[42px] items-center justify-center rounded-[10px] border border-[#dddddd] bg-white px-5 font-['DM_Sans'] text-[13px] font-bold text-[#333333] transition hover:bg-[#f7f7f7]"
+                    >
+                        Annuler
                     </button>
-                </form>
+
+
+                    <!-- CONFIRMER -->
+
+                    <form
+                        method="POST"
+                        action="/commandes/<?= $idCommande ?>/annuler"
+                        class="w-full"
+                    >
+
+                        <button
+                            type="submit"
+                            class="inline-flex h-[42px] w-full items-center justify-center rounded-[10px] bg-[#ff4545] px-5 font-['DM_Sans'] text-[13px] font-bold text-white transition hover:bg-[#e93636]"
+                        >
+                            Oui, annuler
+                        </button>
+
+                    </form>
+
+                </div>
 
             </div>
+
         </div>
+
     </div>
-</div>
 
-<!-- =========================================================
-     JAVASCRIPT MODAL
-========================================================= -->
-<script>
-document.addEventListener('DOMContentLoaded', function () {
 
-    const modal = document.getElementById('cancelModal');
-    const openButton = document.getElementById('openCancelModal');
-    const closeButton = document.getElementById('closeCancelModal');
-    const cancelButton = document.getElementById('cancelModalButton');
+    <!-- =========================================================
+         JAVASCRIPT
+         1. MODAL
+         2. SUIVI EN TEMPS RÉEL
+    ========================================================== -->
 
-    if (!modal || !openButton) {
-        return;
-    }
+    <script>
 
-    /* OUVRIR */
-    openButton.addEventListener('click', function () {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        document.addEventListener('DOMContentLoaded', function () {
 
-        modal.setAttribute('aria-hidden', 'false');
+            /* =====================================================
+               CONFIGURATION
+            ===================================================== */
 
-        document.body.classList.add('overflow-hidden');
+            const commandeId = <?= (int) $idCommande ?>;
 
-        closeButton?.focus();
-    });
+            const urlEtat =
+                `/commande/suivi/${commandeId}/etat`;
 
-    /* FERMER */
-    function closeModal() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+            const intervalle = 3000;
 
-        modal.setAttribute('aria-hidden', 'true');
+            let statutPrecedent =
+                <?= json_encode($statutActuel) ?>;
 
-        document.body.classList.remove('overflow-hidden');
 
-        openButton.focus();
-    }
+            /* =====================================================
+               DONNÉES DES STATUTS
+            ===================================================== */
 
-    /* Bouton X */
-    closeButton?.addEventListener('click', closeModal);
+            const statuts = {
 
-    /* Bouton Annuler */
-    cancelButton?.addEventListener('click', closeModal);
+                EN_ATTENTE: {
+                    label: 'En attente',
+                    message: 'Commande enregistrée avec succès via le site web Saveur 221',
+                    icon: 'fa-regular fa-clock',
+                    badge:
+                        'bg-orange-50 text-orange-600 border-orange-300'
+                },
 
-    /* Clic sur le fond */
-    modal.addEventListener('click', function (event) {
-        if (event.target === modal) {
-            closeModal();
-        }
-    });
+                EN_PREPARATION: {
+                    label: 'En préparation',
+                    message: 'Votre commande est actuellement en préparation dans notre cuisine',
+                    icon: 'fa-solid fa-utensils',
+                    badge:
+                        'bg-blue-50 text-blue-600 border-blue-300'
+                },
 
-    /* Touche Échap */
-    document.addEventListener('keydown', function (event) {
-        if (
-            event.key === 'Escape' &&
-            !modal.classList.contains('hidden')
-        ) {
-            closeModal();
-        }
-    });
+                PRETE: {
+                    label: 'Prête au comptoir',
+                    message: 'Votre commande est prête au comptoir et attend votre retrait',
+                    icon: 'fa-solid fa-store',
+                    badge:
+                        'bg-emerald-50 text-emerald-600 border-emerald-300'
+                },
 
-});
-</script>
+                RETIREE: {
+                    label: 'Retirée',
+                    message: 'Commande remise au client. Bon appétit !',
+                    icon: 'fa-regular fa-circle-check',
+                    badge:
+                        'bg-green-50 text-green-600 border-green-300'
+                },
+
+                ANNULEE: {
+                    label: 'Annulée',
+                    message: 'Annulée par le client - Stock restitué',
+                    icon: 'fa-regular fa-circle-xmark',
+                    badge:
+                        'bg-red-50 text-red-600 border-red-300'
+                }
+
+            };
+
+
+            /* =====================================================
+               ORDRE DES ÉTAPES
+            ===================================================== */
+
+            const ordreEtapes = [
+                'EN_ATTENTE',
+                'EN_PREPARATION',
+                'PRETE',
+                'RETIREE'
+            ];
+
+
+            /* =====================================================
+               ÉLÉMENTS DOM
+            ===================================================== */
+
+            const statutBadge =
+                document.getElementById('statutBadge');
+
+            const statutBadgeIcon =
+                document.getElementById('statutBadgeIcon');
+
+            const statutBadgeLabel =
+                document.getElementById('statutBadgeLabel');
+
+            const etapesCommande =
+                document.getElementById('etapesCommande');
+
+            const historiqueCommande =
+                document.getElementById('historiqueCommande');
+
+            const annulationContainer =
+                document.getElementById('annulationContainer');
+
+
+            /* =====================================================
+               MISE À JOUR DU BADGE PRINCIPAL
+            ===================================================== */
+
+            function mettreAJourBadge(statut) {
+
+                const info = statuts[statut];
+
+                if (!info) {
+                    return;
+                }
+
+                if (!statutBadge ||
+                    !statutBadgeIcon ||
+                    !statutBadgeLabel) {
+                    return;
+                }
+
+                /* Supprimer les anciennes classes */
+
+                statutBadge.className =
+                    'inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-semibold ' +
+                    info.badge;
+
+                statutBadgeIcon.className =
+                    info.icon;
+
+                statutBadgeLabel.textContent =
+                    info.label;
+            }
+
+
+            /* =====================================================
+               MISE À JOUR DES ÉTAPES
+            ===================================================== */
+
+            function mettreAJourEtapes(statut) {
+
+                if (!etapesCommande) {
+                    return;
+                }
+
+                const indexActuel =
+                    ordreEtapes.indexOf(statut);
+
+                if (indexActuel === -1) {
+                    return;
+                }
+
+
+                ordreEtapes.forEach(function (code, index) {
+
+                    const iconeContainer =
+                        document.querySelector(
+                            `[data-step-icon="${code}"]`
+                        );
+
+                    const label =
+                        document.querySelector(
+                            `[data-step-label="${code}"]`
+                        );
+
+                    const icone =
+                        document.querySelector(
+                            `[data-step-icon-element="${code}"]`
+                        );
+
+
+                    if (!iconeContainer) {
+                        return;
+                    }
+
+
+                    const atteinte =
+                        indexActuel >= index;
+
+
+                    const actuelle =
+                        indexActuel === index;
+
+
+                    /* =================================================
+                       ÉTAPE ATTEINTE
+                    ================================================== */
+
+                    if (atteinte) {
+
+                        iconeContainer.className =
+                            'flex h-[64px] w-[64px] items-center justify-center rounded-[21px] transition-all duration-300 bg-[#ff9800] text-black shadow-[0_0_0_4px_#e3e3e3]';
+
+                        label?.classList.remove(
+                            'text-[#333333]'
+                        );
+
+                        label?.classList.add(
+                            'text-[#c96500]'
+                        );
+
+                    } else {
+
+                        iconeContainer.className =
+                            'flex h-[64px] w-[64px] items-center justify-center rounded-[21px] transition-all duration-300 bg-[#f5f5f5] text-[#bdbdbd]';
+
+                        label?.classList.remove(
+                            'text-[#c96500]'
+                        );
+
+                        label?.classList.add(
+                            'text-[#333333]'
+                        );
+
+                    }
+
+
+                    /* =================================================
+                       ICÔNE
+                    ================================================== */
+
+                    if (icone && statuts[code]) {
+
+                        icone.className =
+                            statuts[code].icon +
+                            ' text-[25px]';
+
+                    }
+
+
+                    /* =================================================
+                       ANIMATION POUR L'ÉTAPE ACTUELLE
+                    ================================================== */
+
+                    if (actuelle) {
+
+                        iconeContainer.classList.add(
+                            'scale-105'
+                        );
+
+                    } else {
+
+                        iconeContainer.classList.remove(
+                            'scale-105'
+                        );
+
+                    }
+
+                });
+
+
+                /* =====================================================
+                   CONNECTEURS
+                ===================================================== */
+
+                const connecteurs =
+                    document.querySelectorAll(
+                        '[data-connector]'
+                    );
+
+                connecteurs.forEach(
+                    function (connecteur, index) {
+
+                        if (indexActuel > index) {
+
+                            connecteur.classList.remove(
+                                'bg-[#dedede]'
+                            );
+
+                            connecteur.classList.add(
+                                'bg-[#ff9800]'
+                            );
+
+                        } else {
+
+                            connecteur.classList.remove(
+                                'bg-[#ff9800]'
+                            );
+
+                            connecteur.classList.add(
+                                'bg-[#dedede]'
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            /* =====================================================
+               CRÉER LE BLOC "COMMANDE ANNULÉE"
+            ===================================================== */
+
+            function afficherCommandeAnnulee() {
+
+                if (etapesCommande) {
+
+                    etapesCommande.outerHTML = `
+
+                        <div
+                            id="commandeAnnulee"
+                            class="px-7 py-7 md:px-10 md:py-8"
+                        >
+
+                            <div
+                                class="flex items-center gap-5 rounded-[16px] border border-red-500 bg-red-100 px-5 py-5"
+                            >
+
+                                <div
+                                    class="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full border-[3px] border-red-600"
+                                >
+
+                                    <i
+                                        class="fa-solid fa-xmark text-[21px] text-red-600"
+                                    ></i>
+
+                                </div>
+
+                                <div>
+
+                                    <h2
+                                        class="font-['Inter'] text-[16px] font-bold text-red-700"
+                                    >
+                                        Commande Annulée
+                                    </h2>
+
+                                    <p
+                                        class="mt-2 font-['DM_Sans'] text-[13px] leading-6 text-red-600"
+                                    >
+                                        Cette commande a été annulée.
+                                        Conformément à la
+                                        <strong>Règle métier #8</strong>,
+                                        l'ensemble des articles commandés a été
+                                        réinjecté dans le stock disponible de la cuisine.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+
+
+                /* =====================================================
+                   SUPPRIMER LE BOUTON ANNULATION
+                ===================================================== */
+
+                if (annulationContainer) {
+
+                    annulationContainer.innerHTML = '';
+
+                }
+
+
+                /* =====================================================
+                   AJOUTER L'HISTORIQUE ANNULATION
+                ===================================================== */
+
+                if (historiqueCommande) {
+
+                    const ancienneLigne =
+                        document.getElementById(
+                            'historiqueStatutActuel'
+                        );
+
+                    if (ancienneLigne) {
+                        ancienneLigne.remove();
+                    }
+
+
+                    if (
+                        !document.getElementById(
+                            'historiqueAnnulation'
+                        )
+                    ) {
+
+                        historiqueCommande.insertAdjacentHTML(
+                            'beforeend',
+                            `
+
+                            <div
+                                id="historiqueAnnulation"
+                                class="flex items-center justify-between gap-5 rounded-[14px] border border-[#eeeeee] bg-[#fafafa] px-5 py-4"
+                            >
+
+                                <span
+                                    class="inline-flex shrink-0 items-center gap-2 rounded-full border border-red-400 bg-red-50 px-3 py-1 text-[10px] font-semibold text-red-600"
+                                >
+
+                                    <i class="fa-regular fa-circle-xmark"></i>
+
+                                    Annulée
+
+                                </span>
+
+
+                                <p
+                                    class="flex-1 text-center font-['DM_Sans'] text-[14px] text-[#333333]"
+                                >
+                                    Annulée par le client - Stock restitué
+                                </p>
+
+
+                                <span
+                                    class="shrink-0 font-['DM_Sans'] text-[14px] font-medium text-[#333333]"
+                                >
+                                    ${new Date().toLocaleTimeString(
+                                        'fr-FR',
+                                        {
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        }
+                                    )}
+
+                                </span>
+
+                            </div>
+
+                            `
+                        );
+
+                    }
+
+                }
+
+            }
+
+
+            /* =====================================================
+               MISE À JOUR DE L'HISTORIQUE
+            ===================================================== */
+
+            function mettreAJourHistorique(statut) {
+
+                if (!historiqueCommande) {
+                    return;
+                }
+
+                if (statut === 'EN_ATTENTE') {
+                    return;
+                }
+
+
+                const info =
+                    statuts[statut];
+
+                if (!info) {
+                    return;
+                }
+
+
+                let ligne =
+                    document.getElementById(
+                        'historiqueStatutActuel'
+                    );
+
+
+                /* =================================================
+                   CRÉATION SI ELLE N'EXISTE PAS
+                ================================================== */
+
+                if (!ligne) {
+
+                    historiqueCommande.insertAdjacentHTML(
+                        'beforeend',
+                        `
+
+                        <div
+                            id="historiqueStatutActuel"
+                            class="flex items-center justify-between gap-5 rounded-[14px] border border-[#eeeeee] bg-[#fafafa] px-5 py-4"
+                        >
+
+                            <span
+                                id="historiqueBadge"
+                                class="inline-flex shrink-0 items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-semibold"
+                            >
+
+                                <i id="historiqueBadgeIcon"></i>
+
+                                <span id="historiqueBadgeLabel"></span>
+
+                            </span>
+
+
+                            <p
+                                id="historiqueMessage"
+                                class="flex-1 text-center font-['DM_Sans'] text-[14px] text-[#333333]"
+                            ></p>
+
+
+                            <span
+                                id="historiqueHeure"
+                                class="shrink-0 font-['DM_Sans'] text-[14px] font-medium text-[#333333]"
+                            ></span>
+
+                        </div>
+
+                        `
+                    );
+
+                    ligne =
+                        document.getElementById(
+                            'historiqueStatutActuel'
+                        );
+
+                }
+
+
+                const badge =
+                    document.getElementById(
+                        'historiqueBadge'
+                    );
+
+                const badgeIcon =
+                    document.getElementById(
+                        'historiqueBadgeIcon'
+                    );
+
+                const badgeLabel =
+                    document.getElementById(
+                        'historiqueBadgeLabel'
+                    );
+
+                const message =
+                    document.getElementById(
+                        'historiqueMessage'
+                    );
+
+                const heure =
+                    document.getElementById(
+                        'historiqueHeure'
+                    );
+
+
+                if (badge) {
+
+                    badge.className =
+                        'inline-flex shrink-0 items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-semibold ' +
+                        info.badge;
+
+                }
+
+
+                if (badgeIcon) {
+
+                    badgeIcon.className =
+                        info.icon;
+
+                }
+
+
+                if (badgeLabel) {
+
+                    badgeLabel.textContent =
+                        info.label;
+
+                }
+
+
+                if (message) {
+
+                    message.textContent =
+                        info.message;
+
+                }
+
+
+                if (heure) {
+
+                    heure.textContent =
+                        new Date().toLocaleTimeString(
+                            'fr-FR',
+                            {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            }
+                        );
+
+                }
+
+            }
+
+
+            /* =====================================================
+               MISE À JOUR GÉNÉRALE
+            ===================================================== */
+
+            function mettreAJourInterface(statut) {
+
+                if (!statuts[statut]) {
+                    return;
+                }
+
+
+                /* Badge principal */
+
+                mettreAJourBadge(statut);
+
+
+                /* Commande annulée */
+
+                if (statut === 'ANNULEE') {
+
+                    afficherCommandeAnnulee();
+
+                    return;
+
+                }
+
+
+                /* Étapes */
+
+                mettreAJourEtapes(statut);
+
+
+                /* Historique */
+
+                mettreAJourHistorique(statut);
+
+
+                /* =================================================
+                   BOUTON ANNULATION
+                ================================================== */
+
+                if (annulationContainer) {
+
+                    if (
+                        statut === 'EN_ATTENTE' ||
+                        statut === 'EN_PREPARATION'
+                    ) {
+
+                        if (
+                            !document.getElementById(
+                                'openCancelModal'
+                            )
+                        ) {
+
+                            annulationContainer.innerHTML = `
+
+                                <button
+                                    type="button"
+                                    id="openCancelModal"
+                                    class="inline-flex items-center justify-center gap-3 rounded-[9px] border border-red-500 px-5 py-2.5 font-['DM_Sans'] text-[13px] font-medium text-red-500 transition hover:bg-red-50"
+                                >
+
+                                    <i class="fa-regular fa-circle-xmark"></i>
+
+                                    Annuler cette commande
+
+                                </button>
+
+                            `;
+
+                            initialiserModal();
+
+                        }
+
+                    } else {
+
+                        annulationContainer.innerHTML = '';
+
+                    }
+
+                }
+
+            }
+
+
+            /* =====================================================
+               RÉCUPÉRATION DE L'ÉTAT
+            ===================================================== */
+
+            async function recupererEtat() {
+
+                try {
+
+                    const response =
+                        await fetch(
+                            urlEtat,
+                            {
+                                method: 'GET',
+                                headers: {
+                                    'Accept':
+                                        'application/json'
+                                },
+                                cache: 'no-store'
+                            }
+                        );
+
+
+                    if (!response.ok) {
+
+                        console.error(
+                            'Erreur lors de la récupération du statut.'
+                        );
+
+                        return;
+
+                    }
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (
+                        !data.success ||
+                        !data.commande ||
+                        !data.commande.statut
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const nouveauStatut =
+                        data.commande.statut;
+
+
+                    /* =================================================
+                       LE STATUT A CHANGÉ
+                    ================================================== */
+
+                    if (
+                        nouveauStatut !== statutPrecedent
+                    ) {
+
+                        mettreAJourInterface(
+                            nouveauStatut
+                        );
+
+                        statutPrecedent =
+                            nouveauStatut;
+
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        'Impossible de récupérer le statut de la commande.',
+                        error
+                    );
+
+                }
+
+            }
+
+
+            /* =====================================================
+               DÉMARRER LE SUIVI
+            ===================================================== */
+
+            let intervalleSuivi = null;
+
+
+            function demarrerSuivi() {
+
+                /* Premier appel immédiatement */
+
+                recupererEtat();
+
+
+                /* Puis toutes les 3 secondes */
+
+                intervalleSuivi =
+                    setInterval(
+                        recupererEtat,
+                        intervalle
+                    );
+
+            }
+
+
+            /* =====================================================
+               ARRÊTER LE SUIVI
+               Quand la commande est terminée
+            ===================================================== */
+
+            function arreterSuiviSiNecessaire() {
+
+                if (
+                    statutPrecedent === 'RETIREE' ||
+                    statutPrecedent === 'ANNULEE'
+                ) {
+
+                    if (intervalleSuivi) {
+
+                        clearInterval(
+                            intervalleSuivi
+                        );
+
+                        intervalleSuivi = null;
+
+                    }
+
+                }
+
+            }
+
+
+            /* =====================================================
+               MODAL ANNULATION
+            ===================================================== */
+
+            function initialiserModal() {
+
+                const modal =
+                    document.getElementById(
+                        'cancelModal'
+                    );
+
+                const openButton =
+                    document.getElementById(
+                        'openCancelModal'
+                    );
+
+                const closeButton =
+                    document.getElementById(
+                        'closeCancelModal'
+                    );
+
+                const cancelButton =
+                    document.getElementById(
+                        'cancelModalButton'
+                    );
+
+
+                if (!modal || !openButton) {
+                    return;
+                }
+
+
+                /* Éviter d'attacher plusieurs événements */
+
+                if (
+                    openButton.dataset.modalInitialized ===
+                    'true'
+                ) {
+                    return;
+                }
+
+
+                openButton.dataset.modalInitialized =
+                    'true';
+
+
+                /* =================================================
+                   OUVRIR
+                ================================================== */
+
+                openButton.addEventListener(
+                    'click',
+                    function () {
+
+                        modal.classList.remove(
+                            'hidden'
+                        );
+
+                        modal.classList.add(
+                            'flex'
+                        );
+
+                        modal.setAttribute(
+                            'aria-hidden',
+                            'false'
+                        );
+
+                        document.body.classList.add(
+                            'overflow-hidden'
+                        );
+
+                        closeButton?.focus();
+
+                    }
+                );
+
+
+                /* =================================================
+                   FERMER
+                ================================================== */
+
+                function closeModal() {
+
+                    modal.classList.add(
+                        'hidden'
+                    );
+
+                    modal.classList.remove(
+                        'flex'
+                    );
+
+                    modal.setAttribute(
+                        'aria-hidden',
+                        'true'
+                    );
+
+                    document.body.classList.remove(
+                        'overflow-hidden'
+                    );
+
+                    openButton.focus();
+
+                }
+
+
+                closeButton?.addEventListener(
+                    'click',
+                    closeModal
+                );
+
+
+                cancelButton?.addEventListener(
+                    'click',
+                    closeModal
+                );
+
+
+                modal.addEventListener(
+                    'click',
+                    function (event) {
+
+                        if (
+                            event.target === modal
+                        ) {
+
+                            closeModal();
+
+                        }
+
+                    }
+                );
+
+
+                document.addEventListener(
+                    'keydown',
+                    function (event) {
+
+                        if (
+                            event.key === 'Escape' &&
+                            !modal.classList.contains(
+                                'hidden'
+                            )
+                        ) {
+
+                            closeModal();
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            /* =====================================================
+               INITIALISATION
+            ===================================================== */
+
+            initialiserModal();
+
+            demarrerSuivi();
+
+
+            /* =====================================================
+               VÉRIFIER SI LE SUIVI DOIT ÊTRE ARRÊTÉ
+            ===================================================== */
+
+            setInterval(
+                arreterSuiviSiNecessaire,
+                1000
+            );
+
+        });
+
+    </script>
 
 </main>
