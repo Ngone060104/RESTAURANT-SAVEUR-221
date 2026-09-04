@@ -16,40 +16,64 @@ class ProfilService
         private ClientRepository $clientRepository,
         private UtilisateurRepository $utilisateurRepository,
         private PasswordHasher $hasher,
-    ) {
-    }
+    ) {}
 
     public function modifierInfos(int $clientId, array $data): bool
     {
         $required = ['nom', 'prenom', 'email', 'telephone', 'adresse'];
 
         foreach ($required as $field) {
-            if (empty($data[$field])) {
+            if (empty(trim($data[$field] ?? ''))) {
                 throw new ValidationException("Le champ {$field} est obligatoire.");
             }
         }
 
-        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+        // Vérification email
+        $email = trim($data['email']);
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new ValidationException('Email invalide.');
         }
 
+        // Récupération de l'utilisateur actuel
         $actuel = $this->utilisateurRepository->findById($clientId);
 
         if ($actuel === null) {
             throw new ValidationException('Utilisateur introuvable.');
         }
 
-        // On ne vérifie l'unicité que si l'email a réellement changé.
-        if ($actuel->email !== $data['email'] && $this->utilisateurRepository->emailExists($data['email'])) {
+        // Vérification que l'email n'est pas déjà utilisé par un autre utilisateur
+        if (
+            $this->utilisateurRepository->emailExists($email, $clientId)
+        ) {
             throw new ValidationException('Cet email est déjà utilisé.');
         }
 
+        // Nettoyage du numéro de téléphone
+        $telephone = preg_replace('/[\s.-]/', '', trim($data['telephone']));
+
+        // Suppression du préfixe +221
+        if (str_starts_with($telephone, '+221')) {
+            $telephone = substr($telephone, 4);
+        }
+
+        // Vérification du format sénégalais
+        if (!preg_match('/^[0-9]{9}$/', $telephone)) {
+            throw new ValidationException('Numéro de téléphone invalide.');
+        }
+
+        // Vérification que le téléphone n'est pas déjà utilisé
+        // par un AUTRE client
+        if ($this->clientRepository->telephoneExists($telephone, $clientId)) {
+            throw new ValidationException('Ce numéro de téléphone est déjà utilisé.');
+        }
+
         return $this->clientRepository->update($clientId, [
-            'nom' => $data['nom'],
-            'prenom' => $data['prenom'],
-            'email' => $data['email'],
-            'telephone' => $data['telephone'],
-            'adresse' => $data['adresse'],
+            'nom' => trim($data['nom']),
+            'prenom' => trim($data['prenom']),
+            'email' => $email,
+            'telephone' => $telephone,
+            'adresse' => trim($data['adresse']),
             'actif' => $actuel->actif,
         ]);
     }

@@ -18,9 +18,8 @@ class ClientRepository implements RepositoryInterface
     public function __construct(
         private PDO $pdo,
         private UtilisateurRepository $utilisateurRepository,
-    ) {
-    }
-    
+    ) {}
+
 
     public function findAll(): array
     {
@@ -48,7 +47,7 @@ class ClientRepository implements RepositoryInterface
     }
 
 
-    
+
     /**
      * Section "ESPACE ADMINISTRATEUR -> Gestion des clients -> rechercher".
      */
@@ -165,4 +164,22 @@ class ClientRepository implements RepositoryInterface
             $row->adresse,
         );
     }
+
+   public function telephoneExists(string $telephone, ?int $excludeId = null): bool
+{
+    $stmt = $this->pdo->prepare('
+        SELECT 1
+        FROM clients
+        WHERE telephone = :telephone
+          AND (:exclude_id IS NULL OR id <> :exclude_id)
+        LIMIT 1
+    ');
+
+    $stmt->execute([
+        'telephone' => $telephone,
+        'exclude_id' => $excludeId,
+    ]);
+
+    return (bool) $stmt->fetchColumn();
+}
 }
