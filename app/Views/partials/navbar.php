@@ -3,50 +3,156 @@
 use App\Services\AuthService;
 
 $utilisateurConnecte = AuthService::currentUser();
+
 ?>
+
 <header class="bg-white border-b border-stone-100">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <a href="/" class="flex items-center gap-3">
-            <span class="w-11 h-11 rounded-xl bg-orange-500 flex items-center justify-center text-white text-xl">
-                🍴
+    <div
+        class="mx-auto flex h-[64px] max-w-[1240px] items-center justify-between px-5"
+    >
+
+        <!-- =====================================================
+             LOGO
+        ====================================================== -->
+
+        <a
+            href="/"
+            class="flex items-center gap-3"
+        >
+
+            <span
+                class="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[9px] bg-[#ff9900] text-white shadow-sm"
+            >
+                <i class="fa-solid fa-utensils text-[16px]"></i>
             </span>
-            <span>
-                <span class="block text-lg font-extrabold text-stone-900 leading-none">
-                    Saveur <span class="text-orange-500">221</span>
+
+            <span class="leading-none">
+
+                <span
+                    class="block font-['Inter'] text-[16px] font-extrabold text-black"
+                >
+                    Saveur
+                    <span class="text-[#ff9900]">221</span>
                 </span>
-                <span class="block text-[11px] font-semibold tracking-wide text-stone-400">
+
+                <span
+                    class="mt-1 block font-['DM_Sans'] text-[8px] font-semibold tracking-[0.04em] text-[#777777]"
+                >
                     CUISINE SÉNÉGALAISE &amp; TÉRANGA
                 </span>
+
             </span>
+
         </a>
 
-        <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-stone-700">
-            <a href="/" class="hover:text-orange-500">Accueil</a>
-            <a href="/produits" class="hover:text-orange-500">Menu</a>
-            <a href="/mes-commandes" class="hover:text-orange-500">Mes Commandes</a>
-        </nav>
 
-        <div class="flex items-center gap-6 text-sm font-semibold text-stone-700">
-            <a href="/panier" class="hidden sm:flex items-center gap-2 hover:text-orange-500">
-                <span>🛒</span> Panier
+        <!-- =====================================================
+             NAVIGATION
+        ====================================================== -->
+
+        <nav
+            class="hidden items-center gap-9 md:flex"
+        >
+
+            <a
+                href="/"
+                class="font-['DM_Sans'] text-[13px] font-bold text-[#222222] transition hover:text-[#ff9900]"
+            >
+                Accueil
             </a>
 
+            <a
+                href="/produits"
+                class="font-['DM_Sans'] text-[13px] font-bold text-[#222222] transition hover:text-[#ff9900]"
+            >
+                Menu
+            </a>
+
+            <a
+                href="/mes-commandes"
+                class="font-['DM_Sans'] text-[13px] font-bold text-[#222222] transition hover:text-[#ff9900]"
+            >
+                Mes Commandes
+            </a>
+
+        </nav>
+
+
+        <!-- =====================================================
+             ACTIONS
+        ====================================================== -->
+
+        <div
+            class="flex items-center gap-5"
+        >
+
+            <!-- Panier -->
+
+            <a
+                href="/panier"
+                class="hidden items-center gap-2 font-['DM_Sans'] text-[12px] font-bold text-[#222222] transition hover:text-[#ff9900] sm:flex"
+            >
+                <i class="fa-solid fa-cart-shopping text-[14px] text-[#ff9900]"></i>
+                <span>Panier</span>
+            </a>
+
+
             <?php if ($utilisateurConnecte): ?>
-                <span class="hidden sm:inline text-stone-500">
-                    Bonjour, <?= htmlspecialchars($utilisateurConnecte['prenom']) ?>
+
+                <!-- Utilisateur -->
+
+                <span
+                    class="hidden items-center gap-2 font-['DM_Sans'] text-[12px] font-medium text-[#777777] sm:flex"
+                >
+                    <i class="fa-solid fa-user text-[13px] text-[#ff9900]"></i>
+
+                    Bonjour,
+                    <?= htmlspecialchars($utilisateurConnecte['prenom']) ?>
                 </span>
-                <form action="/logout" method="post" class="inline">
-                    <button type="submit" class="hover:text-orange-500">Déconnexion</button>
+
+
+                <!-- Déconnexion -->
+
+                <form
+                    action="/logout"
+                    method="post"
+                    class="inline"
+                >
+                    <button
+                        type="submit"
+                        title="Déconnexion"
+                        class="flex items-center justify-center text-[#222222] transition hover:text-[#ff9900]"
+                    >
+                        <i class="fa-solid fa-right-from-bracket text-[14px]"></i>
+                    </button>
                 </form>
+
+
             <?php else: ?>
-                <a href="/login" class="hidden sm:flex items-center gap-2 hover:text-orange-500">
-                    <span>👤</span> Connexion
+
+                <!-- Connexion -->
+
+                <a
+                    href="/login"
+                    class="hidden items-center gap-2 font-['DM_Sans'] text-[12px] font-bold text-[#222222] transition hover:text-[#ff9900] sm:flex"
+                >
+                    <i class="fa-solid fa-user text-[13px] text-[#ff9900]"></i>
+                    <span>Connexion</span>
                 </a>
-                <a href="/register"
-                   class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-5 py-2.5 rounded-full">
+
+
+                <!-- Inscription -->
+
+                <a
+                    href="/register"
+                    class="inline-flex h-[34px] items-center justify-center rounded-full bg-[#ff9900] px-5 font-['DM_Sans'] text-[11px] font-extrabold text-white transition hover:bg-[#e88900]"
+                >
                     S'inscrire
                 </a>
+
             <?php endif; ?>
+
         </div>
+
     </div>
 </header>
