@@ -22,13 +22,21 @@ class Client extends Utilisateur
         parent::__construct($id, $nom, $prenom, $email, $actif, 'CLIENT', $dateCreation);
     }
 
-    public function getTelephone(): string
+    public function getTelephone(): ?string
     {
         return $this->telephone;
     }
 
+    public function setTelephone(?string $telephone): void
+    {
+        $this->telephone = $telephone;
+    }
     public function getAdresse(): string
     {
         return $this->adresse;
+    }
+    public function setAdresse(string $adresse): void
+    {
+        $this->adresse = $adresse;
     }
 }

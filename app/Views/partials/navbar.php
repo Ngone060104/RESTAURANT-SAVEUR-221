@@ -7,6 +7,7 @@ $utilisateurConnecte = AuthService::currentUser();
 ?>
 
 <header class="bg-white border-b border-stone-100">
+
     <div
         class="mx-auto flex h-[64px] max-w-[1240px] items-center justify-between px-5"
     >
@@ -19,7 +20,6 @@ $utilisateurConnecte = AuthService::currentUser();
             href="/"
             class="flex items-center gap-3"
         >
-
             <span
                 class="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[9px] bg-[#ff9900] text-white shadow-sm"
             >
@@ -27,7 +27,6 @@ $utilisateurConnecte = AuthService::currentUser();
             </span>
 
             <span class="leading-none">
-
                 <span
                     class="block font-['Inter'] text-[16px] font-extrabold text-black"
                 >
@@ -40,9 +39,7 @@ $utilisateurConnecte = AuthService::currentUser();
                 >
                     CUISINE SÉNÉGALAISE &amp; TÉRANGA
                 </span>
-
             </span>
-
         </a>
 
 
@@ -53,7 +50,6 @@ $utilisateurConnecte = AuthService::currentUser();
         <nav
             class="hidden items-center gap-9 md:flex"
         >
-
             <a
                 href="/"
                 class="font-['DM_Sans'] text-[13px] font-bold text-[#222222] transition hover:text-[#ff9900]"
@@ -74,7 +70,6 @@ $utilisateurConnecte = AuthService::currentUser();
             >
                 Mes Commandes
             </a>
-
         </nav>
 
 
@@ -111,7 +106,23 @@ $utilisateurConnecte = AuthService::currentUser();
                 </span>
 
 
-                <!-- Déconnexion -->
+                <!-- =================================================
+                     PROFIL & SÉCURITÉ
+                ================================================== -->
+
+                <a
+                    href="/profil"
+                    title="Profil & Sécurité"
+                    class="hidden items-center gap-2 font-['DM_Sans'] text-[12px] font-bold text-[#222222] transition hover:text-[#ff9900] sm:flex"
+                >
+                    <i class="fa-solid fa-user-shield text-[14px] text-[#ff9900]"></i>
+                    <span>Profil</span>
+                </a>
+
+
+                <!-- =================================================
+                     DÉCONNEXION
+                ================================================== -->
 
                 <form
                     action="/logout"
@@ -130,7 +141,9 @@ $utilisateurConnecte = AuthService::currentUser();
 
             <?php else: ?>
 
-                <!-- Connexion -->
+                <!-- =================================================
+                     CONNEXION
+                ================================================== -->
 
                 <a
                     href="/login"
@@ -141,7 +154,9 @@ $utilisateurConnecte = AuthService::currentUser();
                 </a>
 
 
-                <!-- Inscription -->
+                <!-- =================================================
+                     INSCRIPTION
+                ================================================== -->
 
                 <a
                     href="/register"
@@ -155,4 +170,5 @@ $utilisateurConnecte = AuthService::currentUser();
         </div>
 
     </div>
+
 </header>

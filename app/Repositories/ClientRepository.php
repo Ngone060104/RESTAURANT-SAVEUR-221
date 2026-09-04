@@ -165,20 +165,33 @@ class ClientRepository implements RepositoryInterface
         );
     }
 
-   public function telephoneExists(string $telephone, ?int $excludeId = null): bool
+public function telephoneExists(string $telephone, ?int $excludeId = null): bool
 {
-    $stmt = $this->pdo->prepare('
-        SELECT 1
-        FROM clients
-        WHERE telephone = :telephone
-          AND (:exclude_id IS NULL OR id <> :exclude_id)
-        LIMIT 1
-    ');
+    if ($excludeId === null) {
+        $stmt = $this->pdo->prepare('
+            SELECT 1
+            FROM clients
+            WHERE telephone = :telephone
+            LIMIT 1
+        ');
 
-    $stmt->execute([
-        'telephone' => $telephone,
-        'exclude_id' => $excludeId,
-    ]);
+        $stmt->execute([
+            'telephone' => $telephone,
+        ]);
+    } else {
+        $stmt = $this->pdo->prepare('
+            SELECT 1
+            FROM clients
+            WHERE telephone = :telephone
+              AND id <> :exclude_id
+            LIMIT 1
+        ');
+
+        $stmt->execute([
+            'telephone' => $telephone,
+            'exclude_id' => $excludeId,
+        ]);
+    }
 
     return (bool) $stmt->fetchColumn();
 }

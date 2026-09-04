@@ -6,94 +6,288 @@ use App\Exceptions\ValidationException;
 use App\Repositories\ClientRepository;
 use App\Repositories\UtilisateurRepository;
 
-/**
- * Section "Client -> Profil" : modifier nom/prénom/téléphone/adresse/
- * email, changer son mot de passe.
- */
 class ProfilService
 {
     public function __construct(
         private ClientRepository $clientRepository,
         private UtilisateurRepository $utilisateurRepository,
         private PasswordHasher $hasher,
-    ) {}
-
-    public function modifierInfos(int $clientId, array $data): bool
-    {
-        $required = ['nom', 'prenom', 'email', 'telephone', 'adresse'];
-
-        foreach ($required as $field) {
-            if (empty(trim($data[$field] ?? ''))) {
-                throw new ValidationException("Le champ {$field} est obligatoire.");
-            }
-        }
-
-        // Vérification email
-        $email = trim($data['email']);
-
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new ValidationException('Email invalide.');
-        }
-
-        // Récupération de l'utilisateur actuel
-        $actuel = $this->utilisateurRepository->findById($clientId);
-
-        if ($actuel === null) {
-            throw new ValidationException('Utilisateur introuvable.');
-        }
-
-        // Vérification que l'email n'est pas déjà utilisé par un autre utilisateur
-        if (
-            $this->utilisateurRepository->emailExists($email, $clientId)
-        ) {
-            throw new ValidationException('Cet email est déjà utilisé.');
-        }
-
-        // Nettoyage du numéro de téléphone
-        $telephone = preg_replace('/[\s.-]/', '', trim($data['telephone']));
-
-        // Suppression du préfixe +221
-        if (str_starts_with($telephone, '+221')) {
-            $telephone = substr($telephone, 4);
-        }
-
-        // Vérification du format sénégalais
-        if (!preg_match('/^[0-9]{9}$/', $telephone)) {
-            throw new ValidationException('Numéro de téléphone invalide.');
-        }
-
-        // Vérification que le téléphone n'est pas déjà utilisé
-        // par un AUTRE client
-        if ($this->clientRepository->telephoneExists($telephone, $clientId)) {
-            throw new ValidationException('Ce numéro de téléphone est déjà utilisé.');
-        }
-
-        return $this->clientRepository->update($clientId, [
-            'nom' => trim($data['nom']),
-            'prenom' => trim($data['prenom']),
-            'email' => $email,
-            'telephone' => $telephone,
-            'adresse' => trim($data['adresse']),
-            'actif' => $actuel->actif,
-        ]);
+    ) {
     }
 
-    public function changerMotDePasse(int $clientId, string $ancienMdp, string $nouveauMdp): bool
+    /**
+     * Modifier les informations personnelles du client.
+     */
+    public function modifierInfos(int $clientId, array $data): bool
     {
+        $erreurs = [];
+
+        /*
+        |--------------------------------------------------------------------------
+        | Récupération de l'utilisateur
+        |--------------------------------------------------------------------------
+        */
         $utilisateur = $this->utilisateurRepository->findById($clientId);
 
         if ($utilisateur === null) {
-            throw new ValidationException('Utilisateur introuvable.');
+            throw new ValidationException(
+                'Utilisateur introuvable.',
+                [
+                    'general' => 'Utilisateur introuvable.',
+                ]
+            );
         }
 
-        if (!$this->hasher->verify($ancienMdp, $utilisateur->mdp)) {
-            throw new ValidationException("L'ancien mot de passe est incorrect.");
+        /*
+        |--------------------------------------------------------------------------
+        | Récupération des champs
+        |--------------------------------------------------------------------------
+        */
+        $nom = trim((string) ($data['nom'] ?? ''));
+        $prenom = trim((string) ($data['prenom'] ?? ''));
+        $email = trim((string) ($data['email'] ?? ''));
+        $telephone = trim((string) ($data['telephone'] ?? ''));
+        $adresse = trim((string) ($data['adresse'] ?? ''));
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validation NOM
+        |--------------------------------------------------------------------------
+        */
+        if ($nom === '') {
+            $erreurs['nom'] = 'Le nom est obligatoire.';
         }
 
-        if (strlen($nouveauMdp) < 6) {
-            throw new ValidationException('Le nouveau mot de passe doit contenir au moins 6 caractères.');
+        /*
+        |--------------------------------------------------------------------------
+        | Validation PRÉNOM
+        |--------------------------------------------------------------------------
+        */
+        if ($prenom === '') {
+            $erreurs['prenom'] = 'Le prénom est obligatoire.';
         }
 
-        return $this->utilisateurRepository->updateMotDePasse($clientId, $this->hasher->hash($nouveauMdp));
+        /*
+        |--------------------------------------------------------------------------
+        | Validation EMAIL
+        |--------------------------------------------------------------------------
+        */
+        if ($email === '') {
+            $erreurs['email'] = "L'adresse email est obligatoire.";
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $erreurs['email'] = 'Veuillez saisir une adresse email valide.';
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validation TÉLÉPHONE
+        |--------------------------------------------------------------------------
+        */
+        if ($telephone === '') {
+            $erreurs['telephone'] = 'Le numéro de téléphone est obligatoire.';
+        } else {
+            /*
+            | On accepte :
+            | 771234567
+            | +221771234567
+            | +221 77 123 45 67
+            | 77 123 45 67
+            */
+            $telephoneNormalise = preg_replace('/[\s.\-()]/', '', $telephone);
+
+            if (str_starts_with($telephoneNormalise, '+221')) {
+                $telephoneNormalise = substr($telephoneNormalise, 4);
+            }
+
+            if (!preg_match('/^[0-9]{9}$/', $telephoneNormalise)) {
+                $erreurs['telephone'] =
+                    'Le numéro doit contenir 9 chiffres.';
+            } else {
+                $telephone = $telephoneNormalise;
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validation ADRESSE
+        |--------------------------------------------------------------------------
+        */
+        if ($adresse === '') {
+            $erreurs['adresse'] = "L'adresse de livraison est obligatoire.";
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Vérification email déjà utilisé
+        |--------------------------------------------------------------------------
+        */
+        if (!isset($erreurs['email'])) {
+            if (
+                $this->utilisateurRepository->emailExists(
+                    $email,
+                    $clientId
+                )
+            ) {
+                $erreurs['email'] =
+                    'Cette adresse email est déjà utilisée.';
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Vérification téléphone déjà utilisé
+        |--------------------------------------------------------------------------
+        */
+        if (!isset($erreurs['telephone'])) {
+            if (
+                $this->clientRepository->telephoneExists(
+                    $telephone,
+                    $clientId
+                )
+            ) {
+                $erreurs['telephone'] =
+                    'Ce numéro de téléphone est déjà utilisé.';
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | S'il y a des erreurs
+        |--------------------------------------------------------------------------
+        */
+        if (!empty($erreurs)) {
+            throw new ValidationException(
+                'Veuillez corriger les erreurs.',
+                $erreurs
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Mise à jour
+        |--------------------------------------------------------------------------
+        */
+        return $this->clientRepository->update(
+            $clientId,
+            [
+                'nom' => $nom,
+                'prenom' => $prenom,
+                'email' => $email,
+                'telephone' => $telephone,
+                'adresse' => $adresse,
+                'actif' => $utilisateur->actif,
+            ]
+        );
+    }
+
+    /**
+     * Modifier le mot de passe.
+     */
+    public function changerMotDePasse(
+        int $clientId,
+        string $ancienMdp,
+        string $nouveauMdp,
+        string $confirmationMdp
+    ): bool {
+        $erreurs = [];
+
+        /*
+        |--------------------------------------------------------------------------
+        | Récupération utilisateur
+        |--------------------------------------------------------------------------
+        */
+        $utilisateur = $this->utilisateurRepository->findById($clientId);
+
+        if ($utilisateur === null) {
+            throw new ValidationException(
+                'Utilisateur introuvable.',
+                [
+                    'general' => 'Utilisateur introuvable.',
+                ]
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ancien mot de passe
+        |--------------------------------------------------------------------------
+        */
+        if (trim($ancienMdp) === '') {
+            $erreurs['ancien_mdp'] =
+                "L'ancien mot de passe est obligatoire.";
+        } elseif (
+            !$this->hasher->verify(
+                $ancienMdp,
+                $utilisateur->mdp
+            )
+        ) {
+            $erreurs['ancien_mdp'] =
+                "L'ancien mot de passe est incorrect.";
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Nouveau mot de passe
+        |--------------------------------------------------------------------------
+        */
+        if (trim($nouveauMdp) === '') {
+            $erreurs['nouveau_mdp'] =
+                'Le nouveau mot de passe est obligatoire.';
+        } elseif (strlen($nouveauMdp) < 6) {
+            $erreurs['nouveau_mdp'] =
+                'Le nouveau mot de passe doit contenir au moins 6 caractères.';
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Confirmation
+        |--------------------------------------------------------------------------
+        */
+        if (trim($confirmationMdp) === '') {
+            $erreurs['confirmation_mdp'] =
+                'Veuillez confirmer le nouveau mot de passe.';
+        } elseif ($nouveauMdp !== $confirmationMdp) {
+            $erreurs['confirmation_mdp'] =
+                'Les deux mots de passe ne correspondent pas.';
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Nouveau mot de passe différent de l'ancien
+        |--------------------------------------------------------------------------
+        */
+        if (
+            !isset($erreurs['ancien_mdp']) &&
+            !isset($erreurs['nouveau_mdp']) &&
+            $this->hasher->verify(
+                $nouveauMdp,
+                $utilisateur->mdp
+            )
+        ) {
+            $erreurs['nouveau_mdp'] =
+                "Le nouveau mot de passe doit être différent de l'ancien.";
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Retourner toutes les erreurs
+        |--------------------------------------------------------------------------
+        */
+        if (!empty($erreurs)) {
+            throw new ValidationException(
+                'Veuillez corriger les erreurs.',
+                $erreurs
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Modification du mot de passe
+        |--------------------------------------------------------------------------
+        */
+        return $this->utilisateurRepository->updateMotDePasse(
+            $clientId,
+            $this->hasher->hash($nouveauMdp)
+        );
     }
 }

@@ -31,9 +31,8 @@ class CommandeService
         private CommandeRepository $commandeRepository,
         private LigneCommandeRepository $ligneCommandeRepository,
         private PanierService $panierService,
-         private PaiementRepository $paiementRepository,
-    ) {
-    }
+        private PaiementRepository $paiementRepository,
+    ) {}
 
     /**
      * Règle métier n°5 : une commande doit contenir au moins un article.
@@ -86,40 +85,54 @@ class CommandeService
     /**
      * @return array{commande: \App\Models\Commande, lignes: \App\Models\LigneCommande[]}
      */
-   public function getDetail(int $commandeId, int $clientId): array
-{
-    $commande = $this->commandeRepository->findCommandeById($commandeId);
+    public function getDetail(int $commandeId, int $clientId): array
+    {
+        $commande = $this->commandeRepository->findCommandeById($commandeId);
 
-    if ($commande === null) {
-        throw new ValidationException('Commande introuvable.');
+        if ($commande === null) {
+            throw new ValidationException('Commande introuvable.');
+        }
+
+        if (!$commande->appartientA($clientId)) {
+            throw new AuthException("Cette commande ne vous appartient pas.");
+        }
+
+        $paiements = $this->paiementRepository->findByCommande($commandeId);
+
+        $statutPaiement = $this->paiementRepository->getStatutCommande($commandeId);
+
+        return [
+            'commande' => $commande,
+
+            'lignes' => $this->ligneCommandeRepository->findByCommande(
+                $commandeId
+            ),
+
+            'paiements' => $paiements,
+
+            'statutPaiement' => $statutPaiement,
+        ];
     }
-
-    if (!$commande->appartientA($clientId)) {
-        throw new AuthException("Cette commande ne vous appartient pas.");
-    }
-
-    $paiements = $this->paiementRepository->findByCommande($commandeId);
-
-    $statutPaiement = $this->paiementRepository->getStatutCommande($commandeId);
-
-    return [
-        'commande' => $commande,
-
-        'lignes' => $this->ligneCommandeRepository->findByCommande(
-            $commandeId
-        ),
-
-        'paiements' => $paiements,
-
-        'statutPaiement' => $statutPaiement,
-    ];
-}
 
     public function getHistoriqueClient(int $clientId): array
     {
-        return $this->commandeRepository->findByClient($clientId);
-    }
+        $commandes = $this->commandeRepository->findByClient($clientId);
 
+        $historique = [];
+
+        foreach ($commandes as $commande) {
+            $id = $commande->getId();
+
+            $historique[] = [
+                'commande' => $commande,
+                'lignes' => $this->ligneCommandeRepository->findByCommande($id),
+                'paiements' => $this->paiementRepository->findByCommande($id),
+                'statutPaiement' => $this->paiementRepository->getStatutCommande($id),
+            ];
+        }
+
+        return $historique;
+    }
     /**
      * Changement de statut côté gérant (section VI - "modifier son statut").
      */

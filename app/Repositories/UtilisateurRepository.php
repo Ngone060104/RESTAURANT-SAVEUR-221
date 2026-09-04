@@ -60,22 +60,35 @@ class UtilisateurRepository implements RepositoryInterface
     }
 
     public function emailExists(string $email, ?int $excludeId = null): bool
-    {
+{
+    if ($excludeId === null) {
         $stmt = $this->pdo->prepare('
-        SELECT 1
-        FROM utilisateurs
-        WHERE email = :email
-          AND (:exclude_id IS NULL OR id <> :exclude_id)
-        LIMIT 1
-    ');
+            SELECT 1
+            FROM utilisateurs
+            WHERE email = :email
+            LIMIT 1
+        ');
+
+        $stmt->execute([
+            'email' => $email,
+        ]);
+    } else {
+        $stmt = $this->pdo->prepare('
+            SELECT 1
+            FROM utilisateurs
+            WHERE email = :email
+              AND id <> :exclude_id
+            LIMIT 1
+        ');
 
         $stmt->execute([
             'email' => $email,
             'exclude_id' => $excludeId,
         ]);
-
-        return (bool) $stmt->fetchColumn();
     }
+
+    return (bool) $stmt->fetchColumn();
+}
 
     public function findRoleIdByLibelle(string $libelle): ?int
     {

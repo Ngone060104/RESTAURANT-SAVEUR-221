@@ -30,10 +30,29 @@ class App
         } catch (NotFoundException $e) {
             $this->afficherErreur(404, 'errors/404');
         } catch (Throwable $e) {
-            // On n'affiche JAMAIS $e->getMessage() ici : une erreur PDO
-            // pourrait révéler des détails sensibles (requête SQL,
-            // structure de la base...) à un visiteur.
-            $this->afficherErreur(500, 'errors/500');
+            http_response_code(500);
+
+            echo '<pre>';
+            echo htmlspecialchars(
+                $e->getMessage(),
+                ENT_QUOTES,
+                'UTF-8'
+            );
+            echo "\n\n";
+            echo htmlspecialchars(
+                $e->getFile(),
+                ENT_QUOTES,
+                'UTF-8'
+            );
+            echo ':';
+            echo $e->getLine();
+            echo "\n\n";
+            echo htmlspecialchars(
+                $e->getTraceAsString(),
+                ENT_QUOTES,
+                'UTF-8'
+            );
+            echo '</pre>';
         }
     }
 
