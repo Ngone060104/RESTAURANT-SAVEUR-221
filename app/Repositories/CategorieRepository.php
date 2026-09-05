@@ -10,53 +10,111 @@ use PDOException;
 
 class CategorieRepository implements RepositoryInterface
 {
-    public function __construct(private PDO $pdo)
-    {
+    public function __construct(
+        private PDO $pdo
+    ) {
     }
-    
 
+    /**
+     * Récupérer toutes les catégories avec
+     * le nombre de produits rattachés.
+     */
     public function findAll(): array
     {
-        $stmt = $this->pdo->query('SELECT * FROM categories ORDER BY libelle');
+        $stmt = $this->pdo->query(
+            'SELECT
+                c.id,
+                c.libelle,
+                c.description,
+                COUNT(p.id) AS nombre_produits
+             FROM categories c
+             LEFT JOIN produits p ON p.categorie_id = c.id
+             GROUP BY c.id, c.libelle, c.description
+             ORDER BY c.libelle'
+        );
 
-        return array_map([$this, 'hydrate'], $stmt->fetchAll());
+        return array_map(
+            [$this, 'hydrate'],
+            $stmt->fetchAll()
+        );
     }
 
+    /**
+     * Récupérer une catégorie par son ID.
+     */
     public function findById(int $id): ?object
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM categories WHERE id = :id');
-        $stmt->execute(['id' => $id]);
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM categories WHERE id = :id'
+        );
+
+        $stmt->execute([
+            'id' => $id
+        ]);
+
         $row = $stmt->fetch();
 
         return $row ?: null;
     }
 
+    /**
+     * Récupérer une catégorie par son libellé.
+     */
     public function findByLibelle(string $libelle): ?object
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM categories WHERE libelle = :libelle');
-        $stmt->execute(['libelle' => $libelle]);
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM categories WHERE libelle = :libelle'
+        );
+
+        $stmt->execute([
+            'libelle' => $libelle
+        ]);
+
         $row = $stmt->fetch();
 
         return $row ?: null;
     }
 
+    /**
+     * Rechercher des catégories avec le nombre
+     * de produits rattachés.
+     */
     public function search(string $terme): array
     {
-        $stmt = $this->pdo->prepare('
-            SELECT * FROM categories WHERE libelle ILIKE :terme ORDER BY libelle
-        ');
-        $stmt->execute(['terme' => "%{$terme}%"]);
+        $stmt = $this->pdo->prepare(
+            'SELECT
+                c.id,
+                c.libelle,
+                c.description,
+                COUNT(p.id) AS nombre_produits
+             FROM categories c
+             LEFT JOIN produits p ON p.categorie_id = c.id
+             WHERE c.libelle ILIKE :terme
+             GROUP BY c.id, c.libelle, c.description
+             ORDER BY c.libelle'
+        );
 
-        return array_map([$this, 'hydrate'], $stmt->fetchAll());
+        $stmt->execute([
+            'terme' => "%{$terme}%"
+        ]);
+
+        return array_map(
+            [$this, 'hydrate'],
+            $stmt->fetchAll()
+        );
     }
 
+    /**
+     * Créer une catégorie.
+     */
     public function create(array $data): int
     {
-        $stmt = $this->pdo->prepare('
-            INSERT INTO categories (libelle, description)
-            VALUES (:libelle, :description)
-            RETURNING id
-        ');
+        $stmt = $this->pdo->prepare(
+            'INSERT INTO categories (libelle, description)
+             VALUES (:libelle, :description)
+             RETURNING id'
+        );
+
         $stmt->execute([
             'libelle' => $data['libelle'],
             'description' => $data['description'] ?? null,
@@ -65,11 +123,17 @@ class CategorieRepository implements RepositoryInterface
         return (int) $stmt->fetchColumn();
     }
 
+    /**
+     * Modifier une catégorie.
+     */
     public function update(int $id, array $data): bool
     {
-        $stmt = $this->pdo->prepare('
-            UPDATE categories SET libelle = :libelle, description = :description WHERE id = :id
-        ');
+        $stmt = $this->pdo->prepare(
+            'UPDATE categories
+             SET libelle = :libelle,
+                 description = :description
+             WHERE id = :id'
+        );
 
         return $stmt->execute([
             'id' => $id,
@@ -79,17 +143,21 @@ class CategorieRepository implements RepositoryInterface
     }
 
     /**
-     * Règle métier n°9 : une catégorie contenant des produits ne peut
-     * pas être supprimée. La FK produits.categorie_id est ON DELETE
-     * RESTRICT, donc PostgreSQL refuserait de toute façon le DELETE ;
-     * on transforme cette erreur SQL brute en message métier clair.
+     * Supprimer une catégorie.
+     *
+     * PostgreSQL empêche la suppression si des produits
+     * utilisent encore cette catégorie.
      */
     public function delete(int $id): bool
     {
         try {
-            $stmt = $this->pdo->prepare('DELETE FROM categories WHERE id = :id');
+            $stmt = $this->pdo->prepare(
+                'DELETE FROM categories WHERE id = :id'
+            );
 
-            return $stmt->execute(['id' => $id]);
+            return $stmt->execute([
+                'id' => $id
+            ]);
         } catch (PDOException $e) {
             throw new ValidationException(
                 'Impossible de supprimer une catégorie qui contient encore des produits.'
@@ -97,8 +165,16 @@ class CategorieRepository implements RepositoryInterface
         }
     }
 
+    /**
+     * Transformer une ligne SQL en objet Categorie.
+     */
     private function hydrate(object $row): Categorie
     {
-        return new Categorie((int) $row->id, $row->libelle, $row->description);
+        return new Categorie(
+            (int) $row->id,
+            $row->libelle,
+            $row->description,
+            (int) ($row->nombre_produits ?? 0)
+        );
     }
 }

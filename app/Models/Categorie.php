@@ -11,6 +11,7 @@ class Categorie
         private int $id,
         private string $libelle,
         private ?string $description,
+         private int $nombreProduits = 0,
     ) {
     }
 
@@ -27,5 +28,10 @@ class Categorie
     public function getDescription(): ?string
     {
         return $this->description;
+    }
+
+    public function getNombreProduits(): int
+    {
+        return $this->nombreProduits;
     }
 }
