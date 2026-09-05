@@ -16,8 +16,15 @@ $terme = trim($terme ?? ($_GET['q'] ?? ''));
 $erreurs = $erreurs ?? [];
 $form = $form ?? [];
 $editId = $editId ?? null;
+$categorieEdition = $categorieEdition ?? null;
+
+$deleteId = $deleteId ?? null;
+
+$categorieSuppression = $categorieSuppression ?? null;
 $message = $message ?? null;
 
+$modeEdition = $editId !== null;
+$modeSuppression = $deleteId !== null;
 $hasFormError = !empty($erreurs);
 ?>
 
@@ -103,8 +110,7 @@ $hasFormError = !empty($erreurs);
             class="mb-5 rounded-[11px] border border-[#e5e5e5] bg-white p-4 shadow-sm">
 
             <form
-                action="/gerant/categories"
-                method="GET"
+                id="formRechercheCategorie"
                 class="flex flex-col gap-3 sm:flex-row">
 
                 <div class="relative flex-1">
@@ -349,31 +355,22 @@ $hasFormError = !empty($erreurs);
 
                                             <!-- MODIFIER -->
 
-                                            <button
-                                                type="button"
-                                                onclick="ouvrirModalModification(
-                                                    <?= $id ?>,
-                                                    <?= htmlspecialchars(json_encode($libelle), ENT_QUOTES, 'UTF-8') ?>,
-                                                    <?= htmlspecialchars(json_encode($description ?? ''), ENT_QUOTES, 'UTF-8') ?>
-                                                )"
+                                            <a
+                                                href="/gerant/categories/update/<?= $id ?>"
                                                 title="Modifier"
                                                 class="flex h-8 w-8 items-center justify-center rounded-[7px] border border-[#e5e5e5] text-[#555555] transition hover:-translate-y-[1px] hover:border-[#ff9900] hover:bg-[#fff1df] hover:text-[#ff9900]">
                                                 <i class="fa-solid fa-pen-to-square text-[11px]"></i>
-                                            </button>
+                                            </a>
 
 
                                             <!-- SUPPRIMER -->
 
-                                            <button
-                                                type="button"
+                                            <a
+                                                href="/gerant/categories/delete/<?= $id ?>"
                                                 title="Supprimer"
-                                                onclick="ouvrirModalSuppression(
-        <?= $id ?>,
-        <?= htmlspecialchars(json_encode($libelle), ENT_QUOTES, 'UTF-8') ?>
-    )"
                                                 class="flex h-8 w-8 items-center justify-center rounded-[7px] border border-[#f0dddd] text-[#dc5555] transition hover:-translate-y-[1px] hover:bg-[#fff0f0]">
                                                 <i class="fa-solid fa-trash-can text-[10px]"></i>
-                                            </button>
+                                            </a>
 
                                         </div>
 
@@ -438,27 +435,18 @@ $hasFormError = !empty($erreurs);
 
                                 <div class="flex shrink-0 items-center gap-2">
 
-                                    <button
-                                        type="button"
-                                        onclick="ouvrirModalModification(
-                                            <?= $id ?>,
-                                            <?= htmlspecialchars(json_encode($libelle), ENT_QUOTES, 'UTF-8') ?>,
-                                            <?= htmlspecialchars(json_encode($description ?? ''), ENT_QUOTES, 'UTF-8') ?>
-                                        )"
+                                    <a
+                                        href="/gerant/categories/update/<?= $id ?>"
                                         title="Modifier"
                                         class="flex h-8 w-8 items-center justify-center rounded-[7px] border border-[#e5e5e5] text-[#555555]">
                                         <i class="fa-solid fa-pen-to-square text-[10px]"></i>
-                                    </button>
-                                    <button
-                                        type="button"
+                                    </a>
+                                    <a
+                                        href="/gerant/categories/delete/<?= $id ?>"
                                         title="Supprimer"
-                                        onclick="ouvrirModalSuppression(
-        <?= $id ?>,
-        <?= htmlspecialchars(json_encode($libelle), ENT_QUOTES, 'UTF-8') ?>
-    )"
                                         class="flex h-8 w-8 items-center justify-center rounded-[7px] border border-[#f0dddd] text-[#dc5555]">
                                         <i class="fa-solid fa-trash-can text-[10px]"></i>
-                                    </button>
+                                    </a>
 
                                 </div>
 
@@ -575,11 +563,7 @@ $hasFormError = !empty($erreurs);
             class="p-5"
             novalidate>
 
-            <input
-                type="hidden"
-                id="categorieId"
-                name="id"
-                value="">
+
 
 
             <!-- LIBELLÉ -->
@@ -752,11 +736,6 @@ $hasFormError = !empty($erreurs);
                 method="POST"
                 class="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
 
-                <input
-                    type="hidden"
-                    id="suppressionId"
-                    name="id"
-                    value="">
 
                 <button
                     type="button"
@@ -785,13 +764,10 @@ $hasFormError = !empty($erreurs);
     const formCategorie = document.getElementById('formCategorie');
     const modalTitre = document.getElementById('modalTitre');
     const btnSubmitCategorie = document.getElementById('btnSubmitCategorie');
-    const categorieId = document.getElementById('categorieId');
     const categorieLibelle = document.getElementById('categorieLibelle');
     const categorieDescription = document.getElementById('categorieDescription');
 
     function ouvrirModalCategorie() {
-
-        categorieId.value = '';
         categorieLibelle.value = '';
         categorieDescription.value = '';
 
@@ -813,15 +789,13 @@ $hasFormError = !empty($erreurs);
 
 
     function ouvrirModalModification(id, libelle, description) {
-
-        categorieId.value = id;
-        categorieLibelle.value = libelle;
+        categorieLibelle.value = libelle || '';
         categorieDescription.value = description || '';
 
         modalTitre.textContent = 'Modifier la catégorie';
         btnSubmitCategorie.textContent = 'Enregistrer';
 
-        formCategorie.action = '/gerant/categories/update';
+        formCategorie.action = '/gerant/categories/update/' + id;
 
         modalCategorie.classList.remove('hidden');
         modalCategorie.classList.add('flex');
@@ -836,29 +810,24 @@ $hasFormError = !empty($erreurs);
 
 
     function fermerModalCategorie() {
-
         modalCategorieBox.classList.remove('scale-100');
         modalCategorieBox.classList.add('scale-95');
 
         setTimeout(() => {
-
-            modalCategorie.classList.remove('flex');
-            modalCategorie.classList.add('hidden');
-
+            window.location.href = '/gerant/categories';
         }, 150);
     }
-
 
     const modalSuppression = document.getElementById('modalSuppression');
     const modalSuppressionBox = document.getElementById('modalSuppressionBox');
     const formSuppression = document.getElementById('formSuppression');
-    const suppressionId = document.getElementById('suppressionId');
     const suppressionLibelle = document.getElementById('suppressionLibelle');
 
     function ouvrirModalSuppression(id, libelle) {
+        suppressionLibelle.textContent = '« ' + (libelle || '') + ' »';
 
-        suppressionId.value = id;
-        suppressionLibelle.textContent = '« ' + libelle + ' »';
+        formSuppression.action =
+            '/gerant/categories/delete/' + id;
 
         modalSuppression.classList.remove('hidden');
         modalSuppression.classList.add('flex');
@@ -870,13 +839,11 @@ $hasFormError = !empty($erreurs);
     }
 
     function fermerModalSuppression() {
-
         modalSuppressionBox.classList.remove('scale-100');
         modalSuppressionBox.classList.add('scale-95');
 
         setTimeout(() => {
-            modalSuppression.classList.remove('flex');
-            modalSuppression.classList.add('hidden');
+            window.location.href = '/gerant/categories';
         }, 150);
     }
 
@@ -904,27 +871,7 @@ $hasFormError = !empty($erreurs);
     });
 
 
-    <?php if ($hasFormError): ?>
 
-        document.addEventListener('DOMContentLoaded', function() {
-
-            <?php if ($editId): ?>
-
-                ouvrirModalModification(
-                    <?= (int) $editId ?>,
-                    <?= htmlspecialchars(json_encode($form['libelle'] ?? ''), ENT_QUOTES, 'UTF-8') ?>,
-                    <?= htmlspecialchars(json_encode($form['description'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
-                );
-
-            <?php else: ?>
-
-                ouvrirModalCategorie();
-
-            <?php endif; ?>
-
-        });
-
-    <?php endif; ?>
 
     <?php if ($message): ?>
         document.addEventListener('DOMContentLoaded', function() {
@@ -955,4 +902,67 @@ $hasFormError = !empty($erreurs);
             }, 300);
         }
     <?php endif; ?>
+
+    <?php if ($modeEdition): ?>
+        document.addEventListener('DOMContentLoaded', function() {
+            ouvrirModalModification(
+                <?= (int) $editId ?>,
+                <?= json_encode(
+                    $form['libelle'] ?? '',
+                    JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+                ) ?>,
+                <?= json_encode(
+                    $form['description'] ?? '',
+                    JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+                ) ?>
+            );
+        });
+    <?php elseif ($hasFormError): ?>
+        document.addEventListener('DOMContentLoaded', function() {
+            ouvrirModalCategorie();
+
+            categorieLibelle.value =
+                <?= json_encode(
+                    $form['libelle'] ?? '',
+                    JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+                ) ?>;
+
+            categorieDescription.value =
+                <?= json_encode(
+                    $form['description'] ?? '',
+                    JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+                ) ?>;
+        });
+    <?php endif; ?>
+
+    <?php if ($deleteId !== null && $categorieSuppression !== null): ?>
+        document.addEventListener('DOMContentLoaded', function() {
+            ouvrirModalSuppression(
+                <?= (int) $deleteId ?>,
+                <?= json_encode(
+                    $categorieSuppression->getLibelle(),
+                    JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+                ) ?>
+            );
+        });
+    <?php endif; ?>
+
+    const formRechercheCategorie = document.getElementById('formRechercheCategorie');
+
+    if (formRechercheCategorie) {
+        formRechercheCategorie.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const input = this.querySelector('input[name="q"]');
+            const terme = input ? input.value.trim() : '';
+
+            if (terme === '') {
+                window.location.href = '/gerant/categories';
+                return;
+            }
+
+            window.location.href =
+                '/gerant/categories/recherche/' + encodeURIComponent(terme);
+        });
+    }
 </script>

@@ -9,9 +9,11 @@ class CategorieService
 {
     public function __construct(
         private CategorieRepository $categorieRepository
-    ) {
-    }
+    ) {}
 
+    /**
+     * Créer une catégorie.
+     */
     public function create(array $data): int
     {
         $data = $this->prepareData($data);
@@ -19,7 +21,10 @@ class CategorieService
         $this->validate($data);
 
         // Vérifier si le libellé existe déjà
-        if ($this->categorieRepository->findByLibelle($data['libelle']) !== null) {
+        if (
+            $this->categorieRepository
+                ->findByLibelle($data['libelle']) !== null
+        ) {
             throw new ValidationException(
                 'Cette catégorie existe déjà.',
                 [
@@ -31,20 +36,49 @@ class CategorieService
         return $this->categorieRepository->create($data);
     }
 
+    /**
+     * Modifier une catégorie.
+     */
     public function update(int $id, array $data): bool
     {
+        if ($id <= 0) {
+            throw new ValidationException(
+                'Catégorie invalide.',
+                [
+                    'id' => 'Identifiant de la catégorie invalide.'
+                ]
+            );
+        }
+
+        // Vérifier que la catégorie existe
+        $categorie = $this->categorieRepository->findById($id);
+
+        if ($categorie === null) {
+            throw new ValidationException(
+                'Catégorie introuvable.',
+                [
+                    'id' => 'La catégorie demandée n’existe pas.'
+                ]
+            );
+        }
+
         $data = $this->prepareData($data);
 
         $this->validate($data);
 
         // Vérifier le doublon en excluant la catégorie actuelle
-        $existante = $this->categorieRepository->findByLibelle($data['libelle']);
+        $existante = $this->categorieRepository
+            ->findByLibelle($data['libelle']);
 
-        if ($existante !== null && (int) $existante->id !== $id) {
+        if (
+            $existante !== null
+            && (int) $existante->getId() !== $id
+        ) {
             throw new ValidationException(
                 'Une autre catégorie porte déjà ce libellé.',
                 [
-                    'libelle' => 'Une autre catégorie porte déjà ce libellé.'
+                    'libelle' =>
+                        'Une autre catégorie porte déjà ce libellé.'
                 ]
             );
         }
@@ -54,12 +88,30 @@ class CategorieService
 
     /**
      * Supprimer une catégorie.
-     *
-     * Le repository gère déjà le cas où la catégorie
-     * contient encore des produits.
      */
     public function delete(int $id): bool
     {
+        if ($id <= 0) {
+            throw new ValidationException(
+                'Catégorie invalide.',
+                [
+                    'id' => 'Identifiant de la catégorie invalide.'
+                ]
+            );
+        }
+
+        // Vérifier que la catégorie existe
+        $categorie = $this->categorieRepository->findById($id);
+
+        if ($categorie === null) {
+            throw new ValidationException(
+                'Catégorie introuvable.',
+                [
+                    'id' => 'La catégorie demandée n’existe pas.'
+                ]
+            );
+        }
+
         return $this->categorieRepository->delete($id);
     }
 
@@ -69,8 +121,12 @@ class CategorieService
     private function prepareData(array $data): array
     {
         return [
-            'libelle' => trim($data['libelle'] ?? ''),
-            'description' => trim($data['description'] ?? ''),
+            'libelle' => trim(
+                (string) ($data['libelle'] ?? '')
+            ),
+            'description' => trim(
+                (string) ($data['description'] ?? '')
+            ),
         ];
     }
 
@@ -86,17 +142,20 @@ class CategorieService
 
         // Libellé obligatoire
         if ($libelle === '') {
-            $errors['libelle'] = 'Le libellé de la catégorie est obligatoire.';
+            $errors['libelle'] =
+                'Le libellé de la catégorie est obligatoire.';
         }
 
         // Maximum 60 caractères
         elseif (mb_strlen($libelle) > 60) {
-            $errors['libelle'] = 'Le libellé ne doit pas dépasser 60 caractères.';
+            $errors['libelle'] =
+                'Le libellé ne doit pas dépasser 60 caractères.';
         }
 
         // Description facultative, maximum 255 caractères
         if (mb_strlen($description) > 255) {
-            $errors['description'] = 'La description ne doit pas dépasser 255 caractères.';
+            $errors['description'] =
+                'La description ne doit pas dépasser 255 caractères.';
         }
 
         if (!empty($errors)) {
