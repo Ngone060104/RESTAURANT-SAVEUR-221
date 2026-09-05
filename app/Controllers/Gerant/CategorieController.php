@@ -7,36 +7,44 @@ use App\Exceptions\ValidationException;
 use App\Repositories\CategorieRepository;
 use App\Services\CategorieService;
 
-/**
- * CRUD complet des catégories - section "ESPACE GÉRANT".
- *
- * Accessible à GERANT et ADMIN via GerantMiddleware.
- */
 class CategorieController extends Controller
 {
     public function __construct(
         private CategorieRepository $categorieRepository,
         private CategorieService $categorieService,
-    ) {
-    }
+    ) {}
 
     /**
-     * Liste des catégories + recherche.
+     * Liste des catégories
      */
     public function index(): void
     {
         $terme = trim($_GET['q'] ?? '');
 
-        $categories = $this->getCategories($terme);
+        $categories = $terme !== ''
+            ? $this->categorieRepository->search($terme)
+            : $this->categorieRepository->findAll();
 
-        $this->renderIndex(
-            $categories,
-            $terme
+        $this->view(
+            'gerant/categories/index',
+            [
+                'titre' => 'Catégories',
+                'categories' => $categories,
+                'terme' => $terme,
+                'erreurs' => [],
+                'form' => [],
+                'editId' => null,
+
+                // Toast
+                'toast' => $_GET['toast'] ?? null,
+                'toastType' => $_GET['toast_type'] ?? null,
+            ],
+            'layouts/gerant'
         );
     }
 
     /**
-     * Création d'une catégorie.
+     * Ajouter une catégorie
      */
     public function store(): void
     {
@@ -48,19 +56,32 @@ class CategorieController extends Controller
             http_response_code(422);
 
             $terme = trim($_GET['q'] ?? '');
-            $categories = $this->getCategories($terme);
 
-            $this->renderIndex(
-                $categories,
-                $terme,
-                $e->getErrors(),
-                $_POST
+            $categories = $terme !== ''
+                ? $this->categorieRepository->search($terme)
+                : $this->categorieRepository->findAll();
+
+            $this->view(
+                'gerant/categories/index',
+                [
+                    'titre' => 'Catégories',
+                    'categories' => $categories,
+                    'terme' => $terme,
+                    'erreurs' => $e->getErrors(),
+                    'form' => $_POST,
+                    'editId' => null,
+
+                    // Toast
+                    'toast' => null,
+                    'toastType' => null,
+                ],
+                'layouts/gerant'
             );
         }
     }
 
     /**
-     * Modification d'une catégorie.
+     * Modifier une catégorie
      */
     public function update(): void
     {
@@ -74,79 +95,66 @@ class CategorieController extends Controller
             http_response_code(422);
 
             $terme = trim($_GET['q'] ?? '');
-            $categories = $this->getCategories($terme);
 
-            $this->renderIndex(
-                $categories,
-                $terme,
-                $e->getErrors(),
-                $_POST,
-                $id
+            $categories = $terme !== ''
+                ? $this->categorieRepository->search($terme)
+                : $this->categorieRepository->findAll();
+
+            $this->view(
+                'gerant/categories/index',
+                [
+                    'titre' => 'Catégories',
+                    'categories' => $categories,
+                    'terme' => $terme,
+                    'erreurs' => $e->getErrors(),
+                    'form' => $_POST,
+                    'editId' => $id,
+
+                    // Toast
+                    'toast' => null,
+                    'toastType' => null,
+                ],
+                'layouts/gerant'
             );
         }
     }
 
     /**
-     * Suppression d'une catégorie.
+     * Supprimer une catégorie
      */
-    public function destroy(): void
-    {
-        $id = (int) ($_POST['id'] ?? 0);
+   public function destroy(): void
+{
+    $id = (int) ($_POST['id'] ?? 0);
 
-        try {
-            $this->categorieService->delete($id);
+    try {
+        $this->categorieService->delete($id);
 
-            $this->redirect('/gerant/categories');
-        } catch (ValidationException $e) {
-            http_response_code(422);
+        // Suppression réussie
+        $this->redirect('/gerant/categories');
 
-            $terme = trim($_GET['q'] ?? '');
-            $categories = $this->getCategories($terme);
+    } catch (ValidationException $e) {
 
-            $this->renderIndex(
-                $categories,
-                $terme,
-                $e->getErrors(),
-                [],
-                null,
-                $e->getMessage()
-            );
-        }
-    }
+        // On recharge les catégories
+        $terme = trim($_GET['q'] ?? '');
 
-    /**
-     * Récupérer les catégories selon la recherche.
-     */
-    private function getCategories(string $terme): array
-    {
-        return $terme !== ''
+        $categories = $terme !== ''
             ? $this->categorieRepository->search($terme)
             : $this->categorieRepository->findAll();
-    }
 
-    /**
-     * Afficher la page des catégories.
-     */
-    private function renderIndex(
-        array $categories,
-        string $terme = '',
-        array $erreurs = [],
-        array $form = [],
-        ?int $editId = null,
-        ?string $message = null
-    ): void {
+        // On reste sur la même page et on transmet le message au toast
         $this->view(
             'gerant/categories/index',
             [
                 'titre' => 'Catégories',
                 'categories' => $categories,
                 'terme' => $terme,
-                'erreurs' => $erreurs,
-                'form' => $form,
-                'editId' => $editId,
-                'message' => $message,
+                'erreurs' => [],
+                'form' => [],
+                'editId' => null,
+                'message' => $e->getMessage(),
             ],
             'layouts/gerant'
         );
     }
+}
 }

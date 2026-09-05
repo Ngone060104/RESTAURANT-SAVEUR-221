@@ -66,15 +66,16 @@ $hasFormError = !empty($erreurs);
         ====================================================== -->
 
         <?php if ($message): ?>
-
             <div
-                class="mb-5 flex items-start gap-3 rounded-[9px] border border-[#f1caca] bg-[#fff5f5] px-4 py-3">
+                id="toastSuppression"
+                class="fixed top-5 right-5 z-[200] flex w-[calc(100%-40px)] max-w-[380px] translate-y-5 items-start gap-3 rounded-[10px] border border-[#f1caca] bg-white px-4 py-3 shadow-xl opacity-0 transition-all duration-300 sm:right-6 sm:w-auto">
+
                 <span
-                    class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#ffe2e2] text-[#dc5555]">
+                    class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#fff0f0] text-[#dc5555]">
                     <i class="fa-solid fa-triangle-exclamation text-[11px]"></i>
                 </span>
 
-                <div>
+                <div class="min-w-0 flex-1">
                     <p class="font-['DM_Sans'] text-[11px] font-bold text-[#b33a3a]">
                         Suppression impossible
                     </p>
@@ -83,8 +84,14 @@ $hasFormError = !empty($erreurs);
                         <?= htmlspecialchars($message) ?>
                     </p>
                 </div>
-            </div>
 
+                <button
+                    type="button"
+                    onclick="fermerToastSuppression()"
+                    class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[#aaaaaa] transition hover:bg-[#f5f5f5] hover:text-[#333333]">
+                    <i class="fa-solid fa-xmark text-[10px]"></i>
+                </button>
+            </div>
         <?php endif; ?>
 
 
@@ -917,5 +924,35 @@ $hasFormError = !empty($erreurs);
 
         });
 
+    <?php endif; ?>
+
+    <?php if ($message): ?>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toast = document.getElementById('toastSuppression');
+
+            if (!toast) return;
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-[-20px]', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            });
+
+            setTimeout(() => {
+                fermerToastSuppression();
+            }, 5000);
+        });
+
+        function fermerToastSuppression() {
+            const toast = document.getElementById('toastSuppression');
+
+            if (!toast) return;
+
+            toast.classList.remove('translate-y-0', 'opacity-100');
+            toast.classList.add('translate-y-[-20px]', 'opacity-0');
+
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }
     <?php endif; ?>
 </script>
