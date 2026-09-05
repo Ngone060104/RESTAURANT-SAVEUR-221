@@ -11,49 +11,108 @@ class ProduitService
     public function __construct(
         private ProduitRepository $produitRepository,
         private CategorieRepository $categorieRepository,
+        private CloudinaryService $cloudinaryService,
     ) {}
 
-    public function create(array $data): int
-    {
+    /**
+     * Créer un produit.
+     *
+     * @param array $data Données POST
+     * @param array|null $image Fichier provenant de $_FILES['image']
+     */
+    public function create(
+        array $data,
+        ?array $image = null
+    ): int {
         $data = $this->normaliser($data);
 
-        $this->validate($data);
+        // Image obligatoire à la création
+        if ($this->fichierSelectionne($image)) {
+            $data['image'] = $this->cloudinaryService
+                ->uploadImage($image);
+        } else {
+            $data['image'] = null;
+        }
+
+        $this->validate($data, true);
 
         return $this->produitRepository->create(
             $this->withStatutDerive($data)
         );
     }
 
-    public function update(int $id, array $data): bool
-    {
+    /**
+     * Modifier un produit.
+     *
+     * Si aucune nouvelle image n'est sélectionnée,
+     * l'ancienne image Cloudinary est conservée.
+     */
+    public function update(
+        int $id,
+        array $data,
+        ?array $image = null
+    ): bool {
+        if ($id <= 0) {
+            throw new ValidationException(
+                'Produit invalide.',
+                [
+                    'id' => 'Identifiant du produit invalide.',
+                ]
+            );
+        }
+
+        $produit = $this->produitRepository
+            ->findProduitById($id);
+
+        if ($produit === null) {
+            throw new ValidationException(
+                'Produit introuvable.',
+                [
+                    'id' => 'Le produit demandé n’existe pas.',
+                ]
+            );
+        }
+
         $data = $this->normaliser($data);
 
-        $this->validate($data);
+        // On conserve l'ancienne image par défaut
+        $data['image'] = $produit->getImage();
+
+        // Si une nouvelle image est envoyée, elle remplace l'ancienne
+        if ($this->fichierSelectionne($image)) {
+            $data['image'] = $this->cloudinaryService
+                ->uploadImage($image);
+        }
+
+        // Image non obligatoire en modification
+        $this->validate($data, false);
 
         return $this->produitRepository->update(
             $id,
             $this->withStatutDerive($data)
         );
     }
-
-    public function approvisionner(int $id, int $quantite): bool
-    {
+    /**
+     * Approvisionnement du stock.
+     */
+    public function approvisionner(
+        int $id,
+        int $quantite
+    ): bool {
         if ($quantite <= 0) {
             throw new ValidationException(
-                'Veuillez corriger les erreurs du formulaire.',
-                [
-                    'quantite' => 'La quantité approvisionnée doit être supérieure à 0.'
-                ]
+                'La quantité approvisionnée doit être positive.'
             );
         }
 
-        $produit = $this->produitRepository->findProduitById($id);
+        $produit = $this->produitRepository
+            ->findProduitById($id);
 
         if ($produit === null) {
-            throw new ValidationException('Produit introuvable.');
+            throw new ValidationException(
+                'Produit introuvable.'
+            );
         }
-
-        $stock = $produit->getStock() + $quantite;
 
         return $this->produitRepository->update(
             $id,
@@ -61,152 +120,179 @@ class ProduitService
                 'nom' => $produit->getNom(),
                 'description' => $produit->getDescription(),
                 'prix' => $produit->getPrix(),
-                'stock' => $stock,
+                'stock' => $produit->getStock() + $quantite,
                 'image' => $produit->getImage(),
                 'categorie_id' => $produit->getCategorieId(),
             ])
         );
     }
 
+    /**
+     * Supprimer un produit.
+     */
     public function delete(int $id): bool
     {
+        if ($id <= 0) {
+            throw new ValidationException(
+                'Produit invalide.'
+            );
+        }
+
+        if (
+            $this->produitRepository
+            ->findProduitById($id) === null
+        ) {
+            throw new ValidationException(
+                'Produit introuvable.'
+            );
+        }
+
         return $this->produitRepository->delete($id);
     }
 
     /**
-     * Nettoyage des données reçues du formulaire.
+     * Vérifie si un fichier a réellement été sélectionné.
+     */
+    private function fichierSelectionne(
+        ?array $image
+    ): bool {
+        return is_array($image)
+            && isset($image['error'])
+            && $image['error'] !== UPLOAD_ERR_NO_FILE;
+    }
+
+    /**
+     * Normalisation des données.
      */
     private function normaliser(array $data): array
     {
-        foreach ($data as $key => $value) {
-            if (is_string($value)) {
-                $data[$key] = trim($value);
-            }
-        }
-
-        return $data;
+        return [
+            'nom' => trim((string) ($data['nom'] ?? '')),
+            'description' => trim(
+                (string) ($data['description'] ?? '')
+            ),
+            'prix' => $data['prix'] ?? '',
+            'stock' => $data['stock'] ?? '',
+            'categorie_id' => $data['categorie_id'] ?? '',
+            'image' => $data['image'] ?? null,
+        ];
     }
 
     /**
-     * Détermine automatiquement le statut du produit
-     * à partir du stock.
+     * Déduit automatiquement le statut à partir du stock.
      */
-    private function withStatutDerive(array $data): array
-    {
+    private function withStatutDerive(
+        array $data
+    ): array {
         $data['statut'] =
-            ((int) ($data['stock'] ?? 0)) === 0
-                ? 'en_rupture'
-                : 'disponible';
+            ((int) $data['stock']) === 0
+            ? 'en_rupture'
+            : 'disponible';
 
         return $data;
     }
 
     /**
-     * Validation complète du formulaire produit.
-     *
-     * Les erreurs sont retournées champ par champ
-     * afin de pouvoir les afficher directement sous chaque input.
+     * Validation métier.
      */
-    private function validate(array $data): void
-    {
-        $errors = [];
+    private function validate(
+        array $data,
+        bool $imageObligatoire = false
+    ): void {
+        $erreurs = [];
 
-        /*
-         * NOM
-         */
-        if (!isset($data['nom']) || $data['nom'] === '') {
-            $errors['nom'] = 'Le nom du produit est obligatoire.';
-        } elseif (mb_strlen($data['nom']) > 100) {
-            $errors['nom'] =
-                'Le nom du produit ne doit pas dépasser 100 caractères.';
-        }
-
-        /*
-         * DESCRIPTION
-         */
+        // =========================
+        // NOM
+        // =========================
         if (
-            isset($data['description'])
-            && $data['description'] !== ''
-            && mb_strlen($data['description']) > 255
+            !isset($data['nom'])
+            || trim((string) $data['nom']) === ''
         ) {
-            $errors['description'] =
-                "La description ne doit pas dépasser 255 caractères.";
+            $erreurs['nom'] = 'Le champ nom est obligatoire.';
         }
 
-        /*
-         * PRIX
-         */
-        if (!isset($data['prix']) || $data['prix'] === '') {
-            $errors['prix'] = 'Le prix est obligatoire.';
+        // =========================
+        // DESCRIPTION
+        // =========================
+        if (
+            !isset($data['description'])
+            || trim((string) $data['description']) === ''
+        ) {
+            $erreurs['description'] =
+                'Le champ description est obligatoire.';
+        }
+
+        // =========================
+        // PRIX
+        // =========================
+        if (
+            !isset($data['prix'])
+            || $data['prix'] === ''
+        ) {
+            $erreurs['prix'] = 'Le champ prix est obligatoire.';
         } elseif (!is_numeric($data['prix'])) {
-            $errors['prix'] = 'Le prix doit être un nombre valide.';
+            $erreurs['prix'] =
+                'Le prix doit être un nombre valide.';
         } elseif ((float) $data['prix'] < 0) {
-            $errors['prix'] = 'Le prix ne peut pas être négatif.';
+            $erreurs['prix'] =
+                'Le prix ne peut pas être négatif.';
         }
 
-        /*
-         * STOCK
-         */
-        if (!isset($data['stock']) || $data['stock'] === '') {
-            $errors['stock'] = 'Le stock est obligatoire.';
-        } elseif (
-            filter_var(
-                $data['stock'],
-                FILTER_VALIDATE_INT
-            ) === false
+        // =========================
+        // STOCK
+        // =========================
+        if (
+            !isset($data['stock'])
+            || trim((string) $data['stock']) === ''
         ) {
-            $errors['stock'] =
-                'Le stock doit être un nombre entier.';
-        } elseif ((int) $data['stock'] < 0) {
-            $errors['stock'] =
-                'Le stock ne peut pas être négatif.';
+            $erreurs['stock'] =
+                'Le champ stock est obligatoire.';
+        } elseif (
+            !ctype_digit((string) $data['stock'])
+        ) {
+            $erreurs['stock'] =
+                'Le stock doit être un nombre entier positif ou nul.';
         }
 
-        /*
-         * CATÉGORIE
-         */
+        // =========================
+        // CATÉGORIE
+        // =========================
         if (
             !isset($data['categorie_id'])
             || $data['categorie_id'] === ''
         ) {
-            $errors['categorie_id'] =
-                'La catégorie est obligatoire.';
+            $erreurs['categorie_id'] =
+                'Le champ catégorie est obligatoire.';
         } elseif (
-            filter_var(
-                $data['categorie_id'],
-                FILTER_VALIDATE_INT
-            ) === false
+            $this->categorieRepository
+            ->findById((int) $data['categorie_id']) === null
         ) {
-            $errors['categorie_id'] =
-                'La catégorie sélectionnée est invalide.';
-        } elseif (
-            $this->categorieRepository->findById(
-                (int) $data['categorie_id']
-            ) === null
-        ) {
-            $errors['categorie_id'] =
-                "La catégorie sélectionnée n'existe pas.";
+            $erreurs['categorie_id'] =
+                'La catégorie sélectionnée est inconnue.';
         }
 
-        /*
-         * IMAGE
-         */
+        // =========================
+        // IMAGE
+        // =========================
         if (
-            isset($data['image'])
-            && $data['image'] !== ''
-            && mb_strlen($data['image']) > 255
+            $imageObligatoire
+            && (
+                !isset($data['image'])
+                || $data['image'] === null
+                || trim((string) $data['image']) === ''
+            )
         ) {
-            $errors['image'] =
-                "Le chemin de l'image ne doit pas dépasser 255 caractères.";
+            $erreurs['image'] =
+                'L’image du produit est obligatoire.';
         }
 
-        /*
-         * S'IL Y A DES ERREURS
-         */
-        if (!empty($errors)) {
+        // =========================
+        // ERREURS
+        // =========================
+        if (!empty($erreurs)) {
             throw new ValidationException(
                 'Veuillez corriger les erreurs du formulaire.',
-                $errors
+                $erreurs
             );
         }
     }

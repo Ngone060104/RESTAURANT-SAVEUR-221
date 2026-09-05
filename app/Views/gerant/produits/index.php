@@ -2,7 +2,6 @@
 
 $produits = $produits ?? [];
 $categories = $categories ?? [];
-
 $form = $form ?? [];
 $erreurs = $erreurs ?? [];
 
@@ -25,7 +24,9 @@ $statutActive = $statutActive ?? '';
 |--------------------------------------------------------------------------
 */
 
-$modeEdition = $editId !== null && $produitEdition !== null;
+$modeEdition =
+    $editId !== null
+    && $produitEdition !== null;
 
 $ouvrirModal =
     $modeEdition
@@ -46,36 +47,75 @@ $valeur = static function (
     string $champ,
     mixed $defaut = ''
 ) use ($form, $produitEdition): mixed {
+
     if (array_key_exists($champ, $form)) {
         return $form[$champ];
     }
 
     if ($produitEdition !== null) {
         return match ($champ) {
-            'nom' => $produitEdition->getNom(),
-            'description' => $produitEdition->getDescription() ?? '',
-            'prix' => $produitEdition->getPrix(),
-            'stock' => $produitEdition->getStock(),
-            'image' => $produitEdition->getImage() ?? '',
-            'categorie_id' => $produitEdition->getCategorieId(),
-            default => $defaut,
+            'nom' =>
+                $produitEdition->getNom(),
+
+            'description' =>
+                $produitEdition->getDescription() ?? '',
+
+            'prix' =>
+                $produitEdition->getPrix(),
+
+            'stock' =>
+                $produitEdition->getStock(),
+
+            'image' =>
+                $produitEdition->getImage() ?? '',
+
+            'categorie_id' =>
+                $produitEdition->getCategorieId(),
+
+            default =>
+                $defaut,
         };
     }
 
     return $defaut;
 };
 
-$erreurChamp = static function (string $champ) use ($erreurs): ?string {
+/*
+|--------------------------------------------------------------------------
+| Erreur d'un champ
+|--------------------------------------------------------------------------
+*/
+
+$erreurChamp = static function (
+    string $champ
+) use ($erreurs): ?string {
+
     return $erreurs[$champ] ?? null;
 };
 
-$classeChamp = static function (string $champ) use ($erreurs): string {
+/*
+|--------------------------------------------------------------------------
+| Classe d'un champ en erreur
+|--------------------------------------------------------------------------
+*/
+
+$classeChamp = static function (
+    string $champ
+) use ($erreurs): string {
+
     return isset($erreurs[$champ])
         ? 'border-red-400 focus:border-red-500 focus:ring-red-100'
         : 'border-gray-200 focus:border-orange-400 focus:ring-orange-100';
 };
 
+/*
+|--------------------------------------------------------------------------
+| Image produit
+|--------------------------------------------------------------------------
+*/
+
 $imageProduit = static function ($produit): string {
+
     $image = $produit->getImage() ?? '';
 
     if ($image === '') {
@@ -95,8 +135,6 @@ $imageProduit = static function ($produit): string {
 
 ?>
 
-
-
 <!-- ========================================================= -->
 <!-- CONTENU PRINCIPAL -->
 <!-- ========================================================= -->
@@ -109,36 +147,48 @@ $imageProduit = static function ($produit): string {
 
     <section
         class="mb-6 overflow-hidden rounded-2xl bg-gradient-to-r from-gray-900 via-gray-800 to-orange-900 shadow-sm">
+
         <div
             class="flex flex-col gap-5 px-5 py-6 sm:px-7 lg:flex-row lg:items-center lg:justify-between">
 
             <div>
+
                 <div class="mb-2 flex items-center gap-2 text-orange-300">
+
                     <i class="fa-solid fa-utensils"></i>
 
-                    <span class="text-xs font-semibold uppercase tracking-wider">
+                    <span
+                        class="text-xs font-semibold uppercase tracking-wider">
                         Carte du restaurant
                     </span>
+
                 </div>
 
-                <h1 class="text-2xl font-bold text-white sm:text-3xl">
+                <h1
+                    class="text-2xl font-bold text-white sm:text-3xl">
                     Gestion des Produits &amp; Carte
                 </h1>
 
-                <p class="mt-2 max-w-2xl text-sm text-gray-300">
+                <p
+                    class="mt-2 max-w-2xl text-sm text-gray-300">
                     Gérez les plats, leurs catégories, leurs prix et leurs stocks.
                 </p>
+
             </div>
 
             <button
                 type="button"
                 onclick="ouvrirModalProduit()"
                 class="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-600 focus:outline-none focus:ring-4 focus:ring-orange-300/30">
+
                 <i class="fa-solid fa-plus"></i>
+
                 Nouveau Produit
+
             </button>
 
         </div>
+
     </section>
 
 
@@ -155,7 +205,9 @@ $imageProduit = static function ($produit): string {
             onsubmit="rechercherProduit(event)">
 
             <!-- Recherche -->
+
             <div class="lg:col-span-5">
+
                 <label
                     for="q"
                     class="mb-1.5 block text-xs font-semibold text-gray-600">
@@ -163,8 +215,10 @@ $imageProduit = static function ($produit): string {
                 </label>
 
                 <div class="relative">
+
                     <i
-                        class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400"></i>
+                        class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">
+                    </i>
 
                     <input
                         id="q"
@@ -172,12 +226,16 @@ $imageProduit = static function ($produit): string {
                         value="<?= htmlspecialchars($terme) ?>"
                         placeholder="Rechercher un produit..."
                         class="h-11 w-full rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-3 text-sm text-gray-700 outline-none transition focus:border-orange-400 focus:bg-white focus:ring-4 focus:ring-orange-100">
+
                 </div>
+
             </div>
 
 
             <!-- Disponibilité -->
+
             <div class="lg:col-span-3">
+
                 <label
                     for="statut"
                     class="mb-1.5 block text-xs font-semibold text-gray-600">
@@ -188,6 +246,7 @@ $imageProduit = static function ($produit): string {
                     id="statut"
                     onchange="filtrerParStatut(this.value)"
                     class="h-11 w-full rounded-xl border border-gray-200 bg-gray-50 px-3 text-sm text-gray-700 outline-none transition focus:border-orange-400 focus:bg-white focus:ring-4 focus:ring-orange-100">
+
                     <option value="">
                         Tous les produits
                     </option>
@@ -203,12 +262,16 @@ $imageProduit = static function ($produit): string {
                         <?= $statutActive === 'en_rupture' ? 'selected' : '' ?>>
                         En rupture
                     </option>
+
                 </select>
+
             </div>
 
 
             <!-- Catégorie -->
+
             <div class="lg:col-span-3">
+
                 <label
                     for="categorie"
                     class="mb-1.5 block text-xs font-semibold text-gray-600">
@@ -219,6 +282,7 @@ $imageProduit = static function ($produit): string {
                     id="categorie"
                     onchange="filtrerParCategorie(this.value)"
                     class="h-11 w-full rounded-xl border border-gray-200 bg-gray-50 px-3 text-sm text-gray-700 outline-none transition focus:border-orange-400 focus:bg-white focus:ring-4 focus:ring-orange-100">
+
                     <option value="">
                         Toutes les catégories
                     </option>
@@ -229,24 +293,34 @@ $imageProduit = static function ($produit): string {
                             value="<?= (int) $categorie->getId() ?>"
                             <?= (int) $categorieActive === (int) $categorie->getId()
                                 ? 'selected'
-                                : ''
-                            ?>>
-                            <?= htmlspecialchars($categorie->getLibelle()) ?>
+                                : '' ?>>
+
+                            <?= htmlspecialchars(
+                                $categorie->getLibelle()
+                            ) ?>
+
                         </option>
 
                     <?php endforeach; ?>
+
                 </select>
+
             </div>
 
 
             <!-- Bouton recherche -->
+
             <div class="flex items-end lg:col-span-1">
+
                 <button
                     type="submit"
                     title="Rechercher"
                     class="h-11 w-full rounded-xl bg-gray-900 text-white transition hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-200 lg:w-11">
+
                     <i class="fa-solid fa-filter"></i>
+
                 </button>
+
             </div>
 
         </form>
@@ -255,18 +329,20 @@ $imageProduit = static function ($produit): string {
 
 
     <!-- ===================================================== -->
-    <!-- MESSAGE -->
+    <!-- MESSAGE GLOBAL -->
     <!-- ===================================================== -->
 
     <?php if ($message !== null): ?>
 
         <div
             class="mb-5 flex items-start gap-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+
             <i class="fa-solid fa-circle-exclamation mt-0.5"></i>
 
             <span>
                 <?= htmlspecialchars($message) ?>
             </span>
+
         </div>
 
     <?php endif; ?>
@@ -279,14 +355,18 @@ $imageProduit = static function ($produit): string {
     <section
         class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
 
-        <!-- Desktop -->
+        <!-- ================================================= -->
+        <!-- DESKTOP -->
+        <!-- ================================================= -->
 
         <div class="hidden overflow-x-auto lg:block">
 
             <table class="w-full min-w-[850px]">
 
                 <thead>
-                    <tr class="border-b border-gray-100 bg-gray-50/80">
+
+                    <tr
+                        class="border-b border-gray-100 bg-gray-50/80">
 
                         <th
                             class="px-5 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-gray-500">
@@ -314,6 +394,7 @@ $imageProduit = static function ($produit): string {
                         </th>
 
                     </tr>
+
                 </thead>
 
 
@@ -322,22 +403,30 @@ $imageProduit = static function ($produit): string {
                     <?php if (empty($produits)): ?>
 
                         <tr>
-                            <td colspan="5" class="px-5 py-16 text-center">
+
+                            <td
+                                colspan="5"
+                                class="px-5 py-16 text-center">
 
                                 <div
                                     class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-gray-400">
+
                                     <i class="fa-solid fa-utensils text-xl"></i>
+
                                 </div>
 
-                                <p class="mt-4 text-sm font-semibold text-gray-700">
+                                <p
+                                    class="mt-4 text-sm font-semibold text-gray-700">
                                     Aucun produit trouvé
                                 </p>
 
-                                <p class="mt-1 text-xs text-gray-400">
+                                <p
+                                    class="mt-1 text-xs text-gray-400">
                                     Essayez de modifier vos filtres.
                                 </p>
 
                             </td>
+
                         </tr>
 
                     <?php else: ?>
@@ -345,11 +434,15 @@ $imageProduit = static function ($produit): string {
                         <?php foreach ($produits as $produit): ?>
 
                             <?php
+
                             $stock = (int) $produit->getStock();
+
                             $stockDisponible = $stock > 0;
+
                             ?>
 
-                            <tr class="transition hover:bg-orange-50/30">
+                            <tr
+                                class="transition hover:bg-orange-50/30">
 
                                 <!-- Produit -->
 
@@ -358,22 +451,34 @@ $imageProduit = static function ($produit): string {
                                     <div class="flex items-center gap-3">
 
                                         <img
-                                            src="<?= htmlspecialchars($imageProduit($produit)) ?>"
-                                            alt="<?= htmlspecialchars($produit->getNom()) ?>"
+                                            src="<?= htmlspecialchars(
+                                                $imageProduit($produit)
+                                            ) ?>"
+                                            alt="<?= htmlspecialchars(
+                                                $produit->getNom()
+                                            ) ?>"
                                             class="h-12 w-12 rounded-xl object-cover ring-1 ring-gray-100">
 
                                         <div class="min-w-0">
 
                                             <p
                                                 class="truncate text-sm font-semibold text-gray-800">
-                                                <?= htmlspecialchars($produit->getNom()) ?>
+
+                                                <?= htmlspecialchars(
+                                                    $produit->getNom()
+                                                ) ?>
+
                                             </p>
 
                                             <?php if ($produit->getDescription()): ?>
 
                                                 <p
                                                     class="mt-0.5 max-w-[280px] truncate text-xs text-gray-400">
-                                                    <?= htmlspecialchars($produit->getDescription()) ?>
+
+                                                    <?= htmlspecialchars(
+                                                        $produit->getDescription()
+                                                    ) ?>
+
                                                 </p>
 
                                             <?php endif; ?>
@@ -391,7 +496,12 @@ $imageProduit = static function ($produit): string {
 
                                     <span
                                         class="inline-flex rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-600">
-                                        <?= htmlspecialchars($produit->getCategorieLibelle() ?? 'Sans catégorie') ?>
+
+                                        <?= htmlspecialchars(
+                                            $produit->getCategorieLibelle()
+                                                ?? 'Sans catégorie'
+                                        ) ?>
+
                                     </span>
 
                                 </td>
@@ -401,14 +511,18 @@ $imageProduit = static function ($produit): string {
 
                                 <td class="px-5 py-4">
 
-                                    <span class="text-sm font-bold text-orange-500">
+                                    <span
+                                        class="text-sm font-bold text-orange-500">
+
                                         <?= number_format(
                                             (float) $produit->getPrix(),
                                             0,
                                             ',',
                                             ' '
                                         ) ?>
+
                                         FCFA
+
                                     </span>
 
                                 </td>
@@ -422,18 +536,26 @@ $imageProduit = static function ($produit): string {
 
                                         <span
                                             class="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-600">
-                                            <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+
+                                            <span
+                                                class="h-1.5 w-1.5 rounded-full bg-green-500">
+                                            </span>
 
                                             <?= $stock ?>
+
                                         </span>
 
                                     <?php else: ?>
 
                                         <span
                                             class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600">
-                                            <span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
+
+                                            <span
+                                                class="h-1.5 w-1.5 rounded-full bg-red-500">
+                                            </span>
 
                                             Rupture
+
                                         </span>
 
                                     <?php endif; ?>
@@ -445,25 +567,26 @@ $imageProduit = static function ($produit): string {
 
                                 <td class="px-5 py-4">
 
-                                    <div class="flex justify-end gap-1">
-
-                                        <!-- Modifier -->
+                                    <div
+                                        class="flex justify-end gap-1">
 
                                         <a
                                             href="/gerant/produits/update/<?= (int) $produit->getId() ?>"
                                             title="Modifier"
                                             class="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition hover:bg-orange-50 hover:text-orange-500">
+
                                             <i class="fa-solid fa-pen-to-square"></i>
+
                                         </a>
 
-
-                                        <!-- Supprimer -->
 
                                         <a
                                             href="/gerant/produits/delete/<?= (int) $produit->getId() ?>"
                                             title="Supprimer"
                                             class="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-500">
+
                                             <i class="fa-solid fa-trash"></i>
+
                                         </a>
 
                                     </div>
@@ -495,14 +618,18 @@ $imageProduit = static function ($produit): string {
 
                     <div
                         class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-gray-400">
+
                         <i class="fa-solid fa-utensils text-xl"></i>
+
                     </div>
 
-                    <p class="mt-4 text-sm font-semibold text-gray-700">
+                    <p
+                        class="mt-4 text-sm font-semibold text-gray-700">
                         Aucun produit trouvé
                     </p>
 
-                    <p class="mt-1 text-xs text-gray-400">
+                    <p
+                        class="mt-1 text-xs text-gray-400">
                         Essayez de modifier vos filtres.
                     </p>
 
@@ -513,8 +640,11 @@ $imageProduit = static function ($produit): string {
                 <?php foreach ($produits as $produit): ?>
 
                     <?php
+
                     $stock = (int) $produit->getStock();
+
                     $stockDisponible = $stock > 0;
+
                     ?>
 
                     <div class="p-4">
@@ -522,25 +652,39 @@ $imageProduit = static function ($produit): string {
                         <div class="flex items-start gap-3">
 
                             <img
-                                src="<?= htmlspecialchars($imageProduit($produit)) ?>"
-                                alt="<?= htmlspecialchars($produit->getNom()) ?>"
+                                src="<?= htmlspecialchars(
+                                    $imageProduit($produit)
+                                ) ?>"
+                                alt="<?= htmlspecialchars(
+                                    $produit->getNom()
+                                ) ?>"
                                 class="h-16 w-16 shrink-0 rounded-xl object-cover ring-1 ring-gray-100">
 
 
                             <div class="min-w-0 flex-1">
 
-                                <div class="flex items-start justify-between gap-3">
+                                <div
+                                    class="flex items-start justify-between gap-3">
 
                                     <div class="min-w-0">
 
                                         <p
                                             class="truncate text-sm font-semibold text-gray-800">
-                                            <?= htmlspecialchars($produit->getNom()) ?>
+
+                                            <?= htmlspecialchars(
+                                                $produit->getNom()
+                                            ) ?>
+
                                         </p>
 
                                         <span
                                             class="mt-1 inline-flex rounded-full bg-orange-50 px-2.5 py-1 text-[10px] font-semibold text-orange-600">
-                                            <?= htmlspecialchars($produit->getCategorieLibelle() ?? 'Sans catégorie') ?>
+
+                                            <?= htmlspecialchars(
+                                                $produit->getCategorieLibelle()
+                                                    ?? 'Sans catégorie'
+                                            ) ?>
+
                                         </span>
 
                                     </div>
@@ -548,20 +692,25 @@ $imageProduit = static function ($produit): string {
 
                                     <!-- Actions -->
 
-                                    <div class="flex shrink-0 gap-1">
+                                    <div
+                                        class="flex shrink-0 gap-1">
 
                                         <a
                                             href="/gerant/produits/update/<?= (int) $produit->getId() ?>"
                                             title="Modifier"
                                             class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 transition hover:bg-orange-50 hover:text-orange-500">
+
                                             <i class="fa-solid fa-pen-to-square text-sm"></i>
+
                                         </a>
 
                                         <a
                                             href="/gerant/produits/delete/<?= (int) $produit->getId() ?>"
                                             title="Supprimer"
                                             class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-500">
+
                                             <i class="fa-solid fa-trash text-sm"></i>
+
                                         </a>
 
                                     </div>
@@ -572,14 +721,18 @@ $imageProduit = static function ($produit): string {
                                 <div
                                     class="mt-3 flex items-center justify-between">
 
-                                    <span class="text-sm font-bold text-orange-500">
+                                    <span
+                                        class="text-sm font-bold text-orange-500">
+
                                         <?= number_format(
                                             (float) $produit->getPrix(),
                                             0,
                                             ',',
                                             ' '
                                         ) ?>
+
                                         FCFA
+
                                     </span>
 
 
@@ -587,18 +740,27 @@ $imageProduit = static function ($produit): string {
 
                                         <span
                                             class="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1 text-[10px] font-semibold text-green-600">
-                                            <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
 
-                                            Stock : <?= $stock ?>
+                                            <span
+                                                class="h-1.5 w-1.5 rounded-full bg-green-500">
+                                            </span>
+
+                                            Stock :
+                                            <?= $stock ?>
+
                                         </span>
 
                                     <?php else: ?>
 
                                         <span
                                             class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-semibold text-red-600">
-                                            <span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
+
+                                            <span
+                                                class="h-1.5 w-1.5 rounded-full bg-red-500">
+                                            </span>
 
                                             Rupture
+
                                         </span>
 
                                     <?php endif; ?>
@@ -633,7 +795,8 @@ $imageProduit = static function ($produit): string {
 
     <div
         id="contenuModalProduit"
-        class="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
+        class="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-2xl">
+
 
         <!-- Header -->
 
@@ -644,27 +807,36 @@ $imageProduit = static function ($produit): string {
 
                 <div
                     class="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-500">
+
                     <i
                         class="<?= $modeEdition
-                                    ? 'fa-solid fa-pen-to-square'
-                                    : 'fa-solid fa-plus'
-                                ?>"></i>
+                            ? 'fa-solid fa-pen-to-square'
+                            : 'fa-solid fa-plus'
+                        ?>">
+                    </i>
+
                 </div>
 
                 <div>
 
-                    <h2 class="text-base font-bold text-gray-800">
+                    <h2
+                        class="text-base font-bold text-gray-800">
+
                         <?= $modeEdition
                             ? 'Modifier le produit'
                             : 'Nouveau Produit'
                         ?>
+
                     </h2>
 
-                    <p class="text-xs text-gray-400">
+                    <p
+                        class="text-xs text-gray-400">
+
                         <?= $modeEdition
                             ? 'Modifiez les informations du produit.'
                             : 'Ajoutez un nouveau plat à votre carte.'
                         ?>
+
                     </p>
 
                 </div>
@@ -677,7 +849,9 @@ $imageProduit = static function ($produit): string {
                 onclick="fermerModalProduit()"
                 title="Fermer"
                 class="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-700">
+
                 <i class="fa-solid fa-xmark"></i>
+
             </button>
 
         </div>
@@ -688,48 +862,79 @@ $imageProduit = static function ($produit): string {
         <form
             method="POST"
             action="<?= $modeEdition
-                        ? '/gerant/produits/update/' . (int) $editId
-                        : '/gerant/produits'
-                    ?>"
+                ? '/gerant/produits/update/' . (int) $editId
+                : '/gerant/produits'
+            ?>"
+            enctype="multipart/form-data"
             class="p-5 sm:p-6">
 
-            <?php if ($messageFormulaire !== null): ?>
+
+            <!-- Message général -->
+
+            <?php if (
+                $messageFormulaire !== null
+                && empty($erreurs)
+            ): ?>
 
                 <div
                     class="mb-5 flex items-start gap-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
+
                     <i class="fa-solid fa-circle-exclamation mt-0.5"></i>
 
                     <span>
-                        <?= htmlspecialchars($messageFormulaire) ?>
+                        <?= htmlspecialchars(
+                            $messageFormulaire
+                        ) ?>
                     </span>
+
                 </div>
 
             <?php endif; ?>
 
 
-            <!-- Nom -->
+            <!-- ================================================= -->
+            <!-- NOM -->
+            <!-- ================================================= -->
 
             <div class="mb-4">
 
                 <label
                     for="nom"
                     class="mb-1.5 block text-xs font-semibold text-gray-700">
+
                     Nom du produit
+
                     <span class="text-red-500">*</span>
+
                 </label>
+
 
                 <input
                     id="nom"
                     name="nom"
                     type="text"
-                    value="<?= htmlspecialchars((string) $valeur('nom')) ?>"
+                    value="<?= htmlspecialchars(
+                        (string) $valeur('nom')
+                    ) ?>"
                     class="<?= $classeChamp('nom') ?> h-11 w-full rounded-xl border bg-gray-50 px-3 text-sm text-gray-700 outline-none transition focus:bg-white focus:ring-4"
                     placeholder="Ex : Thiéboudienne">
 
+
                 <?php if ($erreurChamp('nom')): ?>
 
-                    <p class="mt-1 text-xs text-red-500">
-                        <?= htmlspecialchars($erreurChamp('nom')) ?>
+                    <p
+                        class="mt-1.5 flex items-start gap-1 text-xs text-red-500">
+
+                        <i
+                            class="fa-solid fa-circle-exclamation mt-0.5">
+                        </i>
+
+                        <span>
+                            <?= htmlspecialchars(
+                                $erreurChamp('nom')
+                            ) ?>
+                        </span>
+
                     </p>
 
                 <?php endif; ?>
@@ -737,27 +942,46 @@ $imageProduit = static function ($produit): string {
             </div>
 
 
-            <!-- Description -->
+            <!-- ================================================= -->
+            <!-- DESCRIPTION -->
+            <!-- ================================================= -->
 
             <div class="mb-4">
 
                 <label
                     for="description"
                     class="mb-1.5 block text-xs font-semibold text-gray-700">
+
                     Description
+
                 </label>
+
 
                 <textarea
                     id="description"
                     name="description"
                     rows="3"
                     class="<?= $classeChamp('description') ?> w-full resize-none rounded-xl border bg-gray-50 px-3 py-3 text-sm text-gray-700 outline-none transition focus:bg-white focus:ring-4"
-                    placeholder="Décrivez brièvement le plat..."><?= htmlspecialchars((string) $valeur('description')) ?></textarea>
+                    placeholder="Décrivez brièvement le plat..."><?= htmlspecialchars(
+                        (string) $valeur('description')
+                    ) ?></textarea>
+
 
                 <?php if ($erreurChamp('description')): ?>
 
-                    <p class="mt-1 text-xs text-red-500">
-                        <?= htmlspecialchars($erreurChamp('description')) ?>
+                    <p
+                        class="mt-1.5 flex items-start gap-1 text-xs text-red-500">
+
+                        <i
+                            class="fa-solid fa-circle-exclamation mt-0.5">
+                        </i>
+
+                        <span>
+                            <?= htmlspecialchars(
+                                $erreurChamp('description')
+                            ) ?>
+                        </span>
+
                     </p>
 
                 <?php endif; ?>
@@ -765,18 +989,28 @@ $imageProduit = static function ($produit): string {
             </div>
 
 
-            <!-- Prix / Stock -->
+            <!-- ================================================= -->
+            <!-- PRIX / STOCK -->
+            <!-- ================================================= -->
 
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div
+                class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+
+                <!-- Prix -->
 
                 <div>
 
                     <label
                         for="prix"
                         class="mb-1.5 block text-xs font-semibold text-gray-700">
+
                         Prix
+
                         <span class="text-red-500">*</span>
+
                     </label>
+
 
                     <div class="relative">
 
@@ -786,21 +1020,37 @@ $imageProduit = static function ($produit): string {
                             type="number"
                             min="0"
                             step="1"
-                            value="<?= htmlspecialchars((string) $valeur('prix')) ?>"
+                            value="<?= htmlspecialchars(
+                                (string) $valeur('prix')
+                            ) ?>"
                             class="<?= $classeChamp('prix') ?> h-11 w-full rounded-xl border bg-gray-50 px-3 pr-16 text-sm text-gray-700 outline-none transition focus:bg-white focus:ring-4"
                             placeholder="0">
 
                         <span
                             class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-400">
+
                             FCFA
+
                         </span>
 
                     </div>
 
+
                     <?php if ($erreurChamp('prix')): ?>
 
-                        <p class="mt-1 text-xs text-red-500">
-                            <?= htmlspecialchars($erreurChamp('prix')) ?>
+                        <p
+                            class="mt-1.5 flex items-start gap-1 text-xs text-red-500">
+
+                            <i
+                                class="fa-solid fa-circle-exclamation mt-0.5">
+                            </i>
+
+                            <span>
+                                <?= htmlspecialchars(
+                                    $erreurChamp('prix')
+                                ) ?>
+                            </span>
+
                         </p>
 
                     <?php endif; ?>
@@ -808,14 +1058,20 @@ $imageProduit = static function ($produit): string {
                 </div>
 
 
+                <!-- Stock -->
+
                 <div>
 
                     <label
                         for="stock"
                         class="mb-1.5 block text-xs font-semibold text-gray-700">
+
                         Stock
+
                         <span class="text-red-500">*</span>
+
                     </label>
+
 
                     <input
                         id="stock"
@@ -823,14 +1079,28 @@ $imageProduit = static function ($produit): string {
                         type="number"
                         min="0"
                         step="1"
-                        value="<?= htmlspecialchars((string) $valeur('stock', 0)) ?>"
+                        value="<?= htmlspecialchars(
+                            (string) $valeur('stock')
+                        ) ?>"
                         class="<?= $classeChamp('stock') ?> h-11 w-full rounded-xl border bg-gray-50 px-3 text-sm text-gray-700 outline-none transition focus:bg-white focus:ring-4"
                         placeholder="0">
 
+
                     <?php if ($erreurChamp('stock')): ?>
 
-                        <p class="mt-1 text-xs text-red-500">
-                            <?= htmlspecialchars($erreurChamp('stock')) ?>
+                        <p
+                            class="mt-1.5 flex items-start gap-1 text-xs text-red-500">
+
+                            <i
+                                class="fa-solid fa-circle-exclamation mt-0.5">
+                            </i>
+
+                            <span>
+                                <?= htmlspecialchars(
+                                    $erreurChamp('stock')
+                                ) ?>
+                            </span>
+
                         </p>
 
                     <?php endif; ?>
@@ -840,16 +1110,22 @@ $imageProduit = static function ($produit): string {
             </div>
 
 
-            <!-- Catégorie -->
+            <!-- ================================================= -->
+            <!-- CATÉGORIE -->
+            <!-- ================================================= -->
 
             <div class="mt-4">
 
                 <label
                     for="categorie_id"
                     class="mb-1.5 block text-xs font-semibold text-gray-700">
+
                     Catégorie
+
                     <span class="text-red-500">*</span>
+
                 </label>
+
 
                 <select
                     id="categorie_id"
@@ -860,25 +1136,43 @@ $imageProduit = static function ($produit): string {
                         Sélectionner une catégorie
                     </option>
 
+
                     <?php foreach ($categories as $categorie): ?>
 
                         <option
                             value="<?= (int) $categorie->getId() ?>"
-                            <?= (string) $valeur('categorie_id') === (string) $categorie->getId()
+                            <?= (string) $valeur('categorie_id')
+                                === (string) $categorie->getId()
                                 ? 'selected'
                                 : ''
                             ?>>
-                            <?= htmlspecialchars($categorie->getLibelle()) ?>
+
+                            <?= htmlspecialchars(
+                                $categorie->getLibelle()
+                            ) ?>
+
                         </option>
 
                     <?php endforeach; ?>
 
                 </select>
 
+
                 <?php if ($erreurChamp('categorie_id')): ?>
 
-                    <p class="mt-1 text-xs text-red-500">
-                        <?= htmlspecialchars($erreurChamp('categorie_id')) ?>
+                    <p
+                        class="mt-1.5 flex items-start gap-1 text-xs text-red-500">
+
+                        <i
+                            class="fa-solid fa-circle-exclamation mt-0.5">
+                        </i>
+
+                        <span>
+                            <?= htmlspecialchars(
+                                $erreurChamp('categorie_id')
+                            ) ?>
+                        </span>
+
                     </p>
 
                 <?php endif; ?>
@@ -886,35 +1180,108 @@ $imageProduit = static function ($produit): string {
             </div>
 
 
-            <!-- Image -->
+            <!-- ================================================= -->
+            <!-- IMAGE -->
+            <!-- ================================================= -->
 
             <div class="mt-4">
 
                 <label
-                    for="image"
+                    for="produit_image"
                     class="mb-1.5 block text-xs font-semibold text-gray-700">
-                    Image
+
+                    Image du produit
+
                 </label>
 
-                <div class="relative">
+
+                <?php if (
+                    $modeEdition
+                    && $produitEdition !== null
+                    && $produitEdition->getImage()
+                ): ?>
+
+                    <div
+                        class="mb-3 flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 p-3">
+
+                        <img
+                            src="<?= htmlspecialchars(
+                                $imageProduit($produitEdition)
+                            ) ?>"
+                            alt="<?= htmlspecialchars(
+                                $produitEdition->getNom()
+                            ) ?>"
+                            class="h-16 w-16 rounded-xl object-cover ring-1 ring-gray-200">
+
+
+                        <div class="min-w-0">
+
+                            <p
+                                class="text-xs font-semibold text-gray-700">
+                                Image actuelle
+                            </p>
+
+                            <p
+                                class="mt-0.5 text-[11px] text-gray-400">
+                                Sélectionnez un nouveau fichier pour la remplacer.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                <?php endif; ?>
+
+
+                <label
+                    for="produit_image"
+                    class="<?= $classeChamp('image') ?> flex h-24 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed bg-gray-50 px-4 text-center transition hover:border-orange-400 hover:bg-orange-50/40">
 
                     <i
-                        class="fa-regular fa-image absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400"></i>
+                        class="fa-solid fa-cloud-arrow-up text-xl text-gray-400">
+                    </i>
+
+                    <span
+                        id="nomFichierImage"
+                        class="mt-2 text-xs text-[#777777]">
+
+                        Aucun fichier sélectionné
+
+                    </span>
+
+                    <span
+                        class="mt-1 text-[10px] text-gray-400">
+
+                        JPG, JPEG, PNG ou WEBP
+
+                    </span>
+
 
                     <input
-                        id="image"
+                        id="produit_image"
                         name="image"
-                        type="text"
-                        value="<?= htmlspecialchars((string) $valeur('image')) ?>"
-                        class="<?= $classeChamp('image') ?> h-11 w-full rounded-xl border bg-gray-50 pl-9 pr-3 text-sm text-gray-700 outline-none transition focus:bg-white focus:ring-4"
-                        placeholder="URL ou chemin de l'image">
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        class="hidden">
 
-                </div>
+                </label>
+
 
                 <?php if ($erreurChamp('image')): ?>
 
-                    <p class="mt-1 text-xs text-red-500">
-                        <?= htmlspecialchars($erreurChamp('image')) ?>
+                    <p
+                        class="mt-1.5 flex items-start gap-1 text-xs text-red-500">
+
+                        <i
+                            class="fa-solid fa-circle-exclamation mt-0.5">
+                        </i>
+
+                        <span>
+                            <?= htmlspecialchars(
+                                $erreurChamp('image')
+                            ) ?>
+                        </span>
+
                     </p>
 
                 <?php endif; ?>
@@ -922,7 +1289,9 @@ $imageProduit = static function ($produit): string {
             </div>
 
 
-            <!-- Actions -->
+            <!-- ================================================= -->
+            <!-- ACTIONS -->
+            <!-- ================================================= -->
 
             <div
                 class="mt-6 flex flex-col-reverse gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:justify-end">
@@ -931,22 +1300,28 @@ $imageProduit = static function ($produit): string {
                     type="button"
                     onclick="fermerModalProduit()"
                     class="inline-flex h-11 items-center justify-center rounded-xl border border-gray-200 px-5 text-sm font-semibold text-gray-600 transition hover:bg-gray-50">
+
                     Annuler
+
                 </button>
+
 
                 <button
                     type="submit"
                     class="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-orange-500 px-5 text-sm font-semibold text-white transition hover:bg-orange-600 focus:outline-none focus:ring-4 focus:ring-orange-100">
+
                     <i
                         class="<?= $modeEdition
-                                    ? 'fa-solid fa-floppy-disk'
-                                    : 'fa-solid fa-plus'
-                                ?>"></i>
+                            ? 'fa-solid fa-floppy-disk'
+                            : 'fa-solid fa-plus'
+                        ?>">
+                    </i>
 
                     <?= $modeEdition
                         ? 'Enregistrer les modifications'
                         : 'Créer le produit'
                     ?>
+
                 </button>
 
             </div>
@@ -973,18 +1348,24 @@ $imageProduit = static function ($produit): string {
 
         <div class="p-6 text-center">
 
+
             <!-- Icône -->
 
             <div
                 class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-500">
+
                 <i class="fa-solid fa-trash text-xl"></i>
+
             </div>
 
 
             <!-- Titre -->
 
-            <h2 class="mt-4 text-lg font-bold text-gray-800">
+            <h2
+                class="mt-4 text-lg font-bold text-gray-800">
+
                 Supprimer le produit ?
+
             </h2>
 
 
@@ -992,19 +1373,31 @@ $imageProduit = static function ($produit): string {
 
             <?php if ($produitSuppression !== null): ?>
 
-                <p class="mx-auto mt-2 max-w-sm text-sm leading-6 text-gray-500">
+                <p
+                    class="mx-auto mt-2 max-w-sm text-sm leading-6 text-gray-500">
+
                     Vous êtes sur le point de supprimer
+
                     <span class="font-semibold text-gray-700">
-                        « <?= htmlspecialchars($produitSuppression->getNom()) ?> »
+
+                        « <?= htmlspecialchars(
+                            $produitSuppression->getNom()
+                        ) ?> »
+
                     </span>.
+
                     Cette action est irréversible.
+
                 </p>
 
             <?php else: ?>
 
-                <p class="mx-auto mt-2 max-w-sm text-sm leading-6 text-gray-500">
+                <p
+                    class="mx-auto mt-2 max-w-sm text-sm leading-6 text-gray-500">
+
                     Cette action est irréversible.
                     Voulez-vous vraiment supprimer ce produit ?
+
                 </p>
 
             <?php endif; ?>
@@ -1012,28 +1405,34 @@ $imageProduit = static function ($produit): string {
 
             <!-- Actions -->
 
-            <div class="mt-6 grid grid-cols-2 gap-3">
+            <div
+                class="mt-6 grid grid-cols-2 gap-3">
 
                 <button
                     type="button"
                     onclick="fermerModalSuppression()"
                     class="inline-flex h-11 items-center justify-center rounded-xl border border-gray-200 px-4 text-sm font-semibold text-gray-600 transition hover:bg-gray-50">
+
                     Annuler
+
                 </button>
 
 
                 <form
                     method="POST"
                     action="<?= $deleteId !== null
-                                ? '/gerant/produits/delete/' . (int) $deleteId
-                                : '#'
-                            ?>">
+                        ? '/gerant/produits/delete/' . (int) $deleteId
+                        : '#'
+                    ?>">
 
                     <button
                         type="submit"
                         class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-red-500 px-4 text-sm font-semibold text-white transition hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-100">
+
                         <i class="fa-solid fa-trash"></i>
+
                         Supprimer
+
                     </button>
 
                 </form>
@@ -1047,303 +1446,497 @@ $imageProduit = static function ($produit): string {
 </div>
 
 
-
-<!-- ============================================================= -->
+<!-- ========================================================= -->
 <!-- JAVASCRIPT -->
-<!-- ============================================================= -->
+<!-- ========================================================= -->
 
 <script>
-    /**
-     * ============================================================
-     * MODAL PRODUIT
-     * ============================================================
-     */
 
-    function ouvrirModalProduit() {
+/*
+|--------------------------------------------------------------------------
+| MODAL PRODUIT
+|--------------------------------------------------------------------------
+*/
 
-        const modal = document.getElementById('modalProduit');
+function ouvrirModalProduit() {
 
-        if (!modal) {
-            return;
-        }
+    const modal =
+        document.getElementById('modalProduit');
 
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-
-        modal.setAttribute('aria-hidden', 'false');
-
-        document.body.classList.add('overflow-hidden');
+    if (!modal) {
+        return;
     }
 
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
 
-    function fermerModalProduit() {
+    modal.setAttribute(
+        'aria-hidden',
+        'false'
+    );
 
-        const modal = document.getElementById('modalProduit');
+    document.body.classList.add(
+        'overflow-hidden'
+    );
+}
 
-        if (!modal) {
-            return;
-        }
 
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+function fermerModalProduit() {
 
-        modal.setAttribute('aria-hidden', 'true');
+    const modal =
+        document.getElementById('modalProduit');
 
-        document.body.classList.remove('overflow-hidden');
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+
+    modal.setAttribute(
+        'aria-hidden',
+        'true'
+    );
+
+    document.body.classList.remove(
+        'overflow-hidden'
+    );
+
+
+    if (
+        window.location.pathname.startsWith(
+            '/gerant/produits/update/'
+        )
+    ) {
+
+        window.history.replaceState(
+            {},
+            '',
+            '/gerant/produits'
+        );
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| MODAL SUPPRESSION
+|--------------------------------------------------------------------------
+*/
+
+function ouvrirModalSuppression() {
+
+    const modal =
+        document.getElementById(
+            'modalSuppression'
+        );
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    modal.setAttribute(
+        'aria-hidden',
+        'false'
+    );
+
+    document.body.classList.add(
+        'overflow-hidden'
+    );
+}
+
+
+function fermerModalSuppression() {
+
+    const modal =
+        document.getElementById(
+            'modalSuppression'
+        );
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+
+    modal.setAttribute(
+        'aria-hidden',
+        'true'
+    );
+
+    document.body.classList.remove(
+        'overflow-hidden'
+    );
+
+
+    if (
+        window.location.pathname.startsWith(
+            '/gerant/produits/delete/'
+        )
+    ) {
+
+        window.history.replaceState(
+            {},
+            '',
+            '/gerant/produits'
+        );
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| RECHERCHE
+|--------------------------------------------------------------------------
+*/
+
+function rechercherProduit(event) {
+
+    event.preventDefault();
+
+    const input =
+        document.getElementById('q');
+
+    if (!input) {
+        return;
+    }
+
+    const terme =
+        input.value.trim();
+
+    if (terme === '') {
+
+        window.location.href =
+            '/gerant/produits';
+
+        return;
+    }
+
+    window.location.href =
+        '/gerant/produits/recherche/' +
+        encodeURIComponent(terme);
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| FILTRE CATÉGORIE
+|--------------------------------------------------------------------------
+*/
+
+function filtrerParCategorie(id) {
+
+    if (!id) {
+
+        window.location.href =
+            '/gerant/produits';
+
+        return;
+    }
+
+    window.location.href =
+        '/gerant/produits/categorie/' +
+        encodeURIComponent(id);
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| FILTRE STATUT
+|--------------------------------------------------------------------------
+*/
+
+function filtrerParStatut(statut) {
+
+    if (!statut) {
+
+        window.location.href =
+            '/gerant/produits';
+
+        return;
+    }
+
+    window.location.href =
+        '/gerant/produits/statut/' +
+        encodeURIComponent(statut);
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| INITIALISATION
+|--------------------------------------------------------------------------
+*/
+
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
+
+        const modalProduit =
+            document.getElementById(
+                'modalProduit'
+            );
+
+        const contenuModalProduit =
+            document.getElementById(
+                'contenuModalProduit'
+            );
+
+        const modalSuppression =
+            document.getElementById(
+                'modalSuppression'
+            );
+
+        const contenuModalSuppression =
+            document.getElementById(
+                'contenuModalSuppression'
+            );
+
 
         /*
-         * Si on était sur :
-         * /gerant/produits/update/{id}
-         *
-         * on revient simplement à :
-         * /gerant/produits
-         */
-        if (
-            window.location.pathname.startsWith(
-                '/gerant/produits/update/'
-            )
-        ) {
-            window.history.replaceState({},
-                '',
-                '/gerant/produits'
-            );
-        }
-    }
+        |----------------------------------------------------------------------
+        | Clic sur le fond du modal produit
+        |----------------------------------------------------------------------
+        */
 
+        if (modalProduit) {
 
-    /**
-     * ============================================================
-     * MODAL SUPPRESSION
-     * ============================================================
-     */
-
-    function ouvrirModalSuppression() {
-
-        const modal = document.getElementById('modalSuppression');
-
-        if (!modal) {
-            return;
-        }
-
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-
-        modal.setAttribute('aria-hidden', 'false');
-
-        document.body.classList.add('overflow-hidden');
-    }
-
-
-    function fermerModalSuppression() {
-
-        const modal = document.getElementById('modalSuppression');
-
-        if (!modal) {
-            return;
-        }
-
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-
-        modal.setAttribute('aria-hidden', 'true');
-
-        document.body.classList.remove('overflow-hidden');
-
-        /*
-         * Si on était sur :
-         * /gerant/produits/delete/{id}
-         *
-         * on revient à :
-         * /gerant/produits
-         */
-        if (
-            window.location.pathname.startsWith(
-                '/gerant/produits/delete/'
-            )
-        ) {
-            window.history.replaceState({},
-                '',
-                '/gerant/produits'
-            );
-        }
-    }
-
-
-    /**
-     * ============================================================
-     * INITIALISATION
-     * ============================================================
-     */
-
-    document.addEventListener(
-        'DOMContentLoaded',
-        function() {
-
-            const modalProduit =
-                document.getElementById('modalProduit');
-
-            const contenuModalProduit =
-                document.getElementById('contenuModalProduit');
-
-            const modalSuppression =
-                document.getElementById('modalSuppression');
-
-            const contenuModalSuppression =
-                document.getElementById('contenuModalSuppression');
-
-
-            /*
-             * ----------------------------------------------------
-             * Clic sur le fond du modal produit
-             * ----------------------------------------------------
-             */
-
-            if (modalProduit) {
-
-                modalProduit.addEventListener(
-                    'click',
-                    function(event) {
-
-                        if (
-                            event.target === modalProduit
-                        ) {
-                            fermerModalProduit();
-                        }
-
-                    }
-                );
-
-            }
-
-
-            /*
-             * ----------------------------------------------------
-             * Clic sur le fond du modal suppression
-             * ----------------------------------------------------
-             */
-
-            if (modalSuppression) {
-
-                modalSuppression.addEventListener(
-                    'click',
-                    function(event) {
-
-                        if (
-                            event.target === modalSuppression
-                        ) {
-                            fermerModalSuppression();
-                        }
-
-                    }
-                );
-
-            }
-
-
-            /*
-             * ----------------------------------------------------
-             * Échap
-             * ----------------------------------------------------
-             */
-
-            document.addEventListener(
-                'keydown',
-                function(event) {
-
-                    if (event.key !== 'Escape') {
-                        return;
-                    }
+            modalProduit.addEventListener(
+                'click',
+                function (event) {
 
                     if (
-                        modalSuppression &&
-                        !modalSuppression.classList.contains('hidden')
+                        event.target ===
+                        modalProduit
                     ) {
-                        fermerModalSuppression();
-                        return;
-                    }
 
-                    if (
-                        modalProduit &&
-                        !modalProduit.classList.contains('hidden')
-                    ) {
                         fermerModalProduit();
+
                     }
 
                 }
             );
 
-
-            /*
-             * ----------------------------------------------------
-             * Ouverture automatique du modal d'édition
-             * ----------------------------------------------------
-             */
-
-            <?php if ($ouvrirModal): ?>
-
-                ouvrirModalProduit();
-
-            <?php endif; ?>
-
-
-            /*
-             * ----------------------------------------------------
-             * Ouverture automatique du modal de suppression
-             * ----------------------------------------------------
-             */
-
-            <?php if ($ouvrirSuppression): ?>
-
-                ouvrirModalSuppression();
-
-            <?php endif; ?>
-
-        }
-    );
-
-
-    function rechercherProduit(event) {
-        event.preventDefault();
-
-        const input = document.getElementById('q');
-
-        if (!input) {
-            return;
         }
 
-        const terme = input.value.trim();
 
-        if (terme === '') {
-            window.location.href = '/gerant/produits';
-            return;
+        /*
+        |----------------------------------------------------------------------
+        | Empêcher fermeture modal produit
+        |----------------------------------------------------------------------
+        */
+
+        if (contenuModalProduit) {
+
+            contenuModalProduit.addEventListener(
+                'click',
+                function (event) {
+
+                    event.stopPropagation();
+
+                }
+            );
+
         }
 
-        window.location.href =
-            '/gerant/produits/recherche/' +
-            encodeURIComponent(terme);
+
+        /*
+        |----------------------------------------------------------------------
+        | Clic sur le fond du modal suppression
+        |----------------------------------------------------------------------
+        */
+
+        if (modalSuppression) {
+
+            modalSuppression.addEventListener(
+                'click',
+                function (event) {
+
+                    if (
+                        event.target ===
+                        modalSuppression
+                    ) {
+
+                        fermerModalSuppression();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /*
+        |----------------------------------------------------------------------
+        | Empêcher fermeture modal suppression
+        |----------------------------------------------------------------------
+        */
+
+        if (contenuModalSuppression) {
+
+            contenuModalSuppression.addEventListener(
+                'click',
+                function (event) {
+
+                    event.stopPropagation();
+
+                }
+            );
+
+        }
+
+
+        /*
+        |----------------------------------------------------------------------
+        | Touche Échap
+        |----------------------------------------------------------------------
+        */
+
+        document.addEventListener(
+            'keydown',
+            function (event) {
+
+                if (event.key !== 'Escape') {
+                    return;
+                }
+
+
+                if (
+                    modalSuppression
+                    && !modalSuppression.classList.contains(
+                        'hidden'
+                    )
+                ) {
+
+                    fermerModalSuppression();
+
+                    return;
+
+                }
+
+
+                if (
+                    modalProduit
+                    && !modalProduit.classList.contains(
+                        'hidden'
+                    )
+                ) {
+
+                    fermerModalProduit();
+
+                }
+
+            }
+        );
+
+
+        /*
+        |----------------------------------------------------------------------
+        | Ouverture automatique du modal produit
+        |----------------------------------------------------------------------
+        */
+
+        <?php if ($ouvrirModal): ?>
+
+            ouvrirModalProduit();
+
+        <?php endif; ?>
+
+
+        /*
+        |----------------------------------------------------------------------
+        | Ouverture automatique suppression
+        |----------------------------------------------------------------------
+        */
+
+        <?php if ($ouvrirSuppression): ?>
+
+            ouvrirModalSuppression();
+
+        <?php endif; ?>
+
     }
+);
 
 
-    function filtrerParCategorie(id) {
-        if (!id) {
-            window.location.href = '/gerant/produits';
+/*
+|--------------------------------------------------------------------------
+| Nom du fichier image
+|--------------------------------------------------------------------------
+*/
+
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
+
+        const inputImage =
+            document.getElementById(
+                'produit_image'
+            );
+
+        const nomFichier =
+            document.getElementById(
+                'nomFichierImage'
+            );
+
+        if (
+            !inputImage
+            || !nomFichier
+        ) {
             return;
         }
 
-        window.location.href =
-            '/gerant/produits/categorie/' +
-            encodeURIComponent(id);
+
+        inputImage.addEventListener(
+            'change',
+            function () {
+
+                if (
+                    this.files
+                    && this.files.length > 0
+                ) {
+
+                    nomFichier.textContent =
+                        this.files[0].name;
+
+                    nomFichier.classList.remove(
+                        'text-[#777777]'
+                    );
+
+                    nomFichier.classList.add(
+                        'font-semibold',
+                        'text-[#ff9900]'
+                    );
+
+                } else {
+
+                    nomFichier.textContent =
+                        'Aucun fichier sélectionné';
+
+                    nomFichier.classList.remove(
+                        'font-semibold',
+                        'text-[#ff9900]'
+                    );
+
+                    nomFichier.classList.add(
+                        'text-[#777777]'
+                    );
+
+                }
+
+            }
+        );
+
     }
+);
 
-
-    function filtrerParStatut(statut) {
-        if (!statut) {
-            window.location.href = '/gerant/produits';
-            return;
-        }
-
-        window.location.href =
-            '/gerant/produits/statut/' +
-            encodeURIComponent(statut);
-    }
 </script>

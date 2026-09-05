@@ -150,7 +150,10 @@ class ProduitController extends Controller
     public function store(): void
     {
         try {
-            $this->produitService->create($_POST);
+            $this->produitService->create(
+                $_POST,
+                $_FILES['image'] ?? null
+            );
 
             $this->redirect('/gerant/produits');
         } catch (ValidationException $e) {
@@ -174,7 +177,8 @@ class ProduitController extends Controller
         try {
             $this->produitService->update(
                 $id,
-                $_POST
+                $_POST,
+                $_FILES['image'] ?? null
             );
 
             $this->redirect('/gerant/produits');
