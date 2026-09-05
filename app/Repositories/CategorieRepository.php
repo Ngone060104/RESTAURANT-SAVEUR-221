@@ -12,8 +12,7 @@ class CategorieRepository implements RepositoryInterface
 {
     public function __construct(
         private PDO $pdo
-    ) {
-    }
+    ) {}
 
     /**
      * Récupérer toutes les catégories avec
@@ -42,10 +41,16 @@ class CategorieRepository implements RepositoryInterface
     /**
      * Récupérer une catégorie par son ID.
      */
-    public function findById(int $id): ?object
+    public function findById(int $id): ?Categorie
     {
         $stmt = $this->pdo->prepare(
-            'SELECT * FROM categories WHERE id = :id'
+            'SELECT
+            c.id,
+            c.libelle,
+            c.description,
+            0 AS nombre_produits
+         FROM categories c
+         WHERE c.id = :id'
         );
 
         $stmt->execute([
@@ -54,16 +59,22 @@ class CategorieRepository implements RepositoryInterface
 
         $row = $stmt->fetch();
 
-        return $row ?: null;
+        return $row ? $this->hydrate($row) : null;
     }
 
     /**
      * Récupérer une catégorie par son libellé.
      */
-    public function findByLibelle(string $libelle): ?object
+    public function findByLibelle(string $libelle): ?Categorie
     {
         $stmt = $this->pdo->prepare(
-            'SELECT * FROM categories WHERE libelle = :libelle'
+            'SELECT
+            c.id,
+            c.libelle,
+            c.description,
+            0 AS nombre_produits
+         FROM categories c
+         WHERE c.libelle = :libelle'
         );
 
         $stmt->execute([
@@ -72,7 +83,7 @@ class CategorieRepository implements RepositoryInterface
 
         $row = $stmt->fetch();
 
-        return $row ?: null;
+        return $row ? $this->hydrate($row) : null;
     }
 
     /**

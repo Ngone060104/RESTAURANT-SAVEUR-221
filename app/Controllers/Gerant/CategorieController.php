@@ -19,32 +19,35 @@ class CategorieController extends Controller
      */
     public function index(): void
     {
-        $terme = trim($_GET['q'] ?? '');
+        $this->afficherListe();
+    }
 
-        $categories = $terme !== ''
-            ? $this->categorieRepository->search($terme)
-            : $this->categorieRepository->findAll();
+    /**
+     * Ouvre le formulaire en mode modification
+     * URL : /gerant/categories/update/{id}
+     */
+    public function edit(int $id): void
+    {
+        $categorie = $this->categorieRepository->findById($id);
 
-        $this->view(
-            'gerant/categories/index',
-            [
-                'titre' => 'Catégories',
-                'categories' => $categories,
-                'terme' => $terme,
-                'erreurs' => [],
-                'form' => [],
-                'editId' => null,
+        if ($categorie === null) {
+            $this->redirect('/gerant/categories');
+            return;
+        }
 
-                // Toast
-                'toast' => $_GET['toast'] ?? null,
-                'toastType' => $_GET['toast_type'] ?? null,
+        $this->afficherListe([
+            'editId' => $id,
+            'categorieEdition' => $categorie,
+            'form' => [
+                'libelle' => $categorie->getLibelle(),
+                'description' => $categorie->getDescription() ?? '',
             ],
-            'layouts/gerant'
-        );
+        ]);
     }
 
     /**
      * Ajouter une catégorie
+     * POST : /gerant/categories
      */
     public function store(): void
     {
@@ -55,38 +58,20 @@ class CategorieController extends Controller
         } catch (ValidationException $e) {
             http_response_code(422);
 
-            $terme = trim($_GET['q'] ?? '');
-
-            $categories = $terme !== ''
-                ? $this->categorieRepository->search($terme)
-                : $this->categorieRepository->findAll();
-
-            $this->view(
-                'gerant/categories/index',
-                [
-                    'titre' => 'Catégories',
-                    'categories' => $categories,
-                    'terme' => $terme,
-                    'erreurs' => $e->getErrors(),
-                    'form' => $_POST,
-                    'editId' => null,
-
-                    // Toast
-                    'toast' => null,
-                    'toastType' => null,
-                ],
-                'layouts/gerant'
-            );
+            $this->afficherListe([
+                'erreurs' => $e->getErrors(),
+                'form' => $_POST,
+                'editId' => null,
+            ]);
         }
     }
 
     /**
      * Modifier une catégorie
+     * POST : /gerant/categories/update/{id}
      */
-    public function update(): void
+    public function update(int $id): void
     {
-        $id = (int) ($_POST['id'] ?? 0);
-
         try {
             $this->categorieService->update($id, $_POST);
 
@@ -94,67 +79,140 @@ class CategorieController extends Controller
         } catch (ValidationException $e) {
             http_response_code(422);
 
-            $terme = trim($_GET['q'] ?? '');
+            $categorie = $this->categorieRepository->findById($id);
 
-            $categories = $terme !== ''
-                ? $this->categorieRepository->search($terme)
-                : $this->categorieRepository->findAll();
-
-            $this->view(
-                'gerant/categories/index',
-                [
-                    'titre' => 'Catégories',
-                    'categories' => $categories,
-                    'terme' => $terme,
-                    'erreurs' => $e->getErrors(),
-                    'form' => $_POST,
-                    'editId' => $id,
-
-                    // Toast
-                    'toast' => null,
-                    'toastType' => null,
-                ],
-                'layouts/gerant'
-            );
+            $this->afficherListe([
+                'erreurs' => $e->getErrors(),
+                'form' => $_POST,
+                'editId' => $id,
+                'categorieEdition' => $categorie,
+            ]);
         }
     }
 
     /**
-     * Supprimer une catégorie
+     * Ouvre le modal de confirmation de suppression
+     * GET : /gerant/categories/delete/{id}
      */
-   public function destroy(): void
-{
-    $id = (int) ($_POST['id'] ?? 0);
+    public function confirmDelete(int $id): void
+    {
+        $categorie = $this->categorieRepository->findById($id);
 
-    try {
-        $this->categorieService->delete($id);
+        if ($categorie === null) {
+            $this->redirect('/gerant/categories');
+            return;
+        }
 
-        // Suppression réussie
-        $this->redirect('/gerant/categories');
+        $this->afficherListe([
+            'deleteId' => $id,
+            'categorieSuppression' => $categorie,
+        ]);
+    }
 
-    } catch (ValidationException $e) {
+    /**
+     * Supprimer une catégorie
+     * POST : /gerant/categories/delete/{id}
+     */
+    public function destroy(int $id): void
+    {
+        try {
+            $this->categorieService->delete($id);
 
-        // On recharge les catégories
+            $this->redirect('/gerant/categories');
+        } catch (ValidationException $e) {
+            http_response_code(422);
+
+            $this->afficherListe([
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Recherche
+     * GET : /gerant/categories/recherche/{terme}
+     */
+    public function recherche(string $terme): void
+    {
+        $terme = trim(urldecode($terme));
+
+        $categories = $terme !== ''
+            ? $this->categorieRepository->search($terme)
+            : $this->categorieRepository->findAll();
+
+        $this->renderIndex([
+            'categories' => $categories,
+            'terme' => $terme,
+        ]);
+    }
+
+    /**
+     * Charge la liste complète + données des modals.
+     */
+    private function afficherListe(array $data = []): void
+    {
         $terme = trim($_GET['q'] ?? '');
 
         $categories = $terme !== ''
             ? $this->categorieRepository->search($terme)
             : $this->categorieRepository->findAll();
 
-        // On reste sur la même page et on transmet le message au toast
-        $this->view(
-            'gerant/categories/index',
+        $this->renderIndex(array_merge(
             [
                 'titre' => 'Catégories',
                 'categories' => $categories,
                 'terme' => $terme,
+
                 'erreurs' => [],
                 'form' => [],
+
                 'editId' => null,
-                'message' => $e->getMessage(),
+                'categorieEdition' => null,
+
+                'deleteId' => null,
+                'categorieSuppression' => null,
+
+                'message' => null,
+
+                'toast' => null,
+                'toastType' => null,
             ],
+            $data
+        ));
+    }
+
+    /**
+     * Affichage de la vue.
+     */
+    private function renderIndex(array $data = []): void
+    {
+        $data = array_merge(
+            [
+                'titre' => 'Catégories',
+                'categories' => [],
+                'terme' => '',
+
+                'erreurs' => [],
+                'form' => [],
+
+                'editId' => null,
+                'categorieEdition' => null,
+
+                'deleteId' => null,
+                'categorieSuppression' => null,
+
+                'message' => null,
+
+                'toast' => null,
+                'toastType' => null,
+            ],
+            $data
+        );
+
+        $this->view(
+            'gerant/categories/index',
+            $data,
             'layouts/gerant'
         );
     }
-}
 }

@@ -58,25 +58,65 @@ return function (Router $router): void {
     // GERANT + ADMIN
     // =====================================================
 
+    // Espace gérant - catégories
+    // =====================================================
+    // Espace gérant - catégories
+    // =====================================================
+
     $router->get(
-        '/gerant/dashboard',
-        [GerantDashboardController::class, 'index'],
+    '/gerant/dashboard',
+    [GerantDashboardController::class, 'index'],
+    [GerantMiddleware::class]
+);
+
+    $router->get(
+        '/gerant/categories',
+        [GerantCategorieController::class, 'index'],
         [GerantMiddleware::class]
     );
 
-    // Espace gérant - catégories
-    $router->get('/gerant/categories', [GerantCategorieController::class, 'index'], [
-        GerantMiddleware::class,
-    ]);
-    $router->post('/gerant/categories', [GerantCategorieController::class, 'store'], [
-        GerantMiddleware::class,
-    ]);
-    $router->post('/gerant/categories/update', [GerantCategorieController::class, 'update'], [
-        GerantMiddleware::class,
-    ]);
-    $router->post('/gerant/categories/delete', [GerantCategorieController::class, 'destroy'], [
-        GerantMiddleware::class,
-    ]);
+    // Ouvrir le modal de modification
+    $router->get(
+        '/gerant/categories/update/{id}',
+        [GerantCategorieController::class, 'edit'],
+        [GerantMiddleware::class]
+    );
+
+    // Ajouter une catégorie
+    $router->post(
+        '/gerant/categories',
+        [GerantCategorieController::class, 'store'],
+        [GerantMiddleware::class]
+    );
+
+    // Enregistrer la modification
+    $router->post(
+        '/gerant/categories/update/{id}',
+        [GerantCategorieController::class, 'update'],
+        [GerantMiddleware::class]
+    );
+
+    // Ouvrir le modal de confirmation de suppression
+    $router->get(
+        '/gerant/categories/delete/{id}',
+        [GerantCategorieController::class, 'confirmDelete'],
+        [GerantMiddleware::class]
+    );
+
+    // Supprimer réellement
+    $router->post(
+        '/gerant/categories/delete/{id}',
+        [GerantCategorieController::class, 'destroy'],
+        [GerantMiddleware::class]
+    );
+
+    // Recherche
+    $router->get(
+        '/gerant/categories/recherche/{terme}',
+        [GerantCategorieController::class, 'recherche'],
+        [GerantMiddleware::class]
+    );
+
 
 
 
@@ -110,13 +150,13 @@ return function (Router $router): void {
     );
 
     // Filtrer par statut
-$router->get(
-    '/gerant/produits/statut/{statut}',
-    [GerantProduitController::class, 'byStatut'],
-    [
-        GerantMiddleware::class,
-    ]
-);
+    $router->get(
+        '/gerant/produits/statut/{statut}',
+        [GerantProduitController::class, 'byStatut'],
+        [
+            GerantMiddleware::class,
+        ]
+    );
 
     // Ouvrir le modal de modification
     $router->get(
