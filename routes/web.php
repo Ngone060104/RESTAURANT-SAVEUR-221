@@ -63,7 +63,7 @@ return function (Router $router): void {
         [GerantDashboardController::class, 'index'],
         [GerantMiddleware::class]
     );
-    
+
     // Espace gérant - catégories
     $router->get('/gerant/categories', [GerantCategorieController::class, 'index'], [
         GerantMiddleware::class,
@@ -79,22 +79,98 @@ return function (Router $router): void {
     ]);
 
 
+
     // Espace gérant - produits
-    $router->get('/gerant/produits', [GerantProduitController::class, 'index'], [
+    // =====================================================
+    // Tous les produits
+    $router->get(
+        '/gerant/produits',
+        [GerantProduitController::class, 'index'],
+        [
+            GerantMiddleware::class,
+        ]
+    );
+
+    // Recherche par terme
+    $router->get(
+        '/gerant/produits/recherche/{terme}',
+        [GerantProduitController::class, 'recherche'],
+        [
+            GerantMiddleware::class,
+        ]
+    );
+
+    // Filtrer par catégorie
+    $router->get(
+        '/gerant/produits/categorie/{id}',
+        [GerantProduitController::class, 'byCategorie'],
+        [
+            GerantMiddleware::class,
+        ]
+    );
+
+    // Filtrer par statut
+$router->get(
+    '/gerant/produits/statut/{statut}',
+    [GerantProduitController::class, 'byStatut'],
+    [
         GerantMiddleware::class,
-    ]);
-    $router->post('/gerant/produits', [GerantProduitController::class, 'store'], [
-        GerantMiddleware::class,
-    ]);
-    $router->post('/gerant/produits/update', [GerantProduitController::class, 'update'], [
-        GerantMiddleware::class,
-    ]);
-    $router->post('/gerant/produits/delete', [GerantProduitController::class, 'destroy'], [
-        GerantMiddleware::class,
-    ]);
-    $router->post('/gerant/produits/approvisionner', [GerantProduitController::class, 'approvisionner'], [
-        GerantMiddleware::class,
-    ]);
+    ]
+);
+
+    // Ouvrir le modal de modification
+    $router->get(
+        '/gerant/produits/update/{id}',
+        [GerantProduitController::class, 'edit'],
+        [
+            GerantMiddleware::class,
+        ]
+    );
+
+    // Créer un produit
+    $router->post(
+        '/gerant/produits',
+        [GerantProduitController::class, 'store'],
+        [
+            GerantMiddleware::class,
+        ]
+    );
+
+    // Enregistrer la modification
+    $router->post(
+        '/gerant/produits/update/{id}',
+        [GerantProduitController::class, 'update'],
+        [
+            GerantMiddleware::class,
+        ]
+    );
+
+    // Ouvrir le modal de confirmation de suppression
+    $router->get(
+        '/gerant/produits/delete/{id}',
+        [GerantProduitController::class, 'confirmDelete'],
+        [
+            GerantMiddleware::class,
+        ]
+    );
+
+    // Supprimer réellement le produit
+    $router->post(
+        '/gerant/produits/delete/{id}',
+        [GerantProduitController::class, 'destroy'],
+        [
+            GerantMiddleware::class,
+        ]
+    );
+
+    // Approvisionner le stock
+    $router->post(
+        '/gerant/produits/approvisionner/{id}',
+        [GerantProduitController::class, 'approvisionner'],
+        [
+            GerantMiddleware::class,
+        ]
+    );
 
     // Panier (feature/panier) - réservé aux clients connectés
 
