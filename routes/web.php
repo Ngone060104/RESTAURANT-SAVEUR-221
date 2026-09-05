@@ -14,6 +14,7 @@ use App\Controllers\Admin\ClientController as AdminClientController;
 use App\Controllers\Admin\UtilisateurController as AdminUtilisateurController;
 use App\Controllers\Gerant\CategorieController as GerantCategorieController;
 use App\Controllers\Gerant\CommandeController as GerantCommandeController;
+use App\Controllers\Gerant\DashboardController as GerantDashboardController;
 use App\Controllers\Gerant\PaiementController as GerantPaiementController;
 use App\Controllers\Gerant\ProduitController as GerantProduitController;
 
@@ -51,6 +52,19 @@ return function (Router $router): void {
 
 
     // Espace gérant - catégories (GERANT + ADMIN, règle métier n°14)
+    // =====================================================
+
+    // Dashboard gérant
+    // GERANT + ADMIN
+    // =====================================================
+
+    $router->get(
+        '/gerant/dashboard',
+        [GerantDashboardController::class, 'index'],
+        [GerantMiddleware::class]
+    );
+    
+    // Espace gérant - catégories
     $router->get('/gerant/categories', [GerantCategorieController::class, 'index'], [
         GerantMiddleware::class,
     ]);

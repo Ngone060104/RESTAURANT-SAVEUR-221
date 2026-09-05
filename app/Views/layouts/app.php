@@ -12,9 +12,8 @@
 <body class="bg-orange-50 text-stone-900 font-sans antialiased">
     <?php \App\Core\View::partial('navbar') ?>
 
-    <main>
+   
         <?= $content ?>
-    </main>
 
     <?php \App\Core\View::partial('footer') ?>
 </body>
