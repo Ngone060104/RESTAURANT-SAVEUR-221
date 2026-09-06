@@ -18,6 +18,8 @@ if ($currentPath === '/gerant/dashboard' || $currentPath === '/gerant') {
     $titrePage = 'Stocks';
 } elseif (str_starts_with($currentPath, '/gerant/commandes')) {
     $titrePage = 'Commandes';
+}elseif (str_starts_with($currentPath, '/gerant/paiements')) {
+    $titrePage = 'Paiements';
 }
 else {
     $titrePage = 'Espace Gérant';
