@@ -352,16 +352,30 @@ return function (Router $router): void {
     );
 
     // Paiements (feature/paiements) - gérant
-    $router->get('/gerant/paiements', [GerantPaiementController::class, 'index'], [GerantMiddleware::class]);
-    $router->get('/gerant/paiements/impayees', [GerantPaiementController::class, 'impayees'], [
-        GerantMiddleware::class,
-    ]);
-    $router->get('/gerant/paiements/partielles', [GerantPaiementController::class, 'partielles'], [
-        GerantMiddleware::class,
-    ]);
-    $router->post('/gerant/paiements', [GerantPaiementController::class, 'enregistrer'], [
-        GerantMiddleware::class,
-    ]);
+    $router->get(
+        '/gerant/paiements',
+        [GerantPaiementController::class, 'index'],
+        [GerantMiddleware::class]
+    );
+
+    $router->get(
+        '/gerant/paiements/statut/{statut}',
+        [GerantPaiementController::class, 'byStatut'],
+        [GerantMiddleware::class]
+    );
+
+    $router->get(
+        '/gerant/paiements/recherche/{terme}',
+        [GerantPaiementController::class, 'recherche'],
+        [GerantMiddleware::class]
+    );
+
+    $router->post(
+        '/gerant/paiements',
+        [GerantPaiementController::class, 'enregistrer'],
+        [GerantMiddleware::class]
+    );
+
 
     // Avis (feature/avis) - client
     $router->post('/avis', [AvisController::class, 'store'], [ClientMiddleware::class]);
