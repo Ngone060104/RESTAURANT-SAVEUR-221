@@ -8,9 +8,7 @@ use PDO;
 
 class ProduitRepository implements RepositoryInterface
 {
-    public function __construct(private PDO $pdo)
-    {
-    }
+    public function __construct(private PDO $pdo) {}
 
     /**
      * Tous les produits.
@@ -68,8 +66,8 @@ class ProduitRepository implements RepositoryInterface
     {
         $stmt = $this->pdo->query(
             $this->baseQuery()
-            . " WHERE p.statut = 'disponible'"
-            . ' ORDER BY p.nom ASC'
+                . " WHERE p.statut = 'disponible'"
+                . ' ORDER BY p.nom ASC'
         );
 
         return array_map(
@@ -169,8 +167,8 @@ class ProduitRepository implements RepositoryInterface
     {
         $stmt = $this->pdo->prepare(
             $this->baseQuery()
-            . ' WHERE p.categorie_id = :categorie_id'
-            . ' ORDER BY p.nom ASC'
+                . ' WHERE p.categorie_id = :categorie_id'
+                . ' ORDER BY p.nom ASC'
         );
 
         $stmt->execute([
@@ -192,8 +190,8 @@ class ProduitRepository implements RepositoryInterface
     {
         $stmt = $this->pdo->prepare(
             $this->baseQuery()
-            . ' WHERE p.nom ILIKE :terme'
-            . ' ORDER BY p.nom ASC'
+                . ' WHERE p.nom ILIKE :terme'
+                . ' ORDER BY p.nom ASC'
         );
 
         $stmt->execute([
@@ -265,9 +263,9 @@ class ProduitRepository implements RepositoryInterface
     {
         $stmt = $this->pdo->prepare(
             $this->baseQuery()
-            . ' WHERE p.stock > 0'
-            . ' AND p.stock <= :seuil'
-            . ' ORDER BY p.stock ASC'
+                . ' WHERE p.stock > 0'
+                . ' AND p.stock <= :seuil'
+                . ' ORDER BY p.stock ASC'
         );
 
         $stmt->execute([
@@ -287,8 +285,8 @@ class ProduitRepository implements RepositoryInterface
     {
         $stmt = $this->pdo->query(
             $this->baseQuery()
-            . " WHERE p.statut = 'en_rupture'"
-            . ' ORDER BY p.nom ASC'
+                . " WHERE p.statut = 'en_rupture'"
+                . ' ORDER BY p.nom ASC'
         );
 
         return array_map(
@@ -309,9 +307,9 @@ class ProduitRepository implements RepositoryInterface
 
         $stmt = $this->pdo->query(
             $this->baseQuery()
-            . " WHERE p.statut = 'disponible'"
-            . ' ORDER BY p.id ASC'
-            . ' LIMIT ' . (int) $limite
+                . " WHERE p.statut = 'disponible'"
+                . ' ORDER BY p.id ASC'
+                . ' LIMIT ' . (int) $limite
         );
 
         return array_map(
@@ -390,6 +388,29 @@ class ProduitRepository implements RepositoryInterface
         ]);
     }
 
+
+    public function ajusterStock(int $id, int $variation): bool
+    {
+        $stmt = $this->pdo->prepare('
+        UPDATE produits
+        SET
+            stock = GREATEST(0, stock + :variation),
+            statut = (
+                CASE
+                    WHEN GREATEST(0, stock + :variation) = 0
+                    THEN \'en_rupture\'
+                    ELSE \'disponible\'
+                END
+            )::statut_produit_enum
+        WHERE id = :id
+    ');
+
+        return $stmt->execute([
+            'id' => $id,
+            'variation' => $variation,
+        ]);
+    }
+
     /**
      * Suppression d'un produit.
      */
@@ -434,6 +455,7 @@ class ProduitRepository implements RepositoryInterface
             $row->image,
             $row->statut,
             (int) $row->categorie_id,
+            (int) ($row->seuil_alerte ?? 5),
             $row->categorie_libelle ?? null,
         );
     }

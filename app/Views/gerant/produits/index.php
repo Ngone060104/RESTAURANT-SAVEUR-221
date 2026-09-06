@@ -55,25 +55,25 @@ $valeur = static function (
     if ($produitEdition !== null) {
         return match ($champ) {
             'nom' =>
-                $produitEdition->getNom(),
+            $produitEdition->getNom(),
 
             'description' =>
-                $produitEdition->getDescription() ?? '',
+            $produitEdition->getDescription() ?? '',
 
             'prix' =>
-                $produitEdition->getPrix(),
+            $produitEdition->getPrix(),
 
             'stock' =>
-                $produitEdition->getStock(),
+            $produitEdition->getStock(),
 
             'image' =>
-                $produitEdition->getImage() ?? '',
+            $produitEdition->getImage() ?? '',
 
             'categorie_id' =>
-                $produitEdition->getCategorieId(),
+            $produitEdition->getCategorieId(),
 
             default =>
-                $defaut,
+            $defaut,
         };
     }
 
@@ -452,11 +452,11 @@ $imageProduit = static function ($produit): string {
 
                                         <img
                                             src="<?= htmlspecialchars(
-                                                $imageProduit($produit)
-                                            ) ?>"
+                                                        $imageProduit($produit)
+                                                    ) ?>"
                                             alt="<?= htmlspecialchars(
-                                                $produit->getNom()
-                                            ) ?>"
+                                                        $produit->getNom()
+                                                    ) ?>"
                                             class="h-12 w-12 rounded-xl object-cover ring-1 ring-gray-100">
 
                                         <div class="min-w-0">
@@ -653,11 +653,11 @@ $imageProduit = static function ($produit): string {
 
                             <img
                                 src="<?= htmlspecialchars(
-                                    $imageProduit($produit)
-                                ) ?>"
+                                            $imageProduit($produit)
+                                        ) ?>"
                                 alt="<?= htmlspecialchars(
-                                    $produit->getNom()
-                                ) ?>"
+                                            $produit->getNom()
+                                        ) ?>"
                                 class="h-16 w-16 shrink-0 rounded-xl object-cover ring-1 ring-gray-100">
 
 
@@ -810,9 +810,9 @@ $imageProduit = static function ($produit): string {
 
                     <i
                         class="<?= $modeEdition
-                            ? 'fa-solid fa-pen-to-square'
-                            : 'fa-solid fa-plus'
-                        ?>">
+                                    ? 'fa-solid fa-pen-to-square'
+                                    : 'fa-solid fa-plus'
+                                ?>">
                     </i>
 
                 </div>
@@ -862,9 +862,9 @@ $imageProduit = static function ($produit): string {
         <form
             method="POST"
             action="<?= $modeEdition
-                ? '/gerant/produits/update/' . (int) $editId
-                : '/gerant/produits'
-            ?>"
+                        ? '/gerant/produits/update/' . (int) $editId
+                        : '/gerant/produits'
+                    ?>"
             enctype="multipart/form-data"
             class="p-5 sm:p-6">
 
@@ -914,8 +914,8 @@ $imageProduit = static function ($produit): string {
                     name="nom"
                     type="text"
                     value="<?= htmlspecialchars(
-                        (string) $valeur('nom')
-                    ) ?>"
+                                (string) $valeur('nom')
+                            ) ?>"
                     class="<?= $classeChamp('nom') ?> h-11 w-full rounded-xl border bg-gray-50 px-3 text-sm text-gray-700 outline-none transition focus:bg-white focus:ring-4"
                     placeholder="Ex : Thiéboudienne">
 
@@ -963,8 +963,8 @@ $imageProduit = static function ($produit): string {
                     rows="3"
                     class="<?= $classeChamp('description') ?> w-full resize-none rounded-xl border bg-gray-50 px-3 py-3 text-sm text-gray-700 outline-none transition focus:bg-white focus:ring-4"
                     placeholder="Décrivez brièvement le plat..."><?= htmlspecialchars(
-                        (string) $valeur('description')
-                    ) ?></textarea>
+                                                                        (string) $valeur('description')
+                                                                    ) ?></textarea>
 
 
                 <?php if ($erreurChamp('description')): ?>
@@ -1021,8 +1021,8 @@ $imageProduit = static function ($produit): string {
                             min="0"
                             step="1"
                             value="<?= htmlspecialchars(
-                                (string) $valeur('prix')
-                            ) ?>"
+                                        (string) $valeur('prix')
+                                    ) ?>"
                             class="<?= $classeChamp('prix') ?> h-11 w-full rounded-xl border bg-gray-50 px-3 pr-16 text-sm text-gray-700 outline-none transition focus:bg-white focus:ring-4"
                             placeholder="0">
 
@@ -1080,8 +1080,8 @@ $imageProduit = static function ($produit): string {
                         min="0"
                         step="1"
                         value="<?= htmlspecialchars(
-                            (string) $valeur('stock')
-                        ) ?>"
+                                    (string) $valeur('stock')
+                                ) ?>"
                         class="<?= $classeChamp('stock') ?> h-11 w-full rounded-xl border bg-gray-50 px-3 text-sm text-gray-700 outline-none transition focus:bg-white focus:ring-4"
                         placeholder="0">
 
@@ -1206,11 +1206,11 @@ $imageProduit = static function ($produit): string {
 
                         <img
                             src="<?= htmlspecialchars(
-                                $imageProduit($produitEdition)
-                            ) ?>"
+                                        $imageProduit($produitEdition)
+                                    ) ?>"
                             alt="<?= htmlspecialchars(
-                                $produitEdition->getNom()
-                            ) ?>"
+                                        $produitEdition->getNom()
+                                    ) ?>"
                             class="h-16 w-16 rounded-xl object-cover ring-1 ring-gray-200">
 
 
@@ -1312,9 +1312,9 @@ $imageProduit = static function ($produit): string {
 
                     <i
                         class="<?= $modeEdition
-                            ? 'fa-solid fa-floppy-disk'
-                            : 'fa-solid fa-plus'
-                        ?>">
+                                    ? 'fa-solid fa-floppy-disk'
+                                    : 'fa-solid fa-plus'
+                                ?>">
                     </i>
 
                     <?= $modeEdition
@@ -1381,8 +1381,8 @@ $imageProduit = static function ($produit): string {
                     <span class="font-semibold text-gray-700">
 
                         « <?= htmlspecialchars(
-                            $produitSuppression->getNom()
-                        ) ?> »
+                                $produitSuppression->getNom()
+                            ) ?> »
 
                     </span>.
 
@@ -1421,9 +1421,9 @@ $imageProduit = static function ($produit): string {
                 <form
                     method="POST"
                     action="<?= $deleteId !== null
-                        ? '/gerant/produits/delete/' . (int) $deleteId
-                        : '#'
-                    ?>">
+                                ? '/gerant/produits/delete/' . (int) $deleteId
+                                : '#'
+                            ?>">
 
                     <button
                         type="submit"
@@ -1451,38 +1451,36 @@ $imageProduit = static function ($produit): string {
 <!-- ========================================================= -->
 
 <script>
-
-/*
+    /*
 |--------------------------------------------------------------------------
 | MODAL PRODUIT
 |--------------------------------------------------------------------------
 */
 
-function ouvrirModalProduit() {
+    function ouvrirModalProduit() {
 
-    const modal =
-        document.getElementById('modalProduit');
+        const modal =
+            document.getElementById('modalProduit');
 
-    if (!modal) {
-        return;
+        if (!modal) {
+            return;
+        }
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        modal.setAttribute(
+            'aria-hidden',
+            'false'
+        );
+
+        document.body.classList.add(
+            'overflow-hidden'
+        );
     }
 
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
 
-    modal.setAttribute(
-        'aria-hidden',
-        'false'
-    );
-
-    document.body.classList.add(
-        'overflow-hidden'
-    );
-}
-
-
-function fermerModalProduit() {
-
+ function fermerModalProduit() {
     const modal =
         document.getElementById('modalProduit');
 
@@ -1502,36 +1500,25 @@ function fermerModalProduit() {
         'overflow-hidden'
     );
 
-
     if (
         window.location.pathname.startsWith(
             '/gerant/produits/update/'
         )
     ) {
-
-        window.history.replaceState(
-            {},
-            '',
-            '/gerant/produits'
-        );
-
+        window.location.href =
+            '/gerant/produits';
     }
-
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| MODAL SUPPRESSION
-|--------------------------------------------------------------------------
-*/
-
-function ouvrirModalSuppression() {
-
+    /*
+    |--------------------------------------------------------------------------
+    | MODAL SUPPRESSION
+    |--------------------------------------------------------------------------
+    */
+function ouvrirModalProduit() {
     const modal =
-        document.getElementById(
-            'modalSuppression'
-        );
+        document.getElementById('modalProduit');
 
     if (!modal) {
         return;
@@ -1552,7 +1539,6 @@ function ouvrirModalSuppression() {
 
 
 function fermerModalSuppression() {
-
     const modal =
         document.getElementById(
             'modalSuppression'
@@ -1574,148 +1560,254 @@ function fermerModalSuppression() {
         'overflow-hidden'
     );
 
-
     if (
         window.location.pathname.startsWith(
             '/gerant/produits/delete/'
         )
     ) {
-
-        window.history.replaceState(
-            {},
-            '',
-            '/gerant/produits'
-        );
-
-    }
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| RECHERCHE
-|--------------------------------------------------------------------------
-*/
-
-function rechercherProduit(event) {
-
-    event.preventDefault();
-
-    const input =
-        document.getElementById('q');
-
-    if (!input) {
-        return;
-    }
-
-    const terme =
-        input.value.trim();
-
-    if (terme === '') {
-
         window.location.href =
             '/gerant/produits';
-
-        return;
     }
-
-    window.location.href =
-        '/gerant/produits/recherche/' +
-        encodeURIComponent(terme);
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| FILTRE CATÉGORIE
-|--------------------------------------------------------------------------
-*/
+    /*
+    |--------------------------------------------------------------------------
+    | RECHERCHE
+    |--------------------------------------------------------------------------
+    */
 
-function filtrerParCategorie(id) {
+    function rechercherProduit(event) {
 
-    if (!id) {
+        event.preventDefault();
+
+        const input =
+            document.getElementById('q');
+
+        if (!input) {
+            return;
+        }
+
+        const terme =
+            input.value.trim();
+
+        if (terme === '') {
+
+            window.location.href =
+                '/gerant/produits';
+
+            return;
+        }
 
         window.location.href =
-            '/gerant/produits';
-
-        return;
+            '/gerant/produits/recherche/' +
+            encodeURIComponent(terme);
     }
 
-    window.location.href =
-        '/gerant/produits/categorie/' +
-        encodeURIComponent(id);
-}
 
+    /*
+    |--------------------------------------------------------------------------
+    | FILTRE CATÉGORIE
+    |--------------------------------------------------------------------------
+    */
 
-/*
-|--------------------------------------------------------------------------
-| FILTRE STATUT
-|--------------------------------------------------------------------------
-*/
+    function filtrerParCategorie(id) {
 
-function filtrerParStatut(statut) {
+        if (!id) {
 
-    if (!statut) {
+            window.location.href =
+                '/gerant/produits';
+
+            return;
+        }
 
         window.location.href =
-            '/gerant/produits';
-
-        return;
+            '/gerant/produits/categorie/' +
+            encodeURIComponent(id);
     }
 
-    window.location.href =
-        '/gerant/produits/statut/' +
-        encodeURIComponent(statut);
-}
+
+    /*
+    |--------------------------------------------------------------------------
+    | FILTRE STATUT
+    |--------------------------------------------------------------------------
+    */
+
+    function filtrerParStatut(statut) {
+
+        if (!statut) {
+
+            window.location.href =
+                '/gerant/produits';
+
+            return;
+        }
+
+        window.location.href =
+            '/gerant/produits/statut/' +
+            encodeURIComponent(statut);
+    }
 
 
-/*
-|--------------------------------------------------------------------------
-| INITIALISATION
-|--------------------------------------------------------------------------
-*/
+    /*
+    |--------------------------------------------------------------------------
+    | INITIALISATION
+    |--------------------------------------------------------------------------
+    */
 
-document.addEventListener(
-    'DOMContentLoaded',
-    function () {
+    document.addEventListener(
+        'DOMContentLoaded',
+        function() {
 
-        const modalProduit =
-            document.getElementById(
-                'modalProduit'
-            );
+            const modalProduit =
+                document.getElementById(
+                    'modalProduit'
+                );
 
-        const contenuModalProduit =
-            document.getElementById(
-                'contenuModalProduit'
-            );
+            const contenuModalProduit =
+                document.getElementById(
+                    'contenuModalProduit'
+                );
 
-        const modalSuppression =
-            document.getElementById(
-                'modalSuppression'
-            );
+            const modalSuppression =
+                document.getElementById(
+                    'modalSuppression'
+                );
 
-        const contenuModalSuppression =
-            document.getElementById(
-                'contenuModalSuppression'
-            );
+            const contenuModalSuppression =
+                document.getElementById(
+                    'contenuModalSuppression'
+                );
 
 
-        /*
-        |----------------------------------------------------------------------
-        | Clic sur le fond du modal produit
-        |----------------------------------------------------------------------
-        */
+            /*
+            |----------------------------------------------------------------------
+            | Clic sur le fond du modal produit
+            |----------------------------------------------------------------------
+            */
 
-        if (modalProduit) {
+            if (modalProduit) {
 
-            modalProduit.addEventListener(
-                'click',
-                function (event) {
+                modalProduit.addEventListener(
+                    'click',
+                    function(event) {
+
+                        if (
+                            event.target ===
+                            modalProduit
+                        ) {
+
+                            fermerModalProduit();
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            /*
+            |----------------------------------------------------------------------
+            | Empêcher fermeture modal produit
+            |----------------------------------------------------------------------
+            */
+
+            if (contenuModalProduit) {
+
+                contenuModalProduit.addEventListener(
+                    'click',
+                    function(event) {
+
+                        event.stopPropagation();
+
+                    }
+                );
+
+            }
+
+
+            /*
+            |----------------------------------------------------------------------
+            | Clic sur le fond du modal suppression
+            |----------------------------------------------------------------------
+            */
+
+            if (modalSuppression) {
+
+                modalSuppression.addEventListener(
+                    'click',
+                    function(event) {
+
+                        if (
+                            event.target ===
+                            modalSuppression
+                        ) {
+
+                            fermerModalSuppression();
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            /*
+            |----------------------------------------------------------------------
+            | Empêcher fermeture modal suppression
+            |----------------------------------------------------------------------
+            */
+
+            if (contenuModalSuppression) {
+
+                contenuModalSuppression.addEventListener(
+                    'click',
+                    function(event) {
+
+                        event.stopPropagation();
+
+                    }
+                );
+
+            }
+
+
+            /*
+            |----------------------------------------------------------------------
+            | Touche Échap
+            |----------------------------------------------------------------------
+            */
+
+            document.addEventListener(
+                'keydown',
+                function(event) {
+
+                    if (event.key !== 'Escape') {
+                        return;
+                    }
+
 
                     if (
-                        event.target ===
-                        modalProduit
+                        modalSuppression &&
+                        !modalSuppression.classList.contains(
+                            'hidden'
+                        )
+                    ) {
+
+                        fermerModalSuppression();
+
+                        return;
+
+                    }
+
+
+                    if (
+                        modalProduit &&
+                        !modalProduit.classList.contains(
+                            'hidden'
+                        )
                     ) {
 
                         fermerModalProduit();
@@ -1725,47 +1817,98 @@ document.addEventListener(
                 }
             );
 
+
+            /*
+            |----------------------------------------------------------------------
+            | Ouverture automatique du modal produit
+            |----------------------------------------------------------------------
+            */
+
+            <?php if ($ouvrirModal): ?>
+
+                ouvrirModalProduit();
+
+            <?php endif; ?>
+
+
+            /*
+            |----------------------------------------------------------------------
+            | Ouverture automatique suppression
+            |----------------------------------------------------------------------
+            */
+
+            <?php if ($ouvrirSuppression): ?>
+
+                ouvrirModalSuppression();
+
+            <?php endif; ?>
+
         }
+    );
 
 
-        /*
-        |----------------------------------------------------------------------
-        | Empêcher fermeture modal produit
-        |----------------------------------------------------------------------
-        */
+    /*
+    |--------------------------------------------------------------------------
+    | Nom du fichier image
+    |--------------------------------------------------------------------------
+    */
 
-        if (contenuModalProduit) {
+    document.addEventListener(
+        'DOMContentLoaded',
+        function() {
 
-            contenuModalProduit.addEventListener(
-                'click',
-                function (event) {
+            const inputImage =
+                document.getElementById(
+                    'produit_image'
+                );
 
-                    event.stopPropagation();
+            const nomFichier =
+                document.getElementById(
+                    'nomFichierImage'
+                );
 
-                }
-            );
+            if (
+                !inputImage ||
+                !nomFichier
+            ) {
+                return;
+            }
 
-        }
 
-
-        /*
-        |----------------------------------------------------------------------
-        | Clic sur le fond du modal suppression
-        |----------------------------------------------------------------------
-        */
-
-        if (modalSuppression) {
-
-            modalSuppression.addEventListener(
-                'click',
-                function (event) {
+            inputImage.addEventListener(
+                'change',
+                function() {
 
                     if (
-                        event.target ===
-                        modalSuppression
+                        this.files &&
+                        this.files.length > 0
                     ) {
 
-                        fermerModalSuppression();
+                        nomFichier.textContent =
+                            this.files[0].name;
+
+                        nomFichier.classList.remove(
+                            'text-[#777777]'
+                        );
+
+                        nomFichier.classList.add(
+                            'font-semibold',
+                            'text-[#ff9900]'
+                        );
+
+                    } else {
+
+                        nomFichier.textContent =
+                            'Aucun fichier sélectionné';
+
+                        nomFichier.classList.remove(
+                            'font-semibold',
+                            'text-[#ff9900]'
+                        );
+
+                        nomFichier.classList.add(
+                            'text-[#777777]'
+                        );
 
                     }
 
@@ -1773,170 +1916,5 @@ document.addEventListener(
             );
 
         }
-
-
-        /*
-        |----------------------------------------------------------------------
-        | Empêcher fermeture modal suppression
-        |----------------------------------------------------------------------
-        */
-
-        if (contenuModalSuppression) {
-
-            contenuModalSuppression.addEventListener(
-                'click',
-                function (event) {
-
-                    event.stopPropagation();
-
-                }
-            );
-
-        }
-
-
-        /*
-        |----------------------------------------------------------------------
-        | Touche Échap
-        |----------------------------------------------------------------------
-        */
-
-        document.addEventListener(
-            'keydown',
-            function (event) {
-
-                if (event.key !== 'Escape') {
-                    return;
-                }
-
-
-                if (
-                    modalSuppression
-                    && !modalSuppression.classList.contains(
-                        'hidden'
-                    )
-                ) {
-
-                    fermerModalSuppression();
-
-                    return;
-
-                }
-
-
-                if (
-                    modalProduit
-                    && !modalProduit.classList.contains(
-                        'hidden'
-                    )
-                ) {
-
-                    fermerModalProduit();
-
-                }
-
-            }
-        );
-
-
-        /*
-        |----------------------------------------------------------------------
-        | Ouverture automatique du modal produit
-        |----------------------------------------------------------------------
-        */
-
-        <?php if ($ouvrirModal): ?>
-
-            ouvrirModalProduit();
-
-        <?php endif; ?>
-
-
-        /*
-        |----------------------------------------------------------------------
-        | Ouverture automatique suppression
-        |----------------------------------------------------------------------
-        */
-
-        <?php if ($ouvrirSuppression): ?>
-
-            ouvrirModalSuppression();
-
-        <?php endif; ?>
-
-    }
-);
-
-
-/*
-|--------------------------------------------------------------------------
-| Nom du fichier image
-|--------------------------------------------------------------------------
-*/
-
-document.addEventListener(
-    'DOMContentLoaded',
-    function () {
-
-        const inputImage =
-            document.getElementById(
-                'produit_image'
-            );
-
-        const nomFichier =
-            document.getElementById(
-                'nomFichierImage'
-            );
-
-        if (
-            !inputImage
-            || !nomFichier
-        ) {
-            return;
-        }
-
-
-        inputImage.addEventListener(
-            'change',
-            function () {
-
-                if (
-                    this.files
-                    && this.files.length > 0
-                ) {
-
-                    nomFichier.textContent =
-                        this.files[0].name;
-
-                    nomFichier.classList.remove(
-                        'text-[#777777]'
-                    );
-
-                    nomFichier.classList.add(
-                        'font-semibold',
-                        'text-[#ff9900]'
-                    );
-
-                } else {
-
-                    nomFichier.textContent =
-                        'Aucun fichier sélectionné';
-
-                    nomFichier.classList.remove(
-                        'font-semibold',
-                        'text-[#ff9900]'
-                    );
-
-                    nomFichier.classList.add(
-                        'text-[#777777]'
-                    );
-
-                }
-
-            }
-        );
-
-    }
-);
-
+    );
 </script>

@@ -128,6 +128,40 @@ class ProduitService
     }
 
     /**
+ * Ajustement rapide du stock.
+ *
+ * +1 augmente le stock.
+ * -1 diminue le stock.
+ */
+public function ajusterStock(int $id, int $variation): bool
+{
+    if (!in_array($variation, [-1, 1], true)) {
+        throw new ValidationException(
+            'L\'ajustement doit être de +1 ou -1.'
+        );
+    }
+
+    $produit = $this->produitRepository->findProduitById($id);
+
+    if ($produit === null) {
+        throw new ValidationException(
+            'Produit introuvable.'
+        );
+    }
+
+    if ($variation === -1 && $produit->getStock() <= 0) {
+        throw new ValidationException(
+            'Le stock ne peut pas être inférieur à 0.'
+        );
+    }
+
+    return $this->produitRepository->ajusterStock(
+        $id,
+        $variation
+    );
+}
+
+    /**
      * Supprimer un produit.
      */
     public function delete(int $id): bool

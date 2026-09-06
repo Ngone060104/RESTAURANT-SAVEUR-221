@@ -286,7 +286,7 @@ function gerantSidebarClass(string $path): string
             ================================================== -->
 
             <a
-                href="/gerant/produits"
+                href="/gerant/stocks"
                 onclick="closeGerantSidebar()"
                 class="
                     flex
