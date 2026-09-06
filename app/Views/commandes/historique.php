@@ -435,7 +435,8 @@ $statutClass = static function (string $statut): string {
                                             [
                                                 'EN_ATTENTE',
                                                 'EN_PREPARATION',
-                                                'PRETE'
+                                                'PRETE',
+                                                'RETIREE',
                                             ],
                                             true
                                         )

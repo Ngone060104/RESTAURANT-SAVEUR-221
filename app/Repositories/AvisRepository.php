@@ -32,27 +32,50 @@ class AvisRepository
      * la commande, pas sur un produit précis, il n'y a pas de colonne
      * dédiée dans le schéma).
      */
-    public function findRecents(int $limite = 2): array
-    {
-        $stmt = $this->pdo->query('
-            SELECT a.*, u.nom AS client_nom, u.prenom AS client_prenom,
-                (
-                    SELECT p.nom
-                    FROM lignes_commande lc
-                    JOIN produits p ON p.id = lc.produit_id
-                    WHERE lc.commande_id = a.commande_id
-                    ORDER BY lc.id
-                    LIMIT 1
-                ) AS produit_nom
-            FROM avis a
-            JOIN clients c ON c.id = a.client_id
-            JOIN utilisateurs u ON u.id = c.id
-            ORDER BY a.date_avis DESC
-            LIMIT ' . (int) $limite
-        );
+   public function findRecents(int $limite = 2): array
+{
+    $stmt = $this->pdo->prepare('
+        SELECT
+            a.*,
 
-        return array_map([$this, 'hydrate'], $stmt->fetchAll());
-    }
+            CONCAT(u.prenom, \' \', u.nom)
+                AS client_nom_complet,
+
+            (
+                SELECT p.nom
+                FROM lignes_commande lc
+                INNER JOIN produits p
+                    ON p.id = lc.produit_id
+                WHERE lc.commande_id = a.commande_id
+                ORDER BY lc.id
+                LIMIT 1
+            ) AS produit_nom
+
+        FROM avis a
+
+        INNER JOIN utilisateurs u
+            ON u.id = a.client_id
+
+        WHERE u.role_id = 3
+
+        ORDER BY a.date_avis DESC
+
+        LIMIT :limite
+    ');
+
+    $stmt->bindValue(
+        ':limite',
+        $limite,
+        PDO::PARAM_INT
+    );
+
+    $stmt->execute();
+
+    return array_map(
+        [$this, 'hydrate'],
+        $stmt->fetchAll()
+    );
+}
 
     public function findByCommande(int $commandeId): ?Avis
     {
@@ -94,15 +117,17 @@ class AvisRepository
         return $stmt->execute(['id' => $id]);
     }
 
-    private function hydrate(object $row): Avis
-    {
-        return new Avis(
-            (int) $row->id,
-            (int) $row->note,
-            $row->commentaire,
-            $row->date_avis,
-            (int) $row->client_id,
-            (int) $row->commande_id,
-        );
-    }
+   private function hydrate(object $row): Avis
+{
+    return new Avis(
+        (int) $row->id,
+        (int) $row->note,
+        $row->commentaire,
+        $row->date_avis,
+        (int) $row->client_id,
+        (int) $row->commande_id,
+        $row->client_nom_complet ?? null,
+        $row->produit_nom ?? null,
+    );
+}
 }
