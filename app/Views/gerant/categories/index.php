@@ -28,7 +28,7 @@ $modeSuppression = $deleteId !== null;
 $hasFormError = !empty($erreurs);
 ?>
 
-<main class="min-h-[calc(100vh-79px)] bg-[#f5f5f5] px-4 py-5 sm:px-5 lg:px-[30px]">
+<main class="min-h-[calc(100vh-79px)] bg-[#f5f5f5] sm:px-6 lg:px-8">
 
     <div class="mx-auto max-w-[1180px]">
 
@@ -37,34 +37,51 @@ $hasFormError = !empty($erreurs);
         ====================================================== -->
 
         <section
-            class="mb-5 overflow-hidden rounded-[10px] bg-gradient-to-r from-[#252525] via-[#754916] to-[#ff9900] px-5 py-5 shadow-sm sm:px-6 sm:py-6">
-            <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            class="mb-6 overflow-hidden rounded-2xl bg-gradient-to-r from-gray-900 via-gray-800 to-orange-900 shadow-sm">
+                  
 
-                <div class="min-w-0">
+            <div
+            class="flex flex-col gap-5 px-5 py-6 sm:px-7 lg:flex-row lg:items-center lg:justify-between">
 
-                    <h1
-                        class="font-['Inter'] text-[22px] font-extrabold tracking-tight text-white sm:text-[25px]">
-                        Gestion des Catégories
-                    </h1>
+            <div>
 
-                    <p
-                        class="mt-2 font-['DM_Sans'] text-[11px] leading-5 text-white/85 sm:text-[12px]">
-                        Organisez la carte de votre restaurant par familles de plats.
-                    </p>
+                <div class="mb-2 flex items-center gap-2 text-orange-300">
+
+                    <i class="fas fa-list"></i>
+
+                    <span
+                        class="text-xs font-semibold uppercase tracking-wider">
+                        Carte du restaurant
+                    </span>
 
                 </div>
 
-                <!-- NOUVELLE CATÉGORIE -->
+                <h1
+                    class="text-2xl font-bold text-white sm:text-3xl">
+                    Gestion des Catégories &amp; Carte
+                </h1>
 
-                <button
-                    type="button"
-                    onclick="ouvrirModalCategorie()"
-                    class="inline-flex h-[42px] shrink-0 items-center justify-center gap-2 rounded-[9px] bg-[#d97700] px-5 font-['DM_Sans'] text-[11px] font-bold text-white shadow-sm transition duration-200 hover:-translate-y-[1px] hover:bg-[#c96d00] hover:shadow-md active:translate-y-0">
-                    <i class="fa-solid fa-plus text-[10px]"></i>
-                    Nouvelle Catégorie
-                </button>
+                <p
+                    class="mt-2 max-w-2xl text-sm text-gray-300">
+                    Organisez la carte de votre restaurant par familles de plats.
+                </p>
 
             </div>
+
+            <button
+                type="button"
+                onclick="ouvrirModalCategorie()"
+                class="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-600 focus:outline-none focus:ring-4 focus:ring-orange-300/30">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Nouvelle Catégorie
+
+            </button>
+
+            
+
+        </div>
         </section>
 
 

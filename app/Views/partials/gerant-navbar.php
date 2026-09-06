@@ -4,6 +4,23 @@ use App\Services\AuthService;
 
 $utilisateur = AuthService::currentUser();
 
+$currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+if ($currentPath === '/gerant/dashboard' || $currentPath === '/gerant') {
+    $titrePage = 'Dashboard';
+} elseif (str_starts_with($currentPath, '/gerant/categories')) {
+    $titrePage = 'Catégories';
+} elseif (str_starts_with($currentPath, '/gerant/produits')) {
+    $titrePage = 'Produits';
+} elseif (str_starts_with($currentPath, '/gerant/commandes')) {
+    $titrePage = 'Commandes';
+} elseif (str_starts_with($currentPath, '/gerant/stocks')) {
+    $titrePage = 'Stocks';
+}
+else {
+    $titrePage = 'Espace Gérant';
+}
+
 $prenom = $utilisateur['prenom'] ?? 'Gérant';
 $nom = $utilisateur['nom'] ?? '';
 $role = $utilisateur['role'] ?? 'GERANT';
@@ -84,7 +101,7 @@ $initiales = $initiales ?: 'G';
                     sm:text-[20px]
                 "
             >
-                Dashboard
+               <?= htmlspecialchars($titrePage) ?>
             </h1>
 
         </div>

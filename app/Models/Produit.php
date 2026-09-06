@@ -17,9 +17,9 @@ class Produit
         private ?string $image,
         private string $statut, // 'disponible' ou 'en_rupture'
         private int $categorieId,
+        private int $seuilAlerte = 5,
         private ?string $categorieLibelle = null,
-    ) {
-    }
+    ) {}
 
     public function getId(): int
     {
@@ -69,5 +69,15 @@ class Produit
     public function getCategorieLibelle(): ?string
     {
         return $this->categorieLibelle;
+    }
+
+    public function getSeuilAlerte(): int
+    {
+        return $this->seuilAlerte;
+    }
+
+    public function setSeuilAlerte(int $seuil): void
+    {
+        $this->seuilAlerte = $seuil;
     }
 }

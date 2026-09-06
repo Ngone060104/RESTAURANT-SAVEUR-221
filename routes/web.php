@@ -17,6 +17,7 @@ use App\Controllers\Gerant\CommandeController as GerantCommandeController;
 use App\Controllers\Gerant\DashboardController as GerantDashboardController;
 use App\Controllers\Gerant\PaiementController as GerantPaiementController;
 use App\Controllers\Gerant\ProduitController as GerantProduitController;
+use App\Controllers\Gerant\StockController as GerantStockController;
 
 use App\Middleware\AdminMiddleware;
 use App\Middleware\ClientMiddleware;
@@ -64,10 +65,10 @@ return function (Router $router): void {
     // =====================================================
 
     $router->get(
-    '/gerant/dashboard',
-    [GerantDashboardController::class, 'index'],
-    [GerantMiddleware::class]
-);
+        '/gerant/dashboard',
+        [GerantDashboardController::class, 'index'],
+        [GerantMiddleware::class]
+    );
 
     $router->get(
         '/gerant/categories',
@@ -211,6 +212,26 @@ return function (Router $router): void {
             GerantMiddleware::class,
         ]
     );
+
+    // route pour la gestion des stocks (feature/gerant-stocks)
+
+    $router->get(
+        '/gerant/stocks',
+        [GerantStockController::class, 'index'],
+        [GerantMiddleware::class]
+    );
+
+    $router->post(
+        '/gerant/stocks/approvisionner/{id}',
+        [GerantStockController::class, 'approvisionner'],
+        [GerantMiddleware::class]
+    );
+
+    $router->post(
+    '/gerant/stocks/ajuster/{id}',
+    [GerantStockController::class, 'ajusterStock'],
+    [GerantMiddleware::class]
+);
 
     // Panier (feature/panier) - réservé aux clients connectés
 
