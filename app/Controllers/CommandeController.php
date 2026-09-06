@@ -10,6 +10,7 @@ use App\Repositories\ClientRepository;
 use App\Services\AuthService;
 use App\Services\CommandeService;
 use App\Services\PanierService;
+use App\Repositories\AvisRepository;
 
 class CommandeController extends Controller
 {
@@ -17,6 +18,7 @@ class CommandeController extends Controller
         private CommandeService $commandeService,
         private ClientRepository $clientRepository,
         private PanierService $panierService,
+        private AvisRepository $avisRepository,
     ) {}
 
     /**
@@ -373,6 +375,11 @@ class CommandeController extends Controller
                 $id,
                 (int) $user['id']
             );
+            
+            // Vérifier si un avis existe déjà pour cette commande
+            $avisExiste = $this->avisRepository->findByCommande($id) !== null;
+
+            $detail['avisExiste'] = $avisExiste;
 
             $this->view(
                 'commandes/suivi',

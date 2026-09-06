@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Vue : Suivi d'une commande
  *
@@ -43,6 +44,7 @@ $numeroCommande = 'CMD-' . date('Y') . '-' . str_pad(
 );
 
 $statutActuel = $commande->getStatut();
+$avisExiste = $avisExiste ?? false;
 $total = (float) $commande->getMontantTotal();
 $dateCommande = $commande->getDateCommande();
 
@@ -149,16 +151,14 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
 
             <a
                 href="/mes-commandes"
-                class="inline-flex items-center gap-3 font-['DM_Sans'] text-[14px] text-[#333333] transition hover:text-[#fe9a00]"
-            >
+                class="inline-flex items-center gap-3 font-['DM_Sans'] text-[14px] text-[#333333] transition hover:text-[#fe9a00]">
                 <i class="fa-solid fa-arrow-left text-[14px]"></i>
                 <span>Retour à la liste de mes commandes</span>
             </a>
 
             <span
                 id="statutBadge"
-                class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-semibold <?= $badgeClasses ?>"
-            >
+                class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-semibold <?= $badgeClasses ?>">
                 <i id="statutBadgeIcon" class="<?= $statutIcone ?>"></i>
                 <span id="statutBadgeLabel"><?= htmlspecialchars($statutLabel, ENT_QUOTES, 'UTF-8') ?></span>
             </span>
@@ -251,8 +251,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                     <div class="px-6 py-6 md:px-10 md:py-7">
                         <div
                             id="etapesCommande"
-                            class="grid grid-cols-1 gap-7 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] md:items-start"
-                        >
+                            class="grid grid-cols-1 gap-7 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] md:items-start">
 
                             <?php foreach ($ordreEtapes as $index => $code): ?>
                                 <?php
@@ -265,16 +264,14 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                                     <div class="flex justify-center">
                                         <div
                                             data-step-icon
-                                            class="flex h-[64px] w-[64px] items-center justify-center rounded-[21px] <?= $estAtteinte ? 'bg-[#ff9800] text-black shadow-[0_0_0_4px_#e3e3e3]' : 'bg-[#f5f5f5] text-[#bdbdbd]' ?>"
-                                        >
+                                            class="flex h-[64px] w-[64px] items-center justify-center rounded-[21px] <?= $estAtteinte ? 'bg-[#ff9800] text-black shadow-[0_0_0_4px_#e3e3e3]' : 'bg-[#f5f5f5] text-[#bdbdbd]' ?>">
                                             <i class="<?= $etape['icone'] ?> text-[25px]"></i>
                                         </div>
                                     </div>
 
                                     <h3
                                         data-step-label
-                                        class="mt-3 font-['DM_Sans'] text-[13px] font-bold <?= $estAtteinte ? 'text-[#c96500]' : 'text-[#333333]' ?>"
-                                    >
+                                        class="mt-3 font-['DM_Sans'] text-[13px] font-bold <?= $estAtteinte ? 'text-[#c96500]' : 'text-[#333333]' ?>">
                                         <?= htmlspecialchars($etape['label'], ENT_QUOTES, 'UTF-8') ?>
                                     </h3>
 
@@ -286,8 +283,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                                 <?php if ($index < count($ordreEtapes) - 1): ?>
                                     <div
                                         data-step-connector="<?= $index ?>"
-                                        class="hidden h-[3px] w-[55px] self-center md:block <?= $indexActuel > $index ? 'bg-[#ff9800]' : 'bg-[#dedede]' ?>"
-                                    ></div>
+                                        class="hidden h-[3px] w-[55px] self-center md:block <?= $indexActuel > $index ? 'bg-[#ff9800]' : 'bg-[#dedede]' ?>"></div>
                                 <?php endif; ?>
 
                             <?php endforeach; ?>
@@ -313,8 +309,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
 
                     <span
                         id="suiviConnexion"
-                        class="inline-flex items-center gap-2 font-['DM_Sans'] text-[10px] text-[#888888]"
-                    >
+                        class="inline-flex items-center gap-2 font-['DM_Sans'] text-[10px] text-[#888888]">
                         <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
                         Suivi actif
                     </span>
@@ -325,8 +320,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                     <!-- ÉTAT INITIAL : date réelle de création de la commande -->
                     <div
                         class="flex items-center justify-between gap-5 rounded-[14px] border border-[#eeeeee] bg-[#fafafa] px-5 py-4"
-                        data-history-status="EN_ATTENTE"
-                    >
+                        data-history-status="EN_ATTENTE">
                         <span class="inline-flex shrink-0 items-center gap-2 rounded-full border border-orange-300 bg-orange-50 px-3 py-1 text-[10px] font-semibold text-orange-600">
                             <i class="fa-regular fa-clock"></i>
                             En attente
@@ -344,12 +338,10 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                     <!-- Le statut courant est mis à jour par JavaScript à partir de la BDD. -->
                     <div
                         id="historiqueStatutCourant"
-                        class="<?= $statutActuel === 'EN_ATTENTE' ? 'hidden' : '' ?> flex items-center justify-between gap-5 rounded-[14px] border border-[#eeeeee] bg-[#fafafa] px-5 py-4"
-                    >
+                        class="<?= $statutActuel === 'EN_ATTENTE' ? 'hidden' : '' ?> flex items-center justify-between gap-5 rounded-[14px] border border-[#eeeeee] bg-[#fafafa] px-5 py-4">
                         <span
                             id="historiqueStatutBadge"
-                            class="inline-flex shrink-0 items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-semibold <?= $badgeClasses ?>"
-                        >
+                            class="inline-flex shrink-0 items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-semibold <?= $badgeClasses ?>">
                             <i id="historiqueStatutIcon" class="<?= $statutIcone ?>"></i>
                             <span id="historiqueStatutLabel">
                                 <?= htmlspecialchars($statutLabel, ENT_QUOTES, 'UTF-8') ?>
@@ -358,15 +350,13 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
 
                         <p
                             id="historiqueStatutMessage"
-                            class="flex-1 text-center font-['DM_Sans'] text-[14px] text-[#333333]"
-                        >
+                            class="flex-1 text-center font-['DM_Sans'] text-[14px] text-[#333333]">
                             <?= htmlspecialchars($messageActuel, ENT_QUOTES, 'UTF-8') ?>
                         </p>
 
                         <span
                             id="historiqueStatutHeure"
-                            class="shrink-0 font-['DM_Sans'] text-[11px] font-medium text-[#777777]"
-                        >
+                            class="shrink-0 font-['DM_Sans'] text-[11px] font-medium text-[#777777]">
                             Statut actuel
                         </span>
                     </div>
@@ -374,8 +364,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                     <?php if ($statutActuel === 'ANNULEE'): ?>
                         <div
                             id="historiqueAnnulation"
-                            class="flex items-center justify-between gap-5 rounded-[14px] border border-[#eeeeee] bg-[#fafafa] px-5 py-4"
-                        >
+                            class="flex items-center justify-between gap-5 rounded-[14px] border border-[#eeeeee] bg-[#fafafa] px-5 py-4">
                             <span class="inline-flex shrink-0 items-center gap-2 rounded-full border border-red-400 bg-red-50 px-3 py-1 text-[10px] font-semibold text-red-600">
                                 <i class="fa-regular fa-circle-xmark"></i>
                                 Annulée
@@ -405,28 +394,24 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                         <button
                             type="button"
                             id="openCancelModal"
-                            class="inline-flex items-center justify-center gap-3 rounded-[9px] border border-red-500 px-5 py-2.5 font-['DM_Sans'] text-[13px] font-medium text-red-500 transition hover:bg-red-50"
-                        >
+                            class="inline-flex items-center justify-center gap-3 rounded-[9px] border border-red-500 px-5 py-2.5 font-['DM_Sans'] text-[13px] font-medium text-red-500 transition hover:bg-red-50">
                             <i class="fa-regular fa-circle-xmark"></i>
                             Annuler cette commande
                         </button>
                     <?php endif; ?>
 
-                    <?php if ($statutActuel === 'RETIREE'): ?>
+                    <?php if ($statutActuel === 'RETIREE' && !$avisExiste): ?>
                         <button
                             type="button"
                             id="openAvisModal"
-                            class="inline-flex items-center justify-center gap-3 rounded-[9px] bg-[#ff9800] px-5 py-2.5 font-['DM_Sans'] text-[13px] font-bold text-white transition hover:bg-[#e88900]"
-                        >
+                            class="inline-flex items-center justify-center gap-3 rounded-[9px] bg-[#ff9800] px-5 py-2.5 font-['DM_Sans'] text-[13px] font-bold text-white transition hover:bg-[#e88900]">
                             <i class="fa-regular fa-star"></i>
                             Donner mon avis pour ce repas
                         </button>
                     <?php endif; ?>
-
                     <a
                         href="/commande/detail/<?= $idCommande ?>"
-                        class="inline-flex items-center justify-center gap-3 rounded-[9px] border border-[#dddddd] px-5 py-2.5 font-['DM_Sans'] text-[12px] font-bold text-[#333333] transition hover:bg-[#f8f8f8]"
-                    >
+                        class="inline-flex items-center justify-center gap-3 rounded-[9px] border border-[#dddddd] px-5 py-2.5 font-['DM_Sans'] text-[12px] font-bold text-[#333333] transition hover:bg-[#f8f8f8]">
                         <i class="fa-regular fa-file-lines"></i>
                         Voir la facture / détail complet
                     </a>
@@ -444,15 +429,13 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
     <div
         id="cancelModal"
         class="fixed inset-0 z-[9999] hidden items-start justify-center bg-black/50 px-4 pt-[10vh]"
-        aria-hidden="true"
-    >
+        aria-hidden="true">
         <div
             id="cancelModalContent"
             class="relative w-full max-w-[460px] overflow-hidden rounded-[18px] bg-white shadow-2xl"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="cancelModalTitle"
-        >
+            aria-labelledby="cancelModalTitle">
             <div class="flex items-center justify-between border-b border-[#eeeeee] px-5 py-4">
                 <h2 id="cancelModalTitle" class="font-['Inter'] text-[19px] font-bold text-[#111111]">
                     Annuler la commande ?
@@ -462,8 +445,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                     type="button"
                     id="closeCancelModal"
                     class="flex h-8 w-8 items-center justify-center text-[20px] leading-none text-[#111111] transition hover:text-[#fe7900]"
-                    aria-label="Fermer"
-                >
+                    aria-label="Fermer">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -485,16 +467,14 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                     <button
                         type="button"
                         id="cancelModalButton"
-                        class="inline-flex h-[42px] items-center justify-center rounded-[10px] border border-[#dddddd] bg-white px-5 font-['DM_Sans'] text-[13px] font-bold text-[#333333] transition hover:bg-[#f7f7f7]"
-                    >
+                        class="inline-flex h-[42px] items-center justify-center rounded-[10px] border border-[#dddddd] bg-white px-5 font-['DM_Sans'] text-[13px] font-bold text-[#333333] transition hover:bg-[#f7f7f7]">
                         Annuler
                     </button>
 
                     <form method="POST" action="/commandes/<?= $idCommande ?>/annuler" class="w-full">
                         <button
                             type="submit"
-                            class="inline-flex h-[42px] w-full items-center justify-center rounded-[10px] bg-[#ff4545] px-5 font-['DM_Sans'] text-[13px] font-bold text-white transition hover:bg-[#e93636]"
-                        >
+                            class="inline-flex h-[42px] w-full items-center justify-center rounded-[10px] bg-[#ff4545] px-5 font-['DM_Sans'] text-[13px] font-bold text-white transition hover:bg-[#e93636]">
                             Oui, annuler
                         </button>
                     </form>
@@ -513,14 +493,12 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
     <div
         id="avisModal"
         class="fixed inset-0 z-[9999] hidden items-start justify-center bg-black/50 px-4 pt-[8vh]"
-        aria-hidden="true"
-    >
+        aria-hidden="true">
         <div
             class="relative w-full max-w-[520px] overflow-hidden rounded-[18px] bg-white shadow-2xl"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="avisModalTitle"
-        >
+            aria-labelledby="avisModalTitle">
             <div class="flex items-center justify-between border-b border-[#eeeeee] px-6 py-4">
                 <div>
                     <p class="font-['DM_Sans'] text-[10px] font-bold uppercase text-[#fe7900]">
@@ -528,8 +506,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                     </p>
                     <h2
                         id="avisModalTitle"
-                        class="mt-1 font-['Inter'] text-[19px] font-bold text-[#111111]"
-                    >
+                        class="mt-1 font-['Inter'] text-[19px] font-bold text-[#111111]">
                         Donnez votre avis
                     </h2>
                 </div>
@@ -538,8 +515,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                     type="button"
                     id="closeAvisModal"
                     class="flex h-8 w-8 items-center justify-center text-[20px] leading-none text-[#111111] transition hover:text-[#fe7900]"
-                    aria-label="Fermer"
-                >
+                    aria-label="Fermer">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -560,12 +536,10 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                                     name="note"
                                     value="<?= $note ?>"
                                     class="sr-only"
-                                    <?= $note === 5 ? '' : '' ?>
-                                >
+                                    <?= $note === 5 ? '' : '' ?>>
                                 <i
                                     data-star="<?= $note ?>"
-                                    class="fa-regular fa-star text-[27px] text-[#cfcfcf] transition"
-                                ></i>
+                                    class="fa-regular fa-star text-[27px] text-[#cfcfcf] transition"></i>
                             </label>
                         <?php endfor; ?>
                     </div>
@@ -578,8 +552,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                 <div class="mt-5">
                     <label
                         for="avisCommentaire"
-                        class="font-['DM_Sans'] text-[13px] font-bold text-[#333333]"
-                    >
+                        class="font-['DM_Sans'] text-[13px] font-bold text-[#333333]">
                         Votre commentaire
                     </label>
 
@@ -589,8 +562,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                         rows="5"
                         required
                         class="mt-2 w-full resize-none rounded-[10px] border border-[#dddddd] px-4 py-3 font-['DM_Sans'] text-[13px] text-[#333333] outline-none transition placeholder:text-[#aaaaaa] focus:border-[#ff9800] focus:ring-1 focus:ring-[#ff9800]"
-                        placeholder="Dites-nous ce que vous avez pensé de votre repas..."
-                    ></textarea>
+                        placeholder="Dites-nous ce que vous avez pensé de votre repas..."></textarea>
 
                     <p id="avisCommentaireErreur" class="mt-2 hidden font-['DM_Sans'] text-[12px] text-red-600">
                         Veuillez saisir un commentaire.
@@ -601,15 +573,13 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                     <button
                         type="button"
                         id="cancelAvisModal"
-                        class="inline-flex h-[42px] items-center justify-center rounded-[10px] border border-[#dddddd] bg-white px-5 font-['DM_Sans'] text-[13px] font-bold text-[#333333] transition hover:bg-[#f7f7f7]"
-                    >
+                        class="inline-flex h-[42px] items-center justify-center rounded-[10px] border border-[#dddddd] bg-white px-5 font-['DM_Sans'] text-[13px] font-bold text-[#333333] transition hover:bg-[#f7f7f7]">
                         Annuler
                     </button>
 
                     <button
                         type="submit"
-                        class="inline-flex h-[42px] items-center justify-center gap-2 rounded-[10px] bg-[#ff9800] px-5 font-['DM_Sans'] text-[13px] font-bold text-white transition hover:bg-[#e88900]"
-                    >
+                        class="inline-flex h-[42px] items-center justify-center gap-2 rounded-[10px] bg-[#ff9800] px-5 font-['DM_Sans'] text-[13px] font-bold text-white transition hover:bg-[#e88900]">
                         <i class="fa-regular fa-paper-plane"></i>
                         Envoyer mon avis
                     </button>
@@ -621,7 +591,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
 </main>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const page = document.getElementById('suiviCommande');
 
         if (!page) {
@@ -683,6 +653,10 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
             'RETIREE'
         ];
 
+
+        const avisExiste =
+            <?= $avisExiste ? 'true' : 'false' ?>;
+
         let statutPrecedent = <?= json_encode($statutActuel, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
         let intervalleSuivi = null;
         let requeteEnCours = false;
@@ -700,7 +674,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                 return;
             }
 
-            anciennes.forEach(function (classe) {
+            anciennes.forEach(function(classe) {
                 element.classList.remove(...classe.split(' '));
             });
 
@@ -740,7 +714,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
 
             const indexActuel = ordreEtapes.indexOf(statut);
 
-            zone.querySelectorAll('[data-step]').forEach(function (step) {
+            zone.querySelectorAll('[data-step]').forEach(function(step) {
                 const code = step.dataset.step;
                 const index = ordreEtapes.indexOf(code);
                 const icon = step.querySelector('[data-step-icon]');
@@ -791,7 +765,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                 }
             });
 
-            zone.querySelectorAll('[data-step-connector]').forEach(function (connector) {
+            zone.querySelectorAll('[data-step-connector]').forEach(function(connector) {
                 const connectorIndex = Number(connector.dataset.stepConnector);
 
                 connector.classList.remove(
@@ -800,9 +774,9 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
                 );
 
                 connector.classList.add(
-                    indexActuel > connectorIndex
-                        ? 'bg-[#ff9800]'
-                        : 'bg-[#dedede]'
+                    indexActuel > connectorIndex ?
+                    'bg-[#ff9800]' :
+                    'bg-[#dedede]'
                 );
             });
         }
@@ -983,24 +957,38 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
         }
 
         function creerBoutonAvis() {
+            if (avisExiste) {
+                return;
+            }
+
             if (document.getElementById('openAvisModal')) {
                 return;
             }
 
-            const actions = document.getElementById('actionsContainer');
-            const detail = actions?.querySelector('a[href^="/commande/detail/"]');
+            const actions =
+                document.getElementById('actionsContainer');
 
-            if (!actions || !detail) {
+            if (!actions) {
                 return;
             }
 
-            const bouton = document.createElement('button');
+            const bouton =
+                document.createElement('button');
+
             bouton.type = 'button';
             bouton.id = 'openAvisModal';
-            bouton.className = 'inline-flex items-center justify-center gap-3 rounded-[9px] bg-[#ff9800] px-5 py-2.5 font-[\'DM_Sans\'] text-[13px] font-bold text-white transition hover:bg-[#e88900]';
-            bouton.innerHTML = '<i class="fa-regular fa-star"></i> Donner mon avis pour ce repas';
 
-            actions.insertBefore(bouton, detail);
+            bouton.className =
+                'inline-flex items-center justify-center gap-3 rounded-[9px] bg-[#ff9800] px-5 py-2.5 font-[\'DM_Sans\'] text-[13px] font-bold text-white transition hover:bg-[#e88900]';
+
+            bouton.innerHTML =
+                '<i class="fa-regular fa-star"></i> ' +
+                'Donner mon avis pour ce repas';
+
+            actions.insertBefore(
+                bouton,
+                actions.firstElementChild
+            );
         }
 
         function supprimerBoutonAvis() {
@@ -1099,8 +1087,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
 
             try {
                 const response = await fetch(
-                    '/commande/suivi/' + commandeId + '/etat',
-                    {
+                    '/commande/suivi/' + commandeId + '/etat', {
                         method: 'GET',
                         headers: {
                             'Accept': 'application/json',
@@ -1211,7 +1198,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
             document.body.classList.remove('overflow-hidden');
         }
 
-        document.addEventListener('click', function (event) {
+        document.addEventListener('click', function(event) {
             const bouton = event.target.closest('#openCancelModal');
 
             if (bouton) {
@@ -1222,7 +1209,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
         closeCancelModalButton?.addEventListener('click', fermerModalAnnulation);
         cancelModalButton?.addEventListener('click', fermerModalAnnulation);
 
-        cancelModal?.addEventListener('click', function (event) {
+        cancelModal?.addEventListener('click', function(event) {
             if (event.target === cancelModal) {
                 fermerModalAnnulation();
             }
@@ -1263,7 +1250,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
             document.body.classList.remove('overflow-hidden');
         }
 
-        document.addEventListener('click', function (event) {
+        document.addEventListener('click', function(event) {
             const bouton = event.target.closest('#openAvisModal');
 
             if (bouton) {
@@ -1274,14 +1261,14 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
         closeAvisModalButton?.addEventListener('click', fermerModalAvis);
         cancelAvisModalButton?.addEventListener('click', fermerModalAvis);
 
-        avisModal?.addEventListener('click', function (event) {
+        avisModal?.addEventListener('click', function(event) {
             if (event.target === avisModal) {
                 fermerModalAvis();
             }
         });
 
         /* Étoiles de notation */
-        avisStars?.addEventListener('change', function (event) {
+        avisStars?.addEventListener('change', function(event) {
             const radio = event.target.closest('input[name="note"]');
 
             if (!radio) {
@@ -1290,7 +1277,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
 
             const note = Number(radio.value);
 
-            avisStars.querySelectorAll('[data-star]').forEach(function (star) {
+            avisStars.querySelectorAll('[data-star]').forEach(function(star) {
                 const valeur = Number(star.dataset.star);
 
                 star.classList.remove(
@@ -1310,7 +1297,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
             avisNoteErreur?.classList.add('hidden');
         });
 
-        avisForm?.addEventListener('submit', function (event) {
+        avisForm?.addEventListener('submit', function(event) {
             const noteInput = avisForm.querySelector('input[name="note"]:checked');
             const note = Number(noteInput?.value || 0);
             const commentaire = avisCommentaire?.value.trim() || '';
@@ -1343,7 +1330,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
              */
         });
 
-        avisCommentaire?.addEventListener('input', function () {
+        avisCommentaire?.addEventListener('input', function() {
             if (avisCommentaire.value.trim() !== '') {
                 avisCommentaireErreur?.classList.add('hidden');
             }
@@ -1353,7 +1340,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
            ÉCHAP / FERMETURE
         ===================================================== */
 
-        document.addEventListener('keydown', function (event) {
+        document.addEventListener('keydown', function(event) {
             if (event.key !== 'Escape') {
                 return;
             }
@@ -1369,7 +1356,7 @@ $messageActuel = $messageStatut[$statutActuel] ?? 'Statut de commande mis à jou
         mettreAJourInterface(statutPrecedent);
         demarrerSuivi();
 
-        window.addEventListener('beforeunload', function () {
+        window.addEventListener('beforeunload', function() {
             arreterSuivi();
         });
     });

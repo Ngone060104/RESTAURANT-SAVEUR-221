@@ -228,10 +228,10 @@ return function (Router $router): void {
     );
 
     $router->post(
-    '/gerant/stocks/ajuster/{id}',
-    [GerantStockController::class, 'ajusterStock'],
-    [GerantMiddleware::class]
-);
+        '/gerant/stocks/ajuster/{id}',
+        [GerantStockController::class, 'ajusterStock'],
+        [GerantMiddleware::class]
+    );
 
     // Panier (feature/panier) - réservé aux clients connectés
 
@@ -319,15 +319,37 @@ return function (Router $router): void {
     );
 
     // Commandes - gérant
-    $router->get('/gerant/commandes', [GerantCommandeController::class, 'index'], [GerantMiddleware::class]);
-    $router->get('/gerant/commande', [GerantCommandeController::class, 'show'], [GerantMiddleware::class]); // ?id=...
-    $router->post('/gerant/commandes/statut', [GerantCommandeController::class, 'changerStatut'], [
-        GerantMiddleware::class,
-    ]);
-    $router->post('/gerant/commandes/annuler', [GerantCommandeController::class, 'annuler'], [
-        GerantMiddleware::class,
-    ]);
+    // Commandes - gérant
 
+    $router->get(
+        '/gerant/commandes',
+        [GerantCommandeController::class, 'index'],
+        [GerantMiddleware::class]
+    );
+
+    $router->get(
+        '/gerant/commandes/statut/{statut}',
+        [GerantCommandeController::class, 'byStatut'],
+        [GerantMiddleware::class]
+    );
+
+    $router->get(
+        '/gerant/commande/show/{id}',
+        [GerantCommandeController::class, 'show'],
+        [GerantMiddleware::class]
+    );
+
+    $router->post(
+        '/gerant/commandes/statut',
+        [GerantCommandeController::class, 'changerStatut'],
+        [GerantMiddleware::class]
+    );
+
+    $router->post(
+        '/gerant/commandes/annuler',
+        [GerantCommandeController::class, 'annuler'],
+        [GerantMiddleware::class]
+    );
 
     // Paiements (feature/paiements) - gérant
     $router->get('/gerant/paiements', [GerantPaiementController::class, 'index'], [GerantMiddleware::class]);
