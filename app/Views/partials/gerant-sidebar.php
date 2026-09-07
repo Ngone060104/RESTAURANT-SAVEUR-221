@@ -399,7 +399,8 @@ function gerantSidebarClass(string $path): string
             ================================================== -->
 
             <a
-                href="#"
+                href="/gerant/statistiques"
+                onclick="closeGerantSidebar()"
                 class="
                     flex
                     h-[46px]
@@ -411,6 +412,10 @@ function gerantSidebarClass(string $path): string
                     text-[13px]
                     font-medium
                     text-[#777777]
+                    transition
+                    hover:bg-[#242424]
+                    hover:text-white
+                     <?= gerantSidebarClass('/gerant/statistiques') ?>
                 "
                 title="Disponible prochainement"
             >
@@ -435,7 +440,8 @@ function gerantSidebarClass(string $path): string
             ================================================== -->
 
             <a
-                href="#"
+                href="/gerant/utilisateurs"
+                onclick="closeGerantSidebar()"
                 class="
                     flex
                     h-[46px]
@@ -447,6 +453,10 @@ function gerantSidebarClass(string $path): string
                     text-[13px]
                     font-medium
                     text-[#777777]
+                    transition
+                    hover:bg-[#242424]
+                    hover:text-white
+                     <?= gerantSidebarClass('/gerant/utilisateurs') ?>
                 "
                 title="Disponible prochainement"
             >
@@ -471,7 +481,8 @@ function gerantSidebarClass(string $path): string
             ================================================== -->
 
             <a
-                href="#"
+                href="/gerant/fichiers-clients"
+                onclick="closeGerantSidebar()"
                 class="
                     flex
                     h-[46px]
@@ -507,7 +518,8 @@ function gerantSidebarClass(string $path): string
             ================================================== -->
 
             <a
-                href="#"
+                href="/gerant/moderations"
+                onclick="closeGerantSidebar()"
                 class="
                     flex
                     h-[46px]

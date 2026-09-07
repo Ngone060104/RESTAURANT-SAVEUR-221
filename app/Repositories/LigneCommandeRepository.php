@@ -11,9 +11,7 @@ use PDO;
  */
 class LigneCommandeRepository
 {
-    public function __construct(private PDO $pdo)
-    {
-    }
+    public function __construct(private PDO $pdo) {}
 
     public function findByCommande(int $commandeId): array
     {
@@ -36,6 +34,50 @@ class LigneCommandeRepository
             [$this, 'hydrate'],
             $stmt->fetchAll()
         );
+    }
+
+    public function getProduitPlusVendu(): ?object
+    {
+        $stmt = $this->pdo->query('
+        SELECT
+            p.id,
+            p.nom,
+            SUM(lc.quantite) AS quantite_vendue
+        FROM lignes_commande lc
+        INNER JOIN commandes c
+            ON c.id = lc.commande_id
+        INNER JOIN produits p
+            ON p.id = lc.produit_id
+        WHERE c.statut <> \'ANNULEE\'
+        GROUP BY p.id, p.nom
+        ORDER BY quantite_vendue DESC
+        LIMIT 1
+    ');
+
+        $row = $stmt->fetch();
+
+        return $row ?: null;
+    }
+
+    public function getTop3Produits(): array
+    {
+        $stmt = $this->pdo->query('
+        SELECT
+            p.id,
+            p.nom,
+            SUM(lc.quantite) AS quantite_vendue
+        FROM lignes_commande lc
+        INNER JOIN commandes c
+            ON c.id = lc.commande_id
+        INNER JOIN produits p
+            ON p.id = lc.produit_id
+        WHERE c.statut <> \'ANNULEE\'
+        GROUP BY p.id, p.nom
+        ORDER BY quantite_vendue DESC
+        LIMIT 3
+    ');
+
+        return $stmt->fetchAll();
     }
 
     public function create(

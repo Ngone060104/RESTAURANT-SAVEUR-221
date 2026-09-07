@@ -18,6 +18,7 @@ use App\Controllers\Gerant\DashboardController as GerantDashboardController;
 use App\Controllers\Gerant\PaiementController as GerantPaiementController;
 use App\Controllers\Gerant\ProduitController as GerantProduitController;
 use App\Controllers\Gerant\StockController as GerantStockController;
+use App\Controllers\Gerant\StatistiqueController;
 
 use App\Middleware\AdminMiddleware;
 use App\Middleware\ClientMiddleware;
@@ -213,6 +214,13 @@ return function (Router $router): void {
         ]
     );
 
+
+    // statistiques - gérant
+    $router->get(
+        '/gerant/statistiques',
+        [StatistiqueController::class, 'index'],
+        [GerantMiddleware::class]
+    );
     // route pour la gestion des stocks (feature/gerant-stocks)
 
     $router->get(

@@ -8,10 +8,8 @@ use PDO;
 
 class CommandeRepository implements RepositoryInterface
 {
-    public function __construct(private PDO $pdo)
-    {
-    }
-    
+    public function __construct(private PDO $pdo) {}
+
 
     public function findAll(): array
     {
@@ -70,6 +68,82 @@ class CommandeRepository implements RepositoryInterface
         ]);
 
         return (int) $stmt->fetchColumn();
+    }
+
+    public function getCaJour(): float
+    {
+        $stmt = $this->pdo->query('
+        SELECT COALESCE(SUM(p.montant), 0)
+        FROM paiements p
+        WHERE p.date_paiement::date = CURRENT_DATE
+    ');
+
+        return (float) $stmt->fetchColumn();
+    }
+
+    public function getCaSemaine(): float
+    {
+        $stmt = $this->pdo->query('
+        SELECT COALESCE(SUM(p.montant), 0)
+        FROM paiements p
+        WHERE p.date_paiement >= date_trunc(\'week\', CURRENT_DATE)
+          AND p.date_paiement < date_trunc(\'week\', CURRENT_DATE)
+              + INTERVAL \'1 week\'
+    ');
+
+        return (float) $stmt->fetchColumn();
+    }
+
+    public function getCaMois(): float
+    {
+        $stmt = $this->pdo->query('
+        SELECT COALESCE(SUM(p.montant), 0)
+        FROM paiements p
+        WHERE p.date_paiement >= date_trunc(\'month\', CURRENT_DATE)
+          AND p.date_paiement < date_trunc(\'month\', CURRENT_DATE)
+              + INTERVAL \'1 month\'
+    ');
+
+        return (float) $stmt->fetchColumn();
+    }
+
+    public function countCommandes(): int
+    {
+        $stmt = $this->pdo->query('
+        SELECT COUNT(*)
+        FROM commandes
+    ');
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function countCommandesEnCours(): int
+    {
+        $stmt = $this->pdo->query('
+        SELECT COUNT(*)
+        FROM commandes
+        WHERE statut IN (
+            \'EN_ATTENTE\',
+            \'EN_PREPARATION\',
+            \'PRETE\'
+        )
+    ');
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function countCommandesParStatut(): array
+    {
+        $stmt = $this->pdo->query('
+        SELECT
+            statut,
+            COUNT(*) AS nombre
+        FROM commandes
+        GROUP BY statut
+        ORDER BY statut
+    ');
+
+        return $stmt->fetchAll();
     }
 
     public function update(int $id, array $data): bool
