@@ -16,14 +16,17 @@ class AvisController extends Controller
     public function __construct(
         private AvisRepository $avisRepository,
         private AvisService $avisService,
-    ) {
-    }
+    ) {}
 
     public function index(): void
     {
-        $this->view('admin/avis/index', [
-            'avis' => $this->avisRepository->findAll(),
-        ]);
+        $this->view(
+            'admin/avis/index',
+            [
+                'avis' => $this->avisRepository->findAll(),
+            ],
+            'layouts/gerant'
+        );
     }
 
     public function destroy(): void

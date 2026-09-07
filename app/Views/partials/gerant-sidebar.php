@@ -472,7 +472,7 @@ function gerantSidebarClass(string $path): string
 
                 <!-- MODÉRATIONS -->
                 <a
-                    href="/admin/moderations"
+                    href="/admin/avis"
                     onclick="closeGerantSidebar()"
                     class="
             flex
@@ -485,7 +485,7 @@ function gerantSidebarClass(string $path): string
             text-[13px]
             font-medium
             transition
-            <?= gerantSidebarClass('/admin/moderations') ?>
+            <?= gerantSidebarClass('/admin/avis') ?>
         ">
                     <i
                         class="
