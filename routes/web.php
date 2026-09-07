@@ -9,6 +9,7 @@ use App\Controllers\PanierController;
 use App\Controllers\ProduitController;
 use App\Controllers\ProfilController;
 
+use App\Controllers\Admin\AdminDashboardController;
 use App\Controllers\Admin\AvisController as AdminAvisController;
 use App\Controllers\Admin\ClientController as AdminClientController;
 use App\Controllers\Admin\UtilisateurController as AdminUtilisateurController;
@@ -19,6 +20,7 @@ use App\Controllers\Gerant\PaiementController as GerantPaiementController;
 use App\Controllers\Gerant\ProduitController as GerantProduitController;
 use App\Controllers\Gerant\StockController as GerantStockController;
 use App\Controllers\Gerant\StatistiqueController;
+
 
 use App\Middleware\AdminMiddleware;
 use App\Middleware\ClientMiddleware;
@@ -56,11 +58,7 @@ return function (Router $router): void {
     // Espace gérant - catégories (GERANT + ADMIN, règle métier n°14)
     // =====================================================
 
-    // Dashboard gérant
-    // GERANT + ADMIN
-    // =====================================================
 
-    // Espace gérant - catégories
     // =====================================================
     // Espace gérant - catégories
     // =====================================================
@@ -389,6 +387,47 @@ return function (Router $router): void {
     $router->post('/avis', [AvisController::class, 'store'], [ClientMiddleware::class]);
 
     // Avis - admin (règle métier n°13 : réservé à ADMIN, pas au gérant)
+    $router->get(
+        '/admin/dashboard',
+        [AdminDashboardController::class, 'index'],
+        [AdminMiddleware::class]
+    );
+    $router->get(
+        '/admin/utilisateurs',
+        [AdminUtilisateurController::class, 'index'],
+        [AdminMiddleware::class]
+    );
+    $router->get(
+        '/admin/utilisateurs/recherche/{terme}',
+        [AdminUtilisateurController::class, 'recherche'],
+        [AdminMiddleware::class]
+    );
+    $router->post(
+        '/admin/utilisateurs',
+        [AdminUtilisateurController::class, 'store'],
+        [AdminMiddleware::class]
+    );
+    $router->post(
+        '/admin/utilisateurs/update',
+        [AdminUtilisateurController::class, 'update'],
+        [AdminMiddleware::class]
+    );
+    $router->post(
+        '/admin/utilisateurs/delete',
+        [AdminUtilisateurController::class, 'destroy'],
+        [AdminMiddleware::class]
+    );
+    $router->post(
+        '/admin/utilisateurs/activer',
+        [AdminUtilisateurController::class, 'activer'],
+        [AdminMiddleware::class]
+    );
+    $router->post(
+        '/admin/utilisateurs/desactiver',
+        [AdminUtilisateurController::class, 'desactiver'],
+        [AdminMiddleware::class]
+    );
+    
     $router->get('/admin/avis', [AdminAvisController::class, 'index'], [AdminMiddleware::class]);
     $router->post('/admin/avis/delete', [AdminAvisController::class, 'destroy'], [AdminMiddleware::class]);
 
