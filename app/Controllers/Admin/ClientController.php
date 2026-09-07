@@ -2,23 +2,18 @@
 
 namespace App\Controllers\Admin;
 
-use App\Core\Controller;
 use App\Exceptions\NotFoundException;
+use App\Core\Controller;
 use App\Repositories\ClientRepository;
 use App\Repositories\CommandeRepository;
+use App\Repositories\LigneCommandeRepository;
 
-/**
- * Section "ESPACE ADMINISTRATEUR -> Gestion des clients". Contrairement
- * aux utilisateurs internes, il n'y a PAS de CRUD ici - le cahier des
- * charges ne prévoit que lister/rechercher/consulter/historique, jamais
- * créer/modifier/supprimer un client (un client gère son propre compte
- * via /profil).
- */
 class ClientController extends Controller
 {
     public function __construct(
         private ClientRepository $clientRepository,
         private CommandeRepository $commandeRepository,
+        private LigneCommandeRepository $ligneCommandeRepository,
     ) {
     }
 
@@ -30,21 +25,63 @@ class ClientController extends Controller
             ? $this->clientRepository->search($terme)
             : $this->clientRepository->findAll();
 
-        $this->view('admin/clients/index', ['clients' => $clients]);
+        $this->view(
+            'admin/clients/index',
+            [
+                'clients' => $clients,
+                'termeRecherche' => $terme,
+            ],
+            'layouts/gerant'
+        );
     }
 
-    public function show(): void
-    {
-        $id = (int) ($_GET['id'] ?? 0);
-        $client = $this->clientRepository->findClientById($id);
+    public function recherche(string $terme): void
+{
+    $terme = trim(urldecode($terme));
 
-        if ($client === null) {
-            throw new NotFoundException('Client introuvable.');
-        }
+    if ($terme === '') {
+        $this->redirect('/admin/clients');
+        return;
+    }
 
-        $this->view('admin/clients/show', [
+    $clients = $this->clientRepository->search($terme);
+
+    $this->view(
+        'admin/clients/index',
+        [
+            'clients' => $clients,
+            'termeRecherche' => $terme,
+        ],
+        'layouts/gerant'
+    );
+}
+
+public function show(int $id): void
+{
+    $client = $this->clientRepository->findClientById($id);
+
+    if ($client === null) {
+        throw new NotFoundException('Client introuvable.');
+    }
+
+    $commandes = $this->commandeRepository->findByClient($id);
+
+    $lignesParCommande = [];
+
+    foreach ($commandes as $commande) {
+        $lignesParCommande[$commande->getId()] =
+            $this->ligneCommandeRepository
+                ->findByCommande($commande->getId());
+    }
+
+    $this->view(
+        'admin/clients/show',
+        [
             'client' => $client,
-            'commandes' => $this->commandeRepository->findByClient($id),
-        ]);
-    }
+            'commandes' => $commandes,
+            'lignesParCommande' => $lignesParCommande,
+        ],
+        'layouts/gerant'
+    );
+}
 }

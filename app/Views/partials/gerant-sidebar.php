@@ -443,7 +443,7 @@ function gerantSidebarClass(string $path): string
 
                 <!-- FICHIERS CLIENTS -->
                 <a
-                    href="/admin/fichiers-clients"
+                    href="/admin/clients"
                     onclick="closeGerantSidebar()"
                     class="
             flex
@@ -456,7 +456,7 @@ function gerantSidebarClass(string $path): string
             text-[13px]
             font-medium
             transition
-            <?= gerantSidebarClass('/admin/fichiers-clients') ?>
+            <?= gerantSidebarClass('/admin/clients') ?>
         ">
                     <i
                         class="

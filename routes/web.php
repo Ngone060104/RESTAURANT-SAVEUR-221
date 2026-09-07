@@ -427,7 +427,7 @@ return function (Router $router): void {
         [AdminUtilisateurController::class, 'desactiver'],
         [AdminMiddleware::class]
     );
-    
+
     $router->get('/admin/avis', [AdminAvisController::class, 'index'], [AdminMiddleware::class]);
     $router->post('/admin/avis/delete', [AdminAvisController::class, 'destroy'], [AdminMiddleware::class]);
 
@@ -458,10 +458,10 @@ return function (Router $router): void {
 
     // Clients (lecture seule) - réservé à ADMIN
     $router->get('/admin/clients', [AdminClientController::class, 'index'], [AdminMiddleware::class]);
-    $router->get('/admin/client', [AdminClientController::class, 'show'], [AdminMiddleware::class]); // ?id=...
-
-
-
-
-
+    $router->get('/admin/clients/show/{id}', [AdminClientController::class, 'show'], [AdminMiddleware::class]); // ?id=...
+    $router->get(
+        '/admin/clients/recherche/{terme}',
+        [AdminClientController::class, 'recherche'],
+        [AdminMiddleware::class]
+    );
 };
