@@ -7,34 +7,40 @@ use PDO;
 
 class AvisRepository
 {
-    public function __construct(private PDO $pdo)
-    {
-    }
-    
+    public function __construct(private PDO $pdo) {}
+
 
     public function findAll(): array
     {
         $stmt = $this->pdo->query('
-            SELECT a.*, u.nom AS client_nom, u.prenom AS client_prenom
-            FROM avis a
-            JOIN clients c ON c.id = a.client_id
-            JOIN utilisateurs u ON u.id = c.id
-            ORDER BY a.date_avis DESC
-        ');
+        SELECT
+            a.*,
+            u.nom AS client_nom,
+            u.prenom AS client_prenom
+        FROM avis a
+        JOIN clients c
+            ON c.id = a.client_id
+        JOIN utilisateurs u
+            ON u.id = c.id
+        ORDER BY a.date_avis DESC
+    ');
 
-        return array_map([$this, 'hydrate'], $stmt->fetchAll());
+        return array_map(
+            [$this, 'hydrate'],
+            $stmt->fetchAll()
+        );
     }
 
-     /**
+    /**
      * Avis les plus récents, pour la section témoignages de la page
      * d'accueil. Inclut le nom du premier produit de la commande
      * associée (approximation raisonnable : un avis porte sur toute
      * la commande, pas sur un produit précis, il n'y a pas de colonne
      * dédiée dans le schéma).
      */
-   public function findRecents(int $limite = 2): array
-{
-    $stmt = $this->pdo->prepare('
+    public function findRecents(int $limite = 2): array
+    {
+        $stmt = $this->pdo->prepare('
         SELECT
             a.*,
 
@@ -63,19 +69,19 @@ class AvisRepository
         LIMIT :limite
     ');
 
-    $stmt->bindValue(
-        ':limite',
-        $limite,
-        PDO::PARAM_INT
-    );
+        $stmt->bindValue(
+            ':limite',
+            $limite,
+            PDO::PARAM_INT
+        );
 
-    $stmt->execute();
+        $stmt->execute();
 
-    return array_map(
-        [$this, 'hydrate'],
-        $stmt->fetchAll()
-    );
-}
+        return array_map(
+            [$this, 'hydrate'],
+            $stmt->fetchAll()
+        );
+    }
 
     public function findByCommande(int $commandeId): ?Avis
     {
@@ -117,17 +123,18 @@ class AvisRepository
         return $stmt->execute(['id' => $id]);
     }
 
-   private function hydrate(object $row): Avis
-{
-    return new Avis(
-        (int) $row->id,
-        (int) $row->note,
-        $row->commentaire,
-        $row->date_avis,
-        (int) $row->client_id,
-        (int) $row->commande_id,
-        $row->client_nom_complet ?? null,
-        $row->produit_nom ?? null,
-    );
-}
+    private function hydrate(object $row): Avis
+    {
+        return new Avis(
+            (int) $row->id,
+            (int) $row->note,
+            $row->commentaire,
+            $row->date_avis,
+            (int) $row->client_id,
+            (int) $row->commande_id,
+            $row->client_nom ?? null,
+            $row->client_prenom ?? null,
+            $row->produit_nom ?? null,
+        );
+    }
 }
