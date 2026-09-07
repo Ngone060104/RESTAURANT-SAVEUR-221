@@ -9,7 +9,7 @@ $email = $email ?? ($_POST['email'] ?? '');
 <section class="min-h-[560px] bg-[#faf9f7] flex items-start justify-center px-6 pt-[32px] pb-[40px]">
 
     <!-- Carte de connexion -->
-    <div class="w-full max-w-[550px] bg-white border border-stone-200 rounded-[30px] shadow-[0_3px_5px_rgba(0,0,0,0.22)] px-[46px] pt-[32px] pb-[24px]">
+    <div class="w-full max-w-[500px] bg-white border border-stone-200 rounded-[30px] shadow-[0_3px_5px_rgba(0,0,0,0.22)] px-[46px] pt-[32px] pb-[24px]">
 
         <!-- Logo -->
         <div class="flex justify-center mb-[14px]">

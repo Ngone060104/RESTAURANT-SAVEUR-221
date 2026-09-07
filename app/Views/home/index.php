@@ -175,7 +175,7 @@ $nomInitiale = static function (?string $nom): string {
 
                 <!-- GRANDE IMAGE -->
                 <div
-                    class="absolute right-0 top-0 h-[300px] w-[76%] overflow-hidden rounded-tl-[90px] rounded-tr-[90px] rounded-br-[4px] rounded-bl-[90px] bg-[#dedbd5] sm:h-[350px]"
+                    class="absolute right-20 top-0 h-[300px] w-[50%] overflow-hidden rounded-tl-[140px] rounded-tr-[140px] rounded-br-[4px] rounded-bl-[90px] bg-[#dedbd5] sm:h-[350px]"
                 >
 
                     <img
@@ -188,7 +188,7 @@ $nomInitiale = static function (?string $nom): string {
 
                 <!-- PETITE IMAGE -->
                 <div
-                    class="absolute bottom-0 left-[8%] z-10 h-[190px] w-[48%] overflow-hidden rounded-tl-[70px] rounded-tr-[70px] rounded-br-[4px] rounded-bl-[4px] border-[6px] border-[#faf9f7] bg-[#dedbd5] sm:h-[215px]"
+                    class="absolute bottom-0 left-[8%] z-10 h-[190px] w-[45%] overflow-hidden rounded-tl-[120px] rounded-tr-[120px] rounded-br-[4px] rounded-bl-[4px] border-[6px] border-[#faf9f7] bg-[#dedbd5] sm:h-[215px]"
                 >
 
                     <img
