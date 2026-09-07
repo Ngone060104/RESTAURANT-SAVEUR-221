@@ -659,7 +659,8 @@ $imageProduit = static function ($produit): string {
             <form
                 id="formApprovisionnement"
                 method="POST"
-                action="">
+                action=""
+                novalidate>
 
                 <label
                     for="quantiteApprovisionnement"
@@ -679,8 +680,7 @@ $imageProduit = static function ($produit): string {
                                     $quantiteApprovisionnement ?? ''
                                 ) ?>"
                         placeholder="Ex : 10"
-                        class="h-12 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm font-medium outline-none transition focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
-                        required>
+                        class="h-12 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm font-medium outline-none transition focus:border-orange-400 focus:ring-4 focus:ring-orange-100">
 
                     <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400">
                         unités
