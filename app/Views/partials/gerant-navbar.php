@@ -24,6 +24,8 @@ if ($currentPath === '/gerant/dashboard' || $currentPath === '/gerant') {
     $titrePage = 'Statistiques';
 }elseif (str_starts_with($currentPath, '/admin/utilisateurs')) {
     $titrePage = 'Utilisateurs';
+}elseif (str_starts_with($currentPath, '/admin/clients')) {
+    $titrePage = 'Clients';
 }
 else {
     $titrePage = 'Espace Gérant';
