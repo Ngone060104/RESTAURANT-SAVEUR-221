@@ -73,74 +73,237 @@ $imageProduit = static function ($produit): string {
     <!-- STATISTIQUES -->
     <!-- ===================================================== -->
 
-    <section class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+   <!-- ===================================================== -->
+<!-- STATISTIQUES -->
+<!-- ===================================================== -->
+<section class="mb-6">
 
-        <!-- Total produits -->
-        <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-            <div class="flex items-center justify-between">
+ 
+
+
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+
+        <!-- ================================================= -->
+        <!-- TOTAL PRODUITS -->
+        <!-- ================================================= -->
+        <div
+            class="group relative cursor-pointer overflow-hidden rounded-2xl
+                   border border-gray-100 bg-white p-6 shadow-sm
+                   transition-all duration-300 ease-out
+                   hover:-translate-y-1.5 hover:shadow-xl
+                   active:-translate-y-2 active:shadow-2xl"
+        >
+
+            <!-- Petit accent -->
+            <div
+                class="absolute left-0 top-0 h-1 w-0 rounded-r-full bg-blue-500
+                       transition-all duration-300
+                       group-hover:w-full"
+            ></div>
+
+            <div class="flex items-start justify-between">
 
                 <div>
                     <p class="text-sm font-medium text-gray-500">
                         Total produits
                     </p>
 
-                    <p class="mt-2 text-3xl font-bold text-gray-800">
+                    <p
+                        class="mt-3 text-3xl font-bold tracking-tight text-gray-900
+                               transition-all duration-300
+                               group-hover:translate-x-0.5"
+                    >
                         <?= (int) $nombreProduits ?>
                     </p>
+
+                    <div class="mt-3 flex items-center gap-2">
+                        <span
+                            class="h-1.5 w-1.5 rounded-full bg-blue-500"
+                        ></span>
+
+                        <p class="text-xs font-medium text-gray-400">
+                            Produits enregistrés
+                        </p>
+                    </div>
                 </div>
 
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                    <i class="fa-solid fa-box text-lg"></i>
+
+                <div
+                    class="flex h-14 w-14 shrink-0 items-center justify-center
+                           rounded-2xl bg-blue-50
+                           transition-all duration-300
+                           group-hover:scale-110 group-hover:rotate-3"
+                >
+                    <i
+                        class="fa-solid fa-box text-xl text-blue-600
+                               transition-transform duration-300
+                               group-hover:scale-110"
+                    ></i>
                 </div>
 
             </div>
+
+            <!-- Flèche discrète -->
+            <div
+                class="absolute bottom-5 right-6 opacity-0
+                       translate-x-2
+                       transition-all duration-300
+                       group-hover:translate-x-0 group-hover:opacity-100"
+            >
+                <i class="fa-solid fa-arrow-up-right text-xs text-blue-500"></i>
+            </div>
+
         </div>
 
 
-        <!-- Stock faible -->
-        <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-            <div class="flex items-center justify-between">
+        <!-- ================================================= -->
+        <!-- STOCK FAIBLE -->
+        <!-- ================================================= -->
+        <div
+            class="group relative cursor-pointer overflow-hidden rounded-2xl
+                   border border-gray-100 bg-white p-6 shadow-sm
+                   transition-all duration-300 ease-out
+                   hover:-translate-y-1.5 hover:shadow-xl
+                   active:-translate-y-2 active:shadow-2xl"
+        >
+
+            <!-- Petit accent -->
+            <div
+                class="absolute left-0 top-0 h-1 w-0 rounded-r-full bg-[#ff9500]
+                       transition-all duration-300
+                       group-hover:w-full"
+            ></div>
+
+            <div class="flex items-start justify-between">
 
                 <div>
                     <p class="text-sm font-medium text-gray-500">
                         Stock faible
                     </p>
 
-                    <p class="mt-2 text-3xl font-bold text-orange-500">
+                    <p
+                        class="mt-3 text-3xl font-bold tracking-tight text-gray-900
+                               transition-all duration-300
+                               group-hover:translate-x-0.5"
+                    >
                         <?= (int) $nombreStockFaible ?>
                     </p>
+
+                    <div class="mt-3 flex items-center gap-2">
+                        <span
+                            class="h-1.5 w-1.5 rounded-full bg-[#ff9500]"
+                        ></span>
+
+                        <p class="text-xs font-medium text-gray-400">
+                            Produits à surveiller
+                        </p>
+                    </div>
                 </div>
 
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-50 text-orange-500">
-                    <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+
+                <div
+                    class="flex h-14 w-14 shrink-0 items-center justify-center
+                           rounded-2xl bg-orange-50
+                           transition-all duration-300
+                           group-hover:scale-110 group-hover:rotate-3"
+                >
+                    <i
+                        class="fa-solid fa-triangle-exclamation text-xl text-[#ff9500]
+                               transition-transform duration-300
+                               group-hover:scale-110"
+                    ></i>
                 </div>
 
             </div>
+
+            <!-- Flèche discrète -->
+            <div
+                class="absolute bottom-5 right-6 opacity-0
+                       translate-x-2
+                       transition-all duration-300
+                       group-hover:translate-x-0 group-hover:opacity-100"
+            >
+                <i class="fa-solid fa-arrow-up-right text-xs text-[#ff9500]"></i>
+            </div>
+
         </div>
 
 
-        <!-- Rupture -->
-        <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-            <div class="flex items-center justify-between">
+        <!-- ================================================= -->
+        <!-- RUPTURE -->
+        <!-- ================================================= -->
+        <div
+            class="group relative cursor-pointer overflow-hidden rounded-2xl
+                   border border-gray-100 bg-white p-6 shadow-sm
+                   transition-all duration-300 ease-out
+                   hover:-translate-y-1.5 hover:shadow-xl
+                   active:-translate-y-2 active:shadow-2xl"
+        >
+
+            <!-- Petit accent -->
+            <div
+                class="absolute left-0 top-0 h-1 w-0 rounded-r-full bg-red-500
+                       transition-all duration-300
+                       group-hover:w-full"
+            ></div>
+
+            <div class="flex items-start justify-between">
 
                 <div>
                     <p class="text-sm font-medium text-gray-500">
                         En rupture
                     </p>
 
-                    <p class="mt-2 text-3xl font-bold text-red-500">
+                    <p
+                        class="mt-3 text-3xl font-bold tracking-tight text-gray-900
+                               transition-all duration-300
+                               group-hover:translate-x-0.5"
+                    >
                         <?= (int) $nombreEnRupture ?>
                     </p>
+
+                    <div class="mt-3 flex items-center gap-2">
+                        <span
+                            class="h-1.5 w-1.5 rounded-full bg-red-500"
+                        ></span>
+
+                        <p class="text-xs font-medium text-gray-400">
+                            Produits indisponibles
+                        </p>
+                    </div>
                 </div>
 
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-red-500">
-                    <i class="fa-solid fa-circle-xmark text-lg"></i>
+
+                <div
+                    class="flex h-14 w-14 shrink-0 items-center justify-center
+                           rounded-2xl bg-red-50
+                           transition-all duration-300
+                           group-hover:scale-110 group-hover:rotate-3"
+                >
+                    <i
+                        class="fa-solid fa-circle-xmark text-xl text-red-500
+                               transition-transform duration-300
+                               group-hover:scale-110"
+                    ></i>
                 </div>
 
             </div>
+
+            <!-- Flèche discrète -->
+            <div
+                class="absolute bottom-5 right-6 opacity-0
+                       translate-x-2
+                       transition-all duration-300
+                       group-hover:translate-x-0 group-hover:opacity-100"
+            >
+                <i class="fa-solid fa-arrow-up-right text-xs text-red-500"></i>
+            </div>
+
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 
     <!-- ===================================================== -->
