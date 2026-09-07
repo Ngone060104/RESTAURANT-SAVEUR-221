@@ -14,7 +14,7 @@ $adresse = $_POST['adresse'] ?? '';
 
 <section class="bg-[#faf9f7] px-6 py-6 lg:px-14 lg:py-6">
 
-    <div class="mx-auto max-w-[1128px] overflow-hidden rounded-[30px] border border-stone-100 bg-white shadow-sm">
+    <div class="mx-auto max-w-[1100px] overflow-hidden rounded-[30px] border border-stone-100 bg-white shadow-sm">
 
         <div class="grid min-h-[654px] lg:grid-cols-[1.03fr_0.97fr]">
 
@@ -24,7 +24,7 @@ $adresse = $_POST['adresse'] ?? '';
             <div class="relative hidden min-h-[654px] lg:block">
 
                 <img
-                    src="/assets/images/register-food.jpg"
+                    src="/images/register-food.jpg"
                     alt="Cuisine sénégalaise"
                     class="absolute inset-0 h-full w-full object-cover">
 
