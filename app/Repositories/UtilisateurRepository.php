@@ -30,16 +30,36 @@ class UtilisateurRepository implements RepositoryInterface
     public function findById(int $id): ?object
     {
         $stmt = $this->pdo->prepare("
-            SELECT u.*, r.libelle AS role
-            FROM utilisateurs u
-            JOIN roles r ON r.id = u.role_id
-            WHERE u.id = :id
-        ");
+        SELECT u.*, r.libelle AS role
+        FROM utilisateurs u
+        JOIN roles r ON r.id = u.role_id
+        WHERE u.id = :id
+    ");
+
         $stmt->execute(['id' => $id]);
+
         $row = $stmt->fetch();
 
-        return $row ?: null;
+        return $row ? $this->hydrate($row) : null;
     }
+
+    public function findByIdHydrate(int $id): ?Utilisateur
+{
+    $stmt = $this->pdo->prepare("
+        SELECT u.*, r.libelle AS role
+        FROM utilisateurs u
+        JOIN roles r ON r.id = u.role_id
+        WHERE u.id = :id
+    ");
+
+    $stmt->execute([
+        'id' => $id,
+    ]);
+
+    $row = $stmt->fetch();
+
+    return $row ? $this->hydrate($row) : null;
+}
 
     /**
      * Recherche brute par email, mot de passe (haché) inclus.
@@ -59,21 +79,23 @@ class UtilisateurRepository implements RepositoryInterface
         return $row ?: null;
     }
 
-    public function emailExists(string $email, ?int $excludeId = null): bool
-{
-    if ($excludeId === null) {
-        $stmt = $this->pdo->prepare('
+    public function emailExists(
+        string $email,
+        ?int $excludeId = null
+    ): bool {
+        if ($excludeId === null) {
+            $stmt = $this->pdo->prepare('
             SELECT 1
             FROM utilisateurs
             WHERE email = :email
             LIMIT 1
         ');
 
-        $stmt->execute([
-            'email' => $email,
-        ]);
-    } else {
-        $stmt = $this->pdo->prepare('
+            $stmt->execute([
+                'email' => $email,
+            ]);
+        } else {
+            $stmt = $this->pdo->prepare('
             SELECT 1
             FROM utilisateurs
             WHERE email = :email
@@ -81,14 +103,14 @@ class UtilisateurRepository implements RepositoryInterface
             LIMIT 1
         ');
 
-        $stmt->execute([
-            'email' => $email,
-            'exclude_id' => $excludeId,
-        ]);
-    }
+            $stmt->execute([
+                'email' => $email,
+                'exclude_id' => $excludeId,
+            ]);
+        }
 
-    return (bool) $stmt->fetchColumn();
-}
+        return (bool) $stmt->fetchColumn();
+    }
 
     public function findRoleIdByLibelle(string $libelle): ?int
     {
@@ -122,19 +144,31 @@ class UtilisateurRepository implements RepositoryInterface
     public function update(int $id, array $data): bool
     {
         $stmt = $this->pdo->prepare("
-            UPDATE utilisateurs
-            SET nom = :nom, prenom = :prenom, email = :email, actif = :actif, role_id = :role_id
-            WHERE id = :id
-        ");
+        UPDATE utilisateurs
+        SET nom = :nom,
+            prenom = :prenom,
+            email = :email,
+            actif = :actif,
+            role_id = :role_id
+        WHERE id = :id
+    ");
 
-        return $stmt->execute([
-            'id' => $id,
-            'nom' => $data['nom'],
-            'prenom' => $data['prenom'],
-            'email' => $data['email'],
-            'actif' => $data['actif'],
-            'role_id' => $data['role_id'],
-        ]);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->bindValue(':nom', $data['nom'], PDO::PARAM_STR);
+        $stmt->bindValue(':prenom', $data['prenom'], PDO::PARAM_STR);
+        $stmt->bindValue(':email', $data['email'], PDO::PARAM_STR);
+        $stmt->bindValue(
+            ':actif',
+            (bool) $data['actif'],
+            PDO::PARAM_BOOL
+        );
+        $stmt->bindValue(
+            ':role_id',
+            (int) $data['role_id'],
+            PDO::PARAM_INT
+        );
+
+        return $stmt->execute();
     }
 
 

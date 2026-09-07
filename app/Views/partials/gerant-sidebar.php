@@ -414,7 +414,7 @@ function gerantSidebarClass(string $path): string
 
                 <!-- UTILISATEURS -->
                 <a
-                    href="/gerant/utilisateurs"
+                    href="/admin/utilisateurs"
                     onclick="closeGerantSidebar()"
                     class="
             flex
@@ -427,7 +427,7 @@ function gerantSidebarClass(string $path): string
             text-[13px]
             font-medium
             transition
-            <?= gerantSidebarClass('/gerant/utilisateurs') ?>
+            <?= gerantSidebarClass('/admin/utilisateurs') ?>
         ">
                     <i
                         class="
@@ -443,7 +443,7 @@ function gerantSidebarClass(string $path): string
 
                 <!-- FICHIERS CLIENTS -->
                 <a
-                    href="/gerant/fichiers-clients"
+                    href="/admin/fichiers-clients"
                     onclick="closeGerantSidebar()"
                     class="
             flex
@@ -456,7 +456,7 @@ function gerantSidebarClass(string $path): string
             text-[13px]
             font-medium
             transition
-            <?= gerantSidebarClass('/gerant/fichiers-clients') ?>
+            <?= gerantSidebarClass('/admin/fichiers-clients') ?>
         ">
                     <i
                         class="
@@ -472,7 +472,7 @@ function gerantSidebarClass(string $path): string
 
                 <!-- MODÉRATIONS -->
                 <a
-                    href="/gerant/moderations"
+                    href="/admin/moderations"
                     onclick="closeGerantSidebar()"
                     class="
             flex
@@ -485,7 +485,7 @@ function gerantSidebarClass(string $path): string
             text-[13px]
             font-medium
             transition
-            <?= gerantSidebarClass('/gerant/moderations') ?>
+            <?= gerantSidebarClass('/admin/moderations') ?>
         ">
                     <i
                         class="
