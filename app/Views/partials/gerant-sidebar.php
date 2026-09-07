@@ -5,6 +5,10 @@ $currentPath = parse_url(
     PHP_URL_PATH
 );
 
+$user = \App\Services\AuthService::currentUser();
+
+$isAdmin = $user !== null
+    && strtoupper((string) ($user['role'] ?? '')) === 'ADMIN';
 
 function gerantSidebarActive(string $path): bool
 {
@@ -12,7 +16,6 @@ function gerantSidebarActive(string $path): bool
 
     return $currentPath === $path;
 }
-
 
 function gerantSidebarClass(string $path): string
 {
@@ -39,8 +42,7 @@ function gerantSidebarClass(string $path): string
         backdrop-blur-[1px]
         lg:hidden
     "
-    onclick="closeGerantSidebar()"
-></div>
+    onclick="closeGerantSidebar()"></div>
 
 
 <!-- =========================================================
@@ -65,8 +67,7 @@ function gerantSidebarClass(string $path): string
         ease-in-out
         -translate-x-full
         lg:translate-x-0
-    "
->
+    ">
 
     <!-- =====================================================
          HEADER SIDEBAR
@@ -79,16 +80,14 @@ function gerantSidebarClass(string $path): string
             shrink-0
             items-center
             px-[22px]
-        "
-    >
+        ">
 
         <!-- LOGO -->
 
         <a
             href="/gerant/dashboard"
             onclick="closeGerantSidebar()"
-            class="flex min-w-0 items-center gap-3.5"
-        >
+            class="flex min-w-0 items-center gap-3.5">
 
             <span
                 class="
@@ -102,8 +101,7 @@ function gerantSidebarClass(string $path): string
                     bg-[#ff9900]
                     text-white
                     shadow-md
-                "
-            >
+                ">
                 <i class="fa-solid fa-utensils text-[18px]"></i>
             </span>
 
@@ -115,8 +113,7 @@ function gerantSidebarClass(string $path): string
                     text-[18px]
                     font-extrabold
                     tracking-tight
-                "
-            >
+                ">
                 Saveur
                 <span class="text-[#ff9900]">221</span>
             </span>
@@ -146,8 +143,7 @@ function gerantSidebarClass(string $path): string
                 hover:text-white
                 lg:hidden
             "
-            aria-label="Fermer le menu"
-        >
+            aria-label="Fermer le menu">
             <i class="fa-solid fa-xmark text-[17px]"></i>
         </button>
 
@@ -164,8 +160,7 @@ function gerantSidebarClass(string $path): string
             overflow-y-auto
             px-[17px]
             pb-4
-        "
-    >
+        ">
 
         <div class="space-y-1.5">
 
@@ -189,8 +184,7 @@ function gerantSidebarClass(string $path): string
                     font-medium
                     transition
                     <?= gerantSidebarClass('/gerant/dashboard') ?>
-                "
-            >
+                ">
 
                 <i
                     class="
@@ -199,8 +193,7 @@ function gerantSidebarClass(string $path): string
                         w-4
                         text-center
                         text-[15px]
-                    "
-                ></i>
+                    "></i>
 
                 <span>Dashboard</span>
 
@@ -226,8 +219,7 @@ function gerantSidebarClass(string $path): string
                     font-medium
                     transition
                     <?= gerantSidebarClass('/gerant/categories') ?>
-                "
-            >
+                ">
 
                 <i
                     class="
@@ -236,8 +228,7 @@ function gerantSidebarClass(string $path): string
                         w-4
                         text-center
                         text-[15px]
-                    "
-                ></i>
+                    "></i>
 
                 <span>Catégories</span>
 
@@ -263,8 +254,7 @@ function gerantSidebarClass(string $path): string
                     font-semibold
                     transition
                     <?= gerantSidebarClass('/gerant/produits') ?>
-                "
-            >
+                ">
 
                 <i
                     class="
@@ -273,8 +263,7 @@ function gerantSidebarClass(string $path): string
                         w-4
                         text-center
                         text-[15px]
-                    "
-                ></i>
+                    "></i>
 
                 <span>Produits &amp; Menu</span>
 
@@ -302,8 +291,7 @@ function gerantSidebarClass(string $path): string
                     transition
                     hover:bg-[#242424]
                     hover:text-white
-                "
-            >
+                ">
 
                 <i
                     class="
@@ -312,8 +300,7 @@ function gerantSidebarClass(string $path): string
                         w-4
                         text-center
                         text-[15px]
-                    "
-                ></i>
+                    "></i>
 
                 <span>Gestion des stocks</span>
 
@@ -339,8 +326,7 @@ function gerantSidebarClass(string $path): string
                     font-semibold
                     transition
                     <?= gerantSidebarClass('/gerant/commandes') ?>
-                "
-            >
+                ">
 
                 <i
                     class="
@@ -349,8 +335,7 @@ function gerantSidebarClass(string $path): string
                         w-4
                         text-center
                         text-[15px]
-                    "
-                ></i>
+                    "></i>
 
                 <span>Commandes</span>
 
@@ -376,8 +361,7 @@ function gerantSidebarClass(string $path): string
                     font-medium
                     transition
                     <?= gerantSidebarClass('/gerant/paiements') ?>
-                "
-            >
+                ">
 
                 <i
                     class="
@@ -386,8 +370,7 @@ function gerantSidebarClass(string $path): string
                         w-4
                         text-center
                         text-[15px]
-                    "
-                ></i>
+                    "></i>
 
                 <span>Paiements &amp; Caisses</span>
 
@@ -402,152 +385,123 @@ function gerantSidebarClass(string $path): string
                 href="/gerant/statistiques"
                 onclick="closeGerantSidebar()"
                 class="
-                    flex
-                    h-[46px]
-                    items-center
-                    gap-4
-                    rounded-[9px]
-                    px-3
-                    font-['DM_Sans']
-                    text-[13px]
-                    font-medium
-                    text-[#777777]
-                    transition
-                    hover:bg-[#242424]
-                    hover:text-white
-                     <?= gerantSidebarClass('/gerant/statistiques') ?>
-                "
-                title="Disponible prochainement"
-            >
-
+        flex
+        h-[46px]
+        items-center
+        gap-4
+        rounded-[9px]
+        px-3
+        font-['DM_Sans']
+        text-[13px]
+        font-medium
+        transition
+        <?= gerantSidebarClass('/gerant/statistiques') ?>
+    ">
                 <i
                     class="
-                        fa-solid
-                        fa-chart-line
-                        w-4
-                        text-center
-                        text-[15px]
-                    "
-                ></i>
+            fa-solid
+            fa-chart-line
+            w-4
+            text-center
+            text-[15px]
+        "></i>
 
                 <span>Statistiques &amp; Ventes</span>
-
             </a>
 
 
-            <!-- =================================================
-                 UTILISATEURS
-            ================================================== -->
+            <?php if ($isAdmin): ?>
 
-            <a
-                href="/gerant/utilisateurs"
-                onclick="closeGerantSidebar()"
-                class="
-                    flex
-                    h-[46px]
-                    items-center
-                    gap-4
-                    rounded-[9px]
-                    px-3
-                    font-['DM_Sans']
-                    text-[13px]
-                    font-medium
-                    text-[#777777]
-                    transition
-                    hover:bg-[#242424]
-                    hover:text-white
-                     <?= gerantSidebarClass('/gerant/utilisateurs') ?>
-                "
-                title="Disponible prochainement"
-            >
-
-                <i
+                <!-- UTILISATEURS -->
+                <a
+                    href="/gerant/utilisateurs"
+                    onclick="closeGerantSidebar()"
                     class="
-                        fa-solid
-                        fa-users
-                        w-4
-                        text-center
-                        text-[15px]
-                    "
-                ></i>
+            flex
+            h-[46px]
+            items-center
+            gap-4
+            rounded-[9px]
+            px-3
+            font-['DM_Sans']
+            text-[13px]
+            font-medium
+            transition
+            <?= gerantSidebarClass('/gerant/utilisateurs') ?>
+        ">
+                    <i
+                        class="
+                fa-solid
+                fa-users
+                w-4
+                text-center
+                text-[15px]
+            "></i>
 
-                <span>Utilisateurs &amp; Rôles</span>
+                    <span>Utilisateurs &amp; Rôles</span>
+                </a>
 
-            </a>
-
-
-            <!-- =================================================
-                 FICHIERS CLIENTS
-            ================================================== -->
-
-            <a
-                href="/gerant/fichiers-clients"
-                onclick="closeGerantSidebar()"
-                class="
-                    flex
-                    h-[46px]
-                    items-center
-                    gap-4
-                    rounded-[9px]
-                    px-3
-                    font-['DM_Sans']
-                    text-[13px]
-                    font-medium
-                    text-[#777777]
-                "
-                title="Disponible prochainement"
-            >
-
-                <i
+                <!-- FICHIERS CLIENTS -->
+                <a
+                    href="/gerant/fichiers-clients"
+                    onclick="closeGerantSidebar()"
                     class="
-                        fa-regular
-                        fa-user
-                        w-4
-                        text-center
-                        text-[15px]
-                    "
-                ></i>
+            flex
+            h-[46px]
+            items-center
+            gap-4
+            rounded-[9px]
+            px-3
+            font-['DM_Sans']
+            text-[13px]
+            font-medium
+            transition
+            <?= gerantSidebarClass('/gerant/fichiers-clients') ?>
+        ">
+                    <i
+                        class="
+                fa-regular
+                fa-user
+                w-4
+                text-center
+                text-[15px]
+            "></i>
 
-                <span>Fichiers Clients</span>
+                    <span>Fichiers Clients</span>
+                </a>
 
-            </a>
-
-
-            <!-- =================================================
-                 MODÉRATION
-            ================================================== -->
-
-            <a
-                href="/gerant/moderations"
-                onclick="closeGerantSidebar()"
-                class="
-                    flex
-                    h-[46px]
-                    items-center
-                    gap-4
-                    rounded-[9px]
-                    px-3
-                    font-['DM_Sans']
-                    text-[13px]
-                    font-medium
-                    text-[#777777]
-                "
-                title="Disponible prochainement"
-            >
-
-                <i
+                <!-- MODÉRATIONS -->
+                <a
+                    href="/gerant/moderations"
+                    onclick="closeGerantSidebar()"
                     class="
-                        fa-regular
-                        fa-star
-                        w-4
-                        text-center
-                        text-[15px]
-                    "
-                ></i>
+            flex
+            h-[46px]
+            items-center
+            gap-4
+            rounded-[9px]
+            px-3
+            font-['DM_Sans']
+            text-[13px]
+            font-medium
+            transition
+            <?= gerantSidebarClass('/gerant/moderations') ?>
+        ">
+                    <i
+                        class="
+                fa-regular
+                fa-star
+                w-4
+                text-center
+                text-[15px]
+            "></i>
 
-                <span>Modérations &amp; Avis</span>
+                    <span>Modérations &amp; Avis</span>
+                </a>
 
-            </a>
+            <?php endif; ?>
+
+
 
         </div>
 
@@ -565,13 +519,11 @@ function gerantSidebarClass(string $path): string
             border-[#292929]
             px-[17px]
             py-4
-        "
-    >
+        ">
 
         <form
             action="/logout"
-            method="POST"
-        >
+            method="POST">
 
             <button
                 type="submit"
@@ -590,8 +542,7 @@ function gerantSidebarClass(string $path): string
                     transition
                     hover:bg-[#242424]
                     hover:text-white
-                "
-            >
+                ">
 
                 <i
                     class="
@@ -599,8 +550,7 @@ function gerantSidebarClass(string $path): string
                         fa-arrow-right-from-bracket
                         w-4
                         text-center
-                    "
-                ></i>
+                    "></i>
 
                 Déconnexion
 
@@ -643,11 +593,9 @@ function gerantSidebarClass(string $path): string
     "
     aria-label="Ouvrir le menu"
     aria-controls="gerant-sidebar"
-    aria-expanded="false"
->
+    aria-expanded="false">
     <i
-        class="fa-solid fa-bars text-[17px]"
-    ></i>
+        class="fa-solid fa-bars text-[17px]"></i>
 </button>
 
 
@@ -656,104 +604,97 @@ function gerantSidebarClass(string $path): string
 ========================================================= -->
 
 <script>
+    function openGerantSidebar() {
+        const sidebar = document.getElementById('gerant-sidebar');
+        const overlay = document.getElementById('gerant-sidebar-overlay');
+        const button = document.getElementById('gerant-menu-button');
 
-function openGerantSidebar()
-{
-    const sidebar = document.getElementById('gerant-sidebar');
-    const overlay = document.getElementById('gerant-sidebar-overlay');
-    const button = document.getElementById('gerant-menu-button');
-
-    if (!sidebar || !overlay) {
-        return;
-    }
-
-    sidebar.classList.remove('-translate-x-full');
-    overlay.classList.remove('hidden');
-
-    document.body.classList.add('overflow-hidden');
-
-    if (button) {
-        button.setAttribute('aria-expanded', 'true');
-    }
-}
-
-
-function closeGerantSidebar()
-{
-    const sidebar = document.getElementById('gerant-sidebar');
-    const overlay = document.getElementById('gerant-sidebar-overlay');
-    const button = document.getElementById('gerant-menu-button');
-
-    if (!sidebar || !overlay) {
-        return;
-    }
-
-    if (window.innerWidth < 1024) {
-        sidebar.classList.add('-translate-x-full');
-        overlay.classList.add('hidden');
-
-        document.body.classList.remove('overflow-hidden');
-
-        if (button) {
-            button.setAttribute('aria-expanded', 'false');
+        if (!sidebar || !overlay) {
+            return;
         }
-    }
-}
-
-
-function toggleGerantSidebar()
-{
-    const sidebar = document.getElementById('gerant-sidebar');
-
-    if (!sidebar) {
-        return;
-    }
-
-    const isClosed =
-        sidebar.classList.contains('-translate-x-full');
-
-    if (isClosed) {
-        openGerantSidebar();
-    } else {
-        closeGerantSidebar();
-    }
-}
-
-
-/* Fermer avec la touche Échap */
-
-document.addEventListener('keydown', function (event)
-{
-    if (event.key === 'Escape') {
-        closeGerantSidebar();
-    }
-});
-
-
-/* Synchronisation avec le redimensionnement */
-
-window.addEventListener('resize', function ()
-{
-    const sidebar = document.getElementById('gerant-sidebar');
-    const overlay = document.getElementById('gerant-sidebar-overlay');
-    const button = document.getElementById('gerant-menu-button');
-
-    if (!sidebar || !overlay) {
-        return;
-    }
-
-    if (window.innerWidth >= 1024) {
 
         sidebar.classList.remove('-translate-x-full');
-        overlay.classList.add('hidden');
+        overlay.classList.remove('hidden');
 
-        document.body.classList.remove('overflow-hidden');
+        document.body.classList.add('overflow-hidden');
 
         if (button) {
-            button.setAttribute('aria-expanded', 'false');
+            button.setAttribute('aria-expanded', 'true');
+        }
+    }
+
+
+    function closeGerantSidebar() {
+        const sidebar = document.getElementById('gerant-sidebar');
+        const overlay = document.getElementById('gerant-sidebar-overlay');
+        const button = document.getElementById('gerant-menu-button');
+
+        if (!sidebar || !overlay) {
+            return;
         }
 
-    }
-});
+        if (window.innerWidth < 1024) {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
 
+            document.body.classList.remove('overflow-hidden');
+
+            if (button) {
+                button.setAttribute('aria-expanded', 'false');
+            }
+        }
+    }
+
+
+    function toggleGerantSidebar() {
+        const sidebar = document.getElementById('gerant-sidebar');
+
+        if (!sidebar) {
+            return;
+        }
+
+        const isClosed =
+            sidebar.classList.contains('-translate-x-full');
+
+        if (isClosed) {
+            openGerantSidebar();
+        } else {
+            closeGerantSidebar();
+        }
+    }
+
+
+    /* Fermer avec la touche Échap */
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeGerantSidebar();
+        }
+    });
+
+
+    /* Synchronisation avec le redimensionnement */
+
+    window.addEventListener('resize', function() {
+        const sidebar = document.getElementById('gerant-sidebar');
+        const overlay = document.getElementById('gerant-sidebar-overlay');
+        const button = document.getElementById('gerant-menu-button');
+
+        if (!sidebar || !overlay) {
+            return;
+        }
+
+        if (window.innerWidth >= 1024) {
+
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.add('hidden');
+
+            document.body.classList.remove('overflow-hidden');
+
+            if (button) {
+                button.setAttribute('aria-expanded', 'false');
+            }
+
+        }
+    });
 </script>
