@@ -230,4 +230,18 @@ class UtilisateurRepository implements RepositoryInterface
             $row->date_creation,
         );
     }
+
+    public function updateActif(int $id, bool $actif): bool
+{
+    $stmt = $this->pdo->prepare("
+        UPDATE utilisateurs
+        SET actif = :actif
+        WHERE id = :id
+    ");
+
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->bindValue(':actif', $actif, PDO::PARAM_BOOL);
+
+    return $stmt->execute();
+}
 }
