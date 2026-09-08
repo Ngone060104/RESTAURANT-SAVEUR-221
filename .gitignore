@@ -2,6 +2,6 @@
 .env
 *.log
 
-composer.lock
-composer.json
-config/config.php
+# composer.lock
+# composer.json
+# config/config.php
