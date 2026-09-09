@@ -1031,7 +1031,7 @@ $formatDate = static function (string $date): string {
                                 <!-- Voir -->
 
                                 <a
-                                    href="/gerant/commande?id=<?= $commandeId ?>"
+                                    href="/gerant/commande/show/<?= $commandeId ?>"
                                     title="Voir"
                                     class="flex h-9 w-9 items-center justify-center rounded-full text-[#777777] transition hover:bg-orange-50 hover:text-orange-500">
 
