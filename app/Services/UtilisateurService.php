@@ -13,8 +13,7 @@ class UtilisateurService
     public function __construct(
         private UtilisateurRepository $utilisateurRepository,
         private PasswordHasher $hasher,
-    ) {
-    }
+    ) {}
 
     /**
      * Créer un utilisateur interne.
@@ -38,7 +37,7 @@ class UtilisateurService
                 'Veuillez corriger les erreurs.',
                 [
                     'email' =>
-                        'Cet email appartient déjà à un autre utilisateur.',
+                    'Cet email appartient déjà à un autre utilisateur.',
                 ]
             );
         }
@@ -48,16 +47,16 @@ class UtilisateurService
          */
         $roleId =
             $this->utilisateurRepository
-                ->findRoleIdByLibelle(
-                    $donnees['role']
-                );
+            ->findRoleIdByLibelle(
+                $donnees['role']
+            );
 
         if ($roleId === null) {
             throw new ValidationException(
                 'Veuillez corriger les erreurs.',
                 [
                     'role_id' =>
-                        'Le rôle sélectionné est invalide.',
+                    'Le rôle sélectionné est invalide.',
                 ]
             );
         }
@@ -83,7 +82,7 @@ class UtilisateurService
                     'Veuillez corriger les erreurs.',
                     [
                         'email' =>
-                            'Cet email appartient déjà à un autre utilisateur.',
+                        'Cet email appartient déjà à un autre utilisateur.',
                     ]
                 );
             }
@@ -172,15 +171,15 @@ class UtilisateurService
         } else {
             $roleAdminId =
                 $this->utilisateurRepository
-                    ->findRoleIdByLibelle(
-                        'ADMIN'
-                    );
+                ->findRoleIdByLibelle(
+                    'ADMIN'
+                );
 
             $roleGerantId =
                 $this->utilisateurRepository
-                    ->findRoleIdByLibelle(
-                        'GERANT'
-                    );
+                ->findRoleIdByLibelle(
+                    'GERANT'
+                );
 
             if ($roleAdminId === $roleId) {
                 $role = 'ADMIN';
@@ -210,14 +209,14 @@ class UtilisateurService
          */
         $actuel =
             $this->utilisateurRepository
-                ->findById($id);
+            ->findById($id);
 
         if ($actuel === null) {
             throw new ValidationException(
                 'Utilisateur introuvable.',
                 [
                     'general' =>
-                        'Utilisateur introuvable.',
+                    'Utilisateur introuvable.',
                 ]
             );
         }
@@ -235,7 +234,7 @@ class UtilisateurService
                     'nom' => $nom,
                     'prenom' => $prenom,
                     'email' => $email,
-                    'actif' => (bool) $actuel->actif,
+                    'actif' => $actuel->isActif(),
                     'role_id' => $roleId,
                 ]
             );
@@ -252,7 +251,7 @@ class UtilisateurService
                     'Veuillez corriger les erreurs.',
                     [
                         'email' =>
-                            'Cet email appartient déjà à un autre utilisateur.',
+                        'Cet email appartient déjà à un autre utilisateur.',
                     ]
                 );
             }
@@ -290,7 +289,7 @@ class UtilisateurService
     {
         $utilisateur =
             $this->utilisateurRepository
-                ->findById($id);
+            ->findById($id);
 
         if ($utilisateur === null) {
             throw new ValidationException(
@@ -311,7 +310,7 @@ class UtilisateurService
     ): bool {
         $utilisateur =
             $this->utilisateurRepository
-                ->findById($id);
+            ->findById($id);
 
         if ($utilisateur === null) {
             throw new ValidationException(
@@ -319,16 +318,8 @@ class UtilisateurService
             );
         }
 
-        return $this->utilisateurRepository->update(
-            $id,
-            [
-                'nom' => $utilisateur->nom,
-                'prenom' => $utilisateur->prenom,
-                'email' => $utilisateur->email,
-                'actif' => $actif,
-                'role_id' => $utilisateur->role_id,
-            ]
-        );
+        return $this->utilisateurRepository
+            ->updateActif($id, $actif);
     }
 
     /**
@@ -433,15 +424,15 @@ class UtilisateurService
         } else {
             $roleAdminId =
                 $this->utilisateurRepository
-                    ->findRoleIdByLibelle(
-                        'ADMIN'
-                    );
+                ->findRoleIdByLibelle(
+                    'ADMIN'
+                );
 
             $roleGerantId =
                 $this->utilisateurRepository
-                    ->findRoleIdByLibelle(
-                        'GERANT'
-                    );
+                ->findRoleIdByLibelle(
+                    'GERANT'
+                );
 
             if ($roleAdminId === $roleId) {
                 $role = 'ADMIN';

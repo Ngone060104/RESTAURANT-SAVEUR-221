@@ -1456,7 +1456,7 @@ $imageProduit = static function ($produit): string {
 | MODAL PRODUIT
 |--------------------------------------------------------------------------
 */
-
+  
     function ouvrirModalProduit() {
 
         const modal =
@@ -1516,28 +1516,6 @@ $imageProduit = static function ($produit): string {
     | MODAL SUPPRESSION
     |--------------------------------------------------------------------------
     */
-function ouvrirModalProduit() {
-    const modal =
-        document.getElementById('modalProduit');
-
-    if (!modal) {
-        return;
-    }
-
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-
-    modal.setAttribute(
-        'aria-hidden',
-        'false'
-    );
-
-    document.body.classList.add(
-        'overflow-hidden'
-    );
-}
-
-
 function fermerModalSuppression() {
     const modal =
         document.getElementById(
