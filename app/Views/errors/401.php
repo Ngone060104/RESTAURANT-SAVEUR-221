@@ -1,17 +1,16 @@
 <?php
-
 /**
- * Page d'erreur 500 - Saveur 221
+ * Page d'erreur 401 - Saveur 221
  *
- * Cette vue est un document HTML autonome.
- * Elle est rendue directement par App::afficherErreur()
- * sans passer par le layout public.
+ * Document HTML autonome.
+ * Cette vue est affichée lorsqu'une authentification
+ * est nécessaire pour accéder à une ressource.
  */
-
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
 
@@ -20,7 +19,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Erreur serveur | Saveur 221</title>
+    <title>Connexion requise | Saveur 221</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,9 +50,7 @@
 
         <section class="w-full max-w-[620px] text-center">
 
-            <!-- =====================================================
-                 LOGO / MARQUE
-            ====================================================== -->
+            <!-- LOGO -->
 
             <div class="mb-8">
 
@@ -78,20 +75,18 @@
             </div>
 
 
-            <!-- =====================================================
-                 CARTE ERREUR
-            ====================================================== -->
+            <!-- CARTE -->
 
             <div
                 class="rounded-[20px] border border-[#e7e3dd] bg-white px-6 py-10 shadow-[0_4px_15px_rgba(0,0,0,0.05)] sm:px-10 sm:py-12"
             >
 
-                <!-- CODE ERREUR -->
+                <!-- CODE -->
 
                 <div
                     class="font-['Inter'] text-[80px] font-black leading-none tracking-[-5px] text-[#ff9500] sm:text-[100px]"
                 >
-                    500
+                    401
                 </div>
 
 
@@ -100,7 +95,7 @@
                 <div
                     class="mx-auto mt-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#fff0d8] text-[#ff9000]"
                 >
-                    <i class="fa-solid fa-triangle-exclamation text-[23px]"></i>
+                    <i class="fa-solid fa-lock text-[21px]"></i>
                 </div>
 
 
@@ -109,7 +104,7 @@
                 <h1
                     class="mt-6 font-['Inter'] text-[24px] font-black tracking-[-0.7px] text-[#111111] sm:text-[28px]"
                 >
-                    Oups ! Une erreur est survenue.
+                    Connexion requise.
                 </h1>
 
 
@@ -118,8 +113,8 @@
                 <p
                     class="mx-auto mt-3 max-w-[440px] font-['DM_Sans'] text-[11px] leading-5 text-[#777777]"
                 >
-                    Notre serveur rencontre actuellement un problème.
-                    Veuillez réessayer dans quelques instants.
+                    Vous devez être connecté pour accéder à cette page.
+                    Connectez-vous à votre compte pour continuer.
                 </p>
 
 
@@ -129,15 +124,14 @@
                     class="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row"
                 >
 
-                    <!-- RÉESSAYER -->
+                    <!-- CONNEXION -->
 
                     <a
-                        href=""
-                        onclick="window.location.reload(); return false;"
+                        href="/login"
                         class="inline-flex h-[42px] w-full items-center justify-center gap-2 rounded-[6px] bg-[#ff9500] px-5 font-['DM_Sans'] text-[11px] font-bold text-white transition hover:bg-[#e98500] sm:w-auto"
                     >
-                        <i class="fa-solid fa-rotate-right text-[10px]"></i>
-                        Réessayer
+                        <i class="fa-solid fa-right-to-bracket text-[10px]"></i>
+                        Se connecter
                     </a>
 
 
@@ -156,9 +150,7 @@
             </div>
 
 
-            <!-- =====================================================
-                 MESSAGE BAS DE PAGE
-            ====================================================== -->
+            <!-- FOOTER -->
 
             <p
                 class="mt-6 font-['DM_Sans'] text-[9px] text-[#999999]"
@@ -174,4 +166,5 @@
     </main>
 
 </body>
+
 </html>

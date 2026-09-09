@@ -14,5 +14,5 @@ $container->singleton(PDO::class, fn () => Database::getInstance()->getConnectio
 $app = new App($container);
 
 (require __DIR__ . '/../routes/web.php')($app->router());
-
+// die('TEST INDEX.PHP');
 $app->run();

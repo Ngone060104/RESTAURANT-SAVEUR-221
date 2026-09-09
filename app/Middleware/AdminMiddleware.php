@@ -2,7 +2,8 @@
 
 namespace App\Middleware;
 
-use App\Core\View;
+use App\Exceptions\AuthException;
+use App\Exceptions\ForbiddenException;
 use App\Interfaces\MiddlewareInterface;
 use App\Services\AuthService;
 
@@ -15,17 +16,18 @@ class AdminMiddleware implements MiddlewareInterface
     {
         $user = AuthService::currentUser();
 
+        // Non connecté → 401
         if ($user === null) {
-            header('Location: /login');
-
-            return false;
+            throw new AuthException(
+                'Vous devez être connecté pour accéder à cette page.'
+            );
         }
 
+        // Connecté mais mauvais rôle → 403
         if ($user['role'] !== 'ADMIN') {
-            http_response_code(403);
-            View::render('errors/403', ["message" => "Cette page est réservée à l'administrateur."], null);
-
-            return false;
+            throw new ForbiddenException(
+                "Cette page est réservée à l'administrateur."
+            );
         }
 
         return true;
