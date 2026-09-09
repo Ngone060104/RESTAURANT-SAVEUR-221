@@ -2,7 +2,8 @@
 
 namespace App\Middleware;
 
-use App\Core\View;
+use App\Exceptions\AuthException;
+use App\Exceptions\ForbiddenException;
 use App\Interfaces\MiddlewareInterface;
 use App\Services\AuthService;
 
@@ -12,18 +13,20 @@ class ClientMiddleware implements MiddlewareInterface
     {
         $user = AuthService::currentUser();
 
-      if ($user === null) {
-    $_SESSION['redirect_after_login'] = '/panier';
-    header('Location: /login');
-    return false;
-}
+        // Utilisateur non connecté → 401
+        if ($user === null) {
+            $_SESSION['redirect_after_login'] = '/panier';
 
+            throw new AuthException(
+                'Vous devez être connecté pour accéder à cette page.'
+            );
+        }
+
+        // Utilisateur connecté mais mauvais rôle → 403
         if ($user['role'] !== 'CLIENT') {
-            http_response_code(403);
-            View::render('errors/403', [
-                'message' => 'Cette page est réservée aux clients.'
-            ]);
-            return false;
+            throw new ForbiddenException(
+                'Cette page est réservée aux clients.'
+            );
         }
 
         return true;

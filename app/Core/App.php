@@ -3,6 +3,8 @@
 namespace App\Core;
 
 use App\Exceptions\NotFoundException;
+use App\Exceptions\AuthException;
+use App\Exceptions\ForbiddenException;
 use Throwable;
 
 /**
@@ -26,11 +28,16 @@ class App
     public function run(): void
     {
         try {
+            //  throw new \RuntimeException('Test temporaire de la page 500');
             $this->router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI'] ?? '/');
+        } catch (AuthException $e) {
+            $this->afficherErreur(401, 'errors/401');
+        } catch (ForbiddenException $e) {
+            $this->afficherErreur(403, 'errors/403');
         } catch (NotFoundException $e) {
             $this->afficherErreur(404, 'errors/404');
         } catch (Throwable $e) {
-            http_response_code(500);
+            $this->afficherErreur(500, 'errors/500');
 
             echo '<pre>';
             echo htmlspecialchars(
