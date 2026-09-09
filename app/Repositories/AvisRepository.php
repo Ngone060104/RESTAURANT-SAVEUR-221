@@ -42,31 +42,24 @@ class AvisRepository
     {
         $stmt = $this->pdo->prepare('
         SELECT
-            a.*,
-
-            CONCAT(u.prenom, \' \', u.nom)
-                AS client_nom_complet,
-
-            (
-                SELECT p.nom
-                FROM lignes_commande lc
-                INNER JOIN produits p
-                    ON p.id = lc.produit_id
-                WHERE lc.commande_id = a.commande_id
-                ORDER BY lc.id
-                LIMIT 1
-            ) AS produit_nom
-
-        FROM avis a
-
-        INNER JOIN utilisateurs u
-            ON u.id = a.client_id
-
-        WHERE u.role_id = 3
-
-        ORDER BY a.date_avis DESC
-
-        LIMIT :limite
+    a.*,
+    u.nom AS client_nom,
+    u.prenom AS client_prenom,
+    (
+        SELECT p.nom
+        FROM lignes_commande lc
+        INNER JOIN produits p
+            ON p.id = lc.produit_id
+        WHERE lc.commande_id = a.commande_id
+        ORDER BY lc.id
+        LIMIT 1
+    ) AS produit_nom
+FROM avis a
+INNER JOIN utilisateurs u
+    ON u.id = a.client_id
+WHERE u.role_id = 3
+ORDER BY a.date_avis DESC
+LIMIT :limite
     ');
 
         $stmt->bindValue(
