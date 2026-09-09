@@ -64,22 +64,22 @@ $statutLabel = match ($statut) {
 
 $statutClass = match ($statut) {
     'EN_ATTENTE' =>
-        'bg-amber-50 text-amber-700 border-amber-200',
+    'bg-amber-50 text-amber-700 border-amber-200',
 
     'EN_PREPARATION' =>
-        'bg-blue-50 text-blue-700 border-blue-200',
+    'bg-blue-50 text-blue-700 border-blue-200',
 
     'PRETE' =>
-        'bg-emerald-50 text-emerald-700 border-emerald-200',
+    'bg-emerald-50 text-emerald-700 border-emerald-200',
 
     'RETIREE' =>
-        'bg-emerald-50 text-emerald-700 border-emerald-200',
+    'bg-emerald-50 text-emerald-700 border-emerald-200',
 
     'ANNULEE' =>
-        'bg-red-50 text-red-600 border-red-200',
+    'bg-red-50 text-red-600 border-red-200',
 
     default =>
-        'bg-stone-50 text-stone-700 border-stone-200',
+    'bg-stone-50 text-stone-700 border-stone-200',
 };
 
 $statutIcon = match ($statut) {
@@ -172,7 +172,7 @@ if ($client !== null) {
         ? $client->getNomComplet()
         : trim(
             ($client->getPrenom() ?? '') . ' ' .
-            ($client->getNom() ?? '')
+                ($client->getNom() ?? '')
         );
 
     if (method_exists($client, 'getTelephone')) {
@@ -202,8 +202,7 @@ if ($client !== null) {
 
             <a
                 href="/mes-commandes"
-                class="inline-flex items-center gap-3 text-stone-600 hover:text-orange-600 font-semibold transition"
-            >
+                class="inline-flex items-center gap-3 text-stone-600 hover:text-orange-600 font-semibold transition">
                 <i class="fa-solid fa-arrow-left"></i>
 
                 <span>
@@ -212,8 +211,7 @@ if ($client !== null) {
             </a>
 
             <span
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border text-xs sm:text-sm font-extrabold <?= $statutClass ?>"
-            >
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border text-xs sm:text-sm font-extrabold <?= $statutClass ?>">
                 <i class="fa-solid <?= $statutIcon ?>"></i>
 
                 <?= $escape($statutLabel) ?>
@@ -227,30 +225,26 @@ if ($client !== null) {
         ====================================================== -->
 
         <section
-            class="bg-white rounded-3xl border border-stone-200 shadow-sm p-5 sm:p-7 md:p-8"
-        >
+            class="bg-white rounded-3xl border border-stone-200 shadow-sm p-5 sm:p-7 md:p-8">
 
             <!-- =================================================
                  EN-TÊTE COMMANDE
             ================================================== -->
 
             <div
-                class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 pb-7 border-b border-stone-200"
-            >
+                class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 pb-7 border-b border-stone-200">
 
                 <div>
 
                     <div class="flex flex-wrap items-center gap-4">
 
                         <h1
-                            class="text-3xl md:text-4xl font-black text-stone-900"
-                        >
+                            class="text-3xl md:text-4xl font-black text-stone-900">
                             Commande #<?= $commandeId ?>
                         </h1>
 
                         <span
-                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full border text-xs sm:text-sm font-extrabold <?= $statutClass ?>"
-                        >
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full border text-xs sm:text-sm font-extrabold <?= $statutClass ?>">
                             <i class="fa-solid <?= $statutIcon ?>"></i>
 
                             <?= $escape($statutLabel) ?>
@@ -286,14 +280,12 @@ if ($client !== null) {
                 <div class="md:text-right">
 
                     <p
-                        class="text-sm font-bold text-stone-500 uppercase tracking-wide"
-                    >
+                        class="text-sm font-bold text-stone-500 uppercase tracking-wide">
                         Montant
                     </p>
 
                     <p
-                        class="text-3xl md:text-4xl font-black text-orange-600 mt-1"
-                    >
+                        class="text-3xl md:text-4xl font-black text-orange-600 mt-1">
                         <?= $formatPrix($total) ?>
                     </p>
 
@@ -311,26 +303,22 @@ if ($client !== null) {
                 <div class="mt-7">
 
                     <div
-                        class="rounded-2xl bg-stone-50 p-5 sm:p-6"
-                    >
+                        class="rounded-2xl bg-stone-50 p-5 sm:p-6">
 
                         <div
-                            class="grid grid-cols-1 md:grid-cols-2 gap-6"
-                        >
+                            class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                             <!-- Coordonnées client -->
 
                             <div>
 
                                 <p
-                                    class="text-xs font-extrabold uppercase tracking-wide text-stone-400"
-                                >
+                                    class="text-xs font-extrabold uppercase tracking-wide text-stone-400">
                                     Coordonnées client
                                 </p>
 
                                 <h2
-                                    class="mt-2 text-base sm:text-lg font-extrabold text-stone-900"
-                                >
+                                    class="mt-2 text-base sm:text-lg font-extrabold text-stone-900">
                                     <?= $escape($nomClient) ?>
                                 </h2>
 
@@ -358,14 +346,12 @@ if ($client !== null) {
                             <div>
 
                                 <p
-                                    class="text-xs font-extrabold uppercase tracking-wide text-stone-400"
-                                >
+                                    class="text-xs font-extrabold uppercase tracking-wide text-stone-400">
                                     Lieu de retrait & notes
                                 </p>
 
                                 <h2
-                                    class="mt-2 text-base font-extrabold text-stone-900"
-                                >
+                                    class="mt-2 text-base font-extrabold text-stone-900">
                                     Restaurant Saveur 221 (Dakar)
                                 </h2>
 
@@ -396,8 +382,7 @@ if ($client !== null) {
             <div class="border-t border-stone-200 mt-7 pt-7">
 
                 <h2
-                    class="text-sm font-extrabold uppercase tracking-wide text-stone-700 mb-5"
-                >
+                    class="text-sm font-extrabold uppercase tracking-wide text-stone-700 mb-5">
                     Articles & lignes de la commande
                 </h2>
 
@@ -407,8 +392,7 @@ if ($client !== null) {
                     <?php if (empty($lignes)): ?>
 
                         <div
-                            class="rounded-2xl bg-stone-50 border border-stone-200 p-6 text-center"
-                        >
+                            class="rounded-2xl bg-stone-50 border border-stone-200 p-6 text-center">
                             <p class="text-stone-500">
                                 Aucun article trouvé pour cette commande.
                             </p>
@@ -432,48 +416,32 @@ if ($client !== null) {
 
                             $montantLigne =
                                 $ligne->getMontantLigne();
-
                             $imageProduit = null;
 
-                            if (
-                                method_exists(
-                                    $ligne,
-                                    'getProduitImage'
-                                )
-                            ) {
-                                $imageProduit =
-                                    $ligne->getProduitImage();
+                            if (method_exists($ligne, 'getProduitImage')) {
+                                $imageProduit = $ligne->getProduitImage();
                             }
 
                             /*
-                             * IMPORTANT :
-                             * On utilise directement le chemin
-                             * enregistré en base.
-                             */
+ * L'image est hébergée sur Cloudinary.
+ * On utilise donc directement l'URL enregistrée en base.
+ */
                             $imageUrl = null;
 
-                            if (
-                                !empty($imageProduit)
-                            ) {
-                                $imageUrl =
-                                    '/' .
-                                    ltrim(
-                                        $imageProduit,
-                                        '/'
-                                    );
+                            if (!empty($imageProduit)) {
+                                $imageUrl = trim($imageProduit);
                             }
+
 
                             ?>
 
                             <div
-                                class="flex items-center gap-4 rounded-2xl border border-stone-200 p-4"
-                            >
+                                class="flex items-center gap-4 rounded-2xl border border-stone-200 p-4">
 
                                 <!-- IMAGE PRODUIT -->
 
                                 <div
-                                    class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden bg-stone-100 shrink-0"
-                                >
+                                    class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden bg-stone-100 shrink-0">
 
                                     <?php if ($imageUrl !== null): ?>
 
@@ -481,17 +449,14 @@ if ($client !== null) {
                                             src="<?= $escape($imageUrl) ?>"
                                             alt="<?= $escape($nomProduit) ?>"
                                             class="w-full h-full object-cover"
-                                            loading="lazy"
-                                        >
+                                            loading="lazy">
 
                                     <?php else: ?>
 
                                         <div
-                                            class="w-full h-full flex items-center justify-center bg-orange-50 text-orange-500"
-                                        >
+                                            class="w-full h-full flex items-center justify-center bg-orange-50 text-orange-500">
                                             <i
-                                                class="fa-solid fa-utensils text-xl"
-                                            ></i>
+                                                class="fa-solid fa-utensils text-xl"></i>
                                         </div>
 
                                     <?php endif; ?>
@@ -502,18 +467,15 @@ if ($client !== null) {
                                 <!-- PRODUIT -->
 
                                 <div
-                                    class="flex-1 min-w-0"
-                                >
+                                    class="flex-1 min-w-0">
 
                                     <h3
-                                        class="font-extrabold text-stone-900"
-                                    >
+                                        class="font-extrabold text-stone-900">
                                         <?= $escape($nomProduit) ?>
                                     </h3>
 
                                     <p
-                                        class="text-sm text-stone-500 mt-1"
-                                    >
+                                        class="text-sm text-stone-500 mt-1">
                                         Prix unitaire :
                                         <?= $formatPrix($prixUnitaire) ?>
                                     </p>
@@ -524,18 +486,15 @@ if ($client !== null) {
                                 <!-- QUANTITÉ + TOTAL LIGNE -->
 
                                 <div
-                                    class="text-right shrink-0"
-                                >
+                                    class="text-right shrink-0">
 
                                     <p
-                                        class="text-sm text-stone-400 font-semibold"
-                                    >
+                                        class="text-sm text-stone-400 font-semibold">
                                         <?= $quantite ?> ×
                                     </p>
 
                                     <p
-                                        class="text-lg font-black text-stone-900 mt-1"
-                                    >
+                                        class="text-lg font-black text-stone-900 mt-1">
                                         <?= $formatPrix($montantLigne) ?>
                                     </p>
 
@@ -557,15 +516,12 @@ if ($client !== null) {
             ================================================== -->
 
             <div
-                class="border-t border-stone-200 mt-8 pt-8"
-            >
+                class="border-t border-stone-200 mt-8 pt-8">
 
                 <h2
-                    class="flex items-center gap-3 text-sm font-extrabold uppercase tracking-wide text-stone-700 mb-5"
-                >
+                    class="flex items-center gap-3 text-sm font-extrabold uppercase tracking-wide text-stone-700 mb-5">
                     <i
-                        class="fa-solid fa-wallet text-red-500"
-                    ></i>
+                        class="fa-solid fa-wallet text-red-500"></i>
 
                     Paiements enregistrés
                     <?php if (!empty($paiements)): ?>
@@ -575,26 +531,22 @@ if ($client !== null) {
 
 
                 <div
-                    class="grid grid-cols-1 lg:grid-cols-2 gap-6"
-                >
+                    class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                     <!-- Liste des paiements -->
 
                     <div
-                        class="rounded-2xl bg-stone-50 p-5"
-                    >
+                        class="rounded-2xl bg-stone-50 p-5">
 
                         <?php if (empty($paiements)): ?>
 
                             <h3
-                                class="text-lg font-extrabold text-stone-900"
-                            >
+                                class="text-lg font-extrabold text-stone-900">
                                 Paiement de la commande
                             </h3>
 
                             <p
-                                class="mt-3 text-sm text-stone-500"
-                            >
+                                class="mt-3 text-sm text-stone-500">
                                 Aucun paiement détaillé n'est actuellement
                                 associé à cette commande.
                             </p>
@@ -612,36 +564,33 @@ if ($client !== null) {
                                             $paiement,
                                             'getMontant'
                                         )
-                                            ? $paiement->getMontant()
-                                            : 0;
+                                        ? $paiement->getMontant()
+                                        : 0;
 
                                     $datePaiement =
                                         method_exists(
                                             $paiement,
                                             'getDatePaiement'
                                         )
-                                            ? $paiement->getDatePaiement()
-                                            : null;
+                                        ? $paiement->getDatePaiement()
+                                        : null;
 
                                     ?>
 
                                     <div
-                                        class="flex items-center justify-between gap-4"
-                                    >
+                                        class="flex items-center justify-between gap-4">
 
                                         <div>
 
                                             <p
-                                                class="font-extrabold text-stone-900"
-                                            >
+                                                class="font-extrabold text-stone-900">
                                                 Paiement de la commande
                                             </p>
 
                                             <?php if ($datePaiement): ?>
 
                                                 <p
-                                                    class="mt-1 text-sm text-stone-500"
-                                                >
+                                                    class="mt-1 text-sm text-stone-500">
                                                     <?= $escape(
                                                         $formatDate(
                                                             $datePaiement
@@ -654,11 +603,9 @@ if ($client !== null) {
                                         </div>
 
                                         <span
-                                            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-600 text-xs font-extrabold whitespace-nowrap"
-                                        >
+                                            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-600 text-xs font-extrabold whitespace-nowrap">
                                             <i
-                                                class="fa-solid fa-circle-check"
-                                            ></i>
+                                                class="fa-solid fa-circle-check"></i>
 
                                             <?= $formatPrix(
                                                 (float) $montantPaiement
@@ -679,22 +626,19 @@ if ($client !== null) {
                     <!-- Résumé paiement -->
 
                     <div
-                        class="rounded-2xl bg-stone-50 p-5 sm:p-6"
-                    >
+                        class="rounded-2xl bg-stone-50 p-5 sm:p-6">
 
                         <!-- Total -->
 
                         <div
-                            class="flex items-center justify-between gap-4"
-                        >
+                            class="flex items-center justify-between gap-4">
 
                             <span class="text-stone-600">
                                 Montant total de la commande :
                             </span>
 
                             <span
-                                class="font-black text-stone-900 whitespace-nowrap"
-                            >
+                                class="font-black text-stone-900 whitespace-nowrap">
                                 <?= $formatPrix($total) ?>
                             </span>
 
@@ -704,16 +648,14 @@ if ($client !== null) {
                         <!-- Payé -->
 
                         <div
-                            class="flex items-center justify-between gap-4 mt-4 pt-4 border-t border-stone-200"
-                        >
+                            class="flex items-center justify-between gap-4 mt-4 pt-4 border-t border-stone-200">
 
                             <span class="text-emerald-600">
                                 Montant total payé :
                             </span>
 
                             <span
-                                class="font-black text-emerald-600 whitespace-nowrap"
-                            >
+                                class="font-black text-emerald-600 whitespace-nowrap">
                                 <?= $formatPrix($montantPaye) ?>
                             </span>
 
@@ -723,22 +665,19 @@ if ($client !== null) {
                         <!-- Restant -->
 
                         <div
-                            class="flex items-center justify-between gap-4 mt-4 pt-4 border-t border-stone-200"
-                        >
+                            class="flex items-center justify-between gap-4 mt-4 pt-4 border-t border-stone-200">
 
                             <span
                                 class="<?= $commandePayee
-                                    ? 'text-emerald-600'
-                                    : 'text-orange-600' ?>"
-                            >
+                                            ? 'text-emerald-600'
+                                            : 'text-orange-600' ?>">
                                 Solde restant à régler :
                             </span>
 
                             <span
                                 class="font-black <?= $commandePayee
-                                    ? 'text-emerald-600'
-                                    : 'text-orange-600' ?> whitespace-nowrap"
-                            >
+                                                        ? 'text-emerald-600'
+                                                        : 'text-orange-600' ?> whitespace-nowrap">
                                 <?= $formatPrix($montantRestant) ?>
                             </span>
 
@@ -752,11 +691,9 @@ if ($client !== null) {
                             <?php if ($commandePayee): ?>
 
                                 <span
-                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-600 text-xs font-extrabold"
-                                >
+                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-600 text-xs font-extrabold">
                                     <i
-                                        class="fa-solid fa-circle-check"
-                                    ></i>
+                                        class="fa-solid fa-circle-check"></i>
 
                                     Payé
                                 </span>
@@ -764,11 +701,9 @@ if ($client !== null) {
                             <?php elseif ($montantPaye > 0): ?>
 
                                 <span
-                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-amber-200 bg-amber-50 text-amber-700 text-xs font-extrabold"
-                                >
+                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-amber-200 bg-amber-50 text-amber-700 text-xs font-extrabold">
                                     <i
-                                        class="fa-solid fa-clock"
-                                    ></i>
+                                        class="fa-solid fa-clock"></i>
 
                                     Paiement partiel
                                 </span>
@@ -776,11 +711,9 @@ if ($client !== null) {
                             <?php else: ?>
 
                                 <span
-                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-red-200 bg-red-50 text-red-600 text-xs font-extrabold"
-                                >
+                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-red-200 bg-red-50 text-red-600 text-xs font-extrabold">
                                     <i
-                                        class="fa-solid fa-circle-exclamation"
-                                    ></i>
+                                        class="fa-solid fa-circle-exclamation"></i>
 
                                     <?= $escape(
                                         $statutPaiementLabel
@@ -806,37 +739,30 @@ if ($client !== null) {
             <?php if ($statut === 'RETIREE'): ?>
 
                 <div
-                    class="mt-8 rounded-2xl border-2 border-orange-300 bg-orange-50 p-5 sm:p-6"
-                >
+                    class="mt-8 rounded-2xl border-2 border-orange-300 bg-orange-50 p-5 sm:p-6">
 
                     <div
-                        class="flex flex-col md:flex-row md:items-center md:justify-between gap-5"
-                    >
+                        class="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
 
                         <div
-                            class="flex items-start gap-4"
-                        >
+                            class="flex items-start gap-4">
 
                             <div
-                                class="w-11 h-11 rounded-xl bg-orange-500 text-white flex items-center justify-center shrink-0"
-                            >
+                                class="w-11 h-11 rounded-xl bg-orange-500 text-white flex items-center justify-center shrink-0">
                                 <i
-                                    class="fa-solid fa-star"
-                                ></i>
+                                    class="fa-solid fa-star"></i>
                             </div>
 
                             <div>
 
                                 <h2
-                                    class="font-extrabold text-orange-800 text-lg"
-                                >
+                                    class="font-extrabold text-orange-800 text-lg">
                                     Votre avis compte beaucoup
                                     pour Saveur 221 !
                                 </h2>
 
                                 <p
-                                    class="text-sm text-orange-700 mt-1"
-                                >
+                                    class="text-sm text-orange-700 mt-1">
                                     Commande retirée avec succès.
                                     Partagez votre expérience culinaire.
                                 </p>
@@ -849,13 +775,11 @@ if ($client !== null) {
                         <button
                             type="button"
                             class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-stone-200 text-stone-500 font-bold cursor-not-allowed"
-                            disabled
-                        >
+                            disabled>
                             <span>Avis</span>
 
                             <i
-                                class="fa-solid fa-star"
-                            ></i>
+                                class="fa-solid fa-star"></i>
                         </button>
 
                     </div>
@@ -872,18 +796,16 @@ if ($client !== null) {
         ====================================================== -->
 
         <div
-            class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6"
-        >
+            class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
 
-            
+
 
 
             <?php if ($statut === 'RETIREE'): ?>
 
                 <a
                     href="/"
-                    class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-orange-500 hover:bg-orange-600 text-stone-900 font-extrabold transition"
-                >
+                    class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-orange-500 hover:bg-orange-600 text-stone-900 font-extrabold transition">
                     <i class="fa-solid fa-utensils"></i>
 
                     Commander à nouveau
@@ -891,14 +813,13 @@ if ($client !== null) {
 
             <?php elseif ($statut !== 'ANNULEE'): ?>
 
-              <a
-                href="/mes-commandes"
-                class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl border border-stone-300 bg-white hover:bg-stone-50 text-stone-700 font-bold transition"
-            >
-                <i class="fa-solid fa-arrow-left"></i>
+                <a
+                    href="/mes-commandes"
+                    class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl border border-stone-300 bg-white hover:bg-stone-50 text-stone-700 font-bold transition">
+                    <i class="fa-solid fa-arrow-left"></i>
 
-                Mes commandes
-            </a>
+                    Mes commandes
+                </a>
 
             <?php endif; ?>
 
