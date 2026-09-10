@@ -21,7 +21,7 @@ class HomeController extends Controller
         $this->view('home/index', [
             'titre' => 'Accueil',
             'categories' => $this->categorieRepository->findAll(),
-            'produitsVedettes' => $this->produitRepository->findVedettes(3),
+            'produitsVedettes' => $this->produitRepository->findVedettes(4),
             'avisRecents' => $this->avisRepository->findRecents(2),
         ]);
     }
