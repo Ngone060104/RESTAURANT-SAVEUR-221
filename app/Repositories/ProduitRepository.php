@@ -301,7 +301,7 @@ class ProduitRepository implements RepositoryInterface
      * Il n'y a pas de colonne "vedette" dans la base.
      * On prend donc les premiers produits disponibles.
      */
-    public function findVedettes(int $limite = 3): array
+    public function findVedettes(int $limite = 4): array
     {
         $limite = max(1, $limite);
 

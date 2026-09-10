@@ -315,7 +315,7 @@ $nomInitiale = static function (?string $nom): string {
 
         <!-- PRODUITS -->
 
-        <div class="mt-6 grid gap-5 md:grid-cols-3">
+        <div class="mt-6 grid gap-5 md:grid-cols-4">
 
             <?php foreach ($produitsVedettes as $produit): ?>
 
